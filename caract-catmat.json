@@ -1,0 +1,42 @@
+[
+  {
+    "key": "SAUD-40828",
+    "summary": "Exportação BNAFAR (BNDASAF - nova versão)"
+  },
+  {
+    "key": "SAUD-5134",
+    "summary": "Assistência Farmacêutica."
+  },
+  {
+    "key": "SAUD-62481",
+    "summary": "SI BNAFAR x RNDS"
+  },
+  {
+    "key": "SAUD-62730",
+    "summary": "Exportação ao SI-BNAFAR"
+  },
+  {
+    "key": "SAUD-11735",
+    "summary": "Permitir a vinculação de funcionalidades pertinentes a módulos, os módulos são Atenção Primária, Assistência em Saúde, Assistência Farmacêutica, Ações Programáticas,Diagnósticos e Financeiro/Regulação. "
+  },
+  {
+    "key": "SAUD-15837",
+    "summary": "Catálogo de Materiais - CATMAT"
+  },
+  {
+    "key": "SAUD-7873",
+    "summary": "Deverá possuir painel gráfico que mostre a quantidade de produtos dispensados pelas unidades de assistência farmacêutica, podendo definir um ou mais produtos para a comparação anual"
+  },
+  {
+    "key": "SAUD-22916",
+    "summary": "Exportação BNDASAF - antiga"
+  },
+  {
+    "key": "SAUD-29256",
+    "summary": "Fonte de dados BNDASAF"
+  },
+  {
+    "key": "SAUD-24038",
+    "summary": "Exibir Competências na exportação BNDASAF"
+  }
+]

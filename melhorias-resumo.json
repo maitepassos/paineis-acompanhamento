@@ -1,0 +1,326 @@
+[
+  {
+    "key": "DSI-33742",
+    "summary": "Separar campos CATMAT no cadastro do produto",
+    "description": "1 - Descrição da dúvida:\r\nComo sugestão de melhoria na correção e manutenção dos CATMAT do BNDASAF e do e-SUS, que os campos sejam separados no cadastro do produto, facilitando os ajustes.\r\n\r\n2 - Entidade:\r\nPM Santiago\r\n\r\n3 - Acesso na entidade Cloud para o usuário:\r\nN/A\r\n\r\n4 - Passos para simulação e evidências:\r\n\r\n!Screenshot_1.png|thumbnail!\r\n\r\n5 - Necessidade:\r\nAo separar os campos CATMAT, o ajuste se dá diretamente no cadastro do produto, não sendo necessário acessar o cadastro de CATMAT no almoxarifado, localizar (dá trabalho) e alterar/replicar.",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "PUBINFOS-56527",
+    "summary": "Pré visualização de medicamentos ",
+    "description": "Todos clientes\r\nEm farmácia, na dispensação, uma aba para pré visualizar os medicamentos sem a necessidade de abrir cada dispensação.",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "DSI-33703",
+    "summary": "Adicionar procedimento automaticamente ao registrar puericultura",
+    "description": "1 - Descrição da dúvida:\r\nCliente sugere como melhoria de rotina que o sistema adicione o procedimento 03.01.01.027-7 - AVALIAÇÃO DO DESENVOLVIMENTO DA CRIANÇA NA PUERICULTURA automaticamente ao avaliar fatores de risco e alterações fenotípicas na rotina de puericultura do atendimento, como ocorre no e-SUS atualmente.\r\n\r\nSugeri que colocasse o procedimento como 'sugerido' no sistema, e essa rotina já é utilizada pelos profissionais.\r\n\r\n2 - Entidade:\r\nPM Crissiumal\r\n\r\n3 - Acesso na entidade Cloud para o usuário:\r\nN/A\r\n\r\n4 - Passos para simulação e evidências:\r\n\r\n!Screenshot_1.png|thumbnail!\r\n!Screenshot_2.png|thumbnail!\r\n\r\n5 - Necessidade:\r\nCriar facilitador para atendimento do indicador ao adicionar o procedimento automaticamente.",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "CSMCSM-148314",
+    "summary": "Ligação por IA",
+    "description": "1 - Descrição da dúvida:\r\nBoa Tarde, \r\n\r\nO cliente Bruno da Entidade: \"Prefeitura Municipal Orlândia - Orlândia/SP\", está solicitando a seguinte questão:\r\n\"Prezados, é possível mudar o ddd das ligações de IA que o sistema betha faz para confirmar exames e consultas?\r\n\r\nNo nosso município temos muita resistência para receber/atender ligações de ddd como o 051 e o pessoal está achando que é golpe!\"\r\n\r\nRecentemente foi configurado o envio de mensagem e de ligação e está criando um movimento na população que pode ser um possível Golpe.\r\n\r\n2 - Entidade:\r\nPrefeitura Municipal Orlândia - Orlândia/SP\r\n\r\n3 - Acesso na entidade Cloud para o usuário:\r\nHabilitar o parâmetro de Acesso Técnico na entidade, caso se trate de um cenário específico do cliente.\r\n\r\n4 - Passos para simulação e evidências:\r\nEnvio de Mensagem e de Ligação por IA para consultas marcadas\r\n\r\n5 - Necessidade:\r\nAlta",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "BTHSC-307489",
+    "summary": "Na dispensa da prescrição permitir adicionar quantidade a maior",
+    "description": "1 - Funcionalidade\r\n\r\nDispensa > Prescrições\r\n\r\n2 - Necessidade\r\n\r\nAtualmente ao realizar a dispensa de uma prescrição, o sistema não permite editar a quantidade a maior que o prescrito, mesmo não se tratando de medicamento controlado. Por exemplo: Há casos que o médico prescreve determinada quantidade de comprimidos,  porém a dispensa ocorre por cartela. \r\n\r\n",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "BTHSC-307305",
+    "summary": "Relatorio de dispensação diaria de portaria 344",
+    "description": "solicito a implantação de acesso para relatório diário para dispensação de medicamentos controlados e antibióticos, para melhorar o controle de estoque destes grupos. neste relatório deve conter: data, nome de paciente, medicamento, quantidade dispensada e crm/nome do prescritor.\r\npode ser algo parecido com o relatorio da portaria 344, mas que não tenha as capas de abertura e fechamento.",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "PUBINFOS-56398",
+    "summary": "PERMITIR REPLICAR OS AGENDAMENTOS QUANDO A AGENDA FOR POR ONDEM DE CHEGADA E PERMITIR AGENDAMENTOS DE GRUPOS.",
+    "description": "PERMITIR REPLICAR OS AGENDAMENTOS QUANDO A AGENDA FOR POR ONDEM DE CHEGADA E PERMITIR AGENDAMENTOS DE GRUPOS.\r\n\r\nCLIENTE PM SABAUDIA\r\n\r\nContexto;\r\nO cliente esta precisando realizar o agendamento dos fisioterapeutas, eles atendem um grupo de pacientes em cada consulta e cada paciente, e precisam programar / replicar os agendamentos, mas o sistema nao permite quando é agenda por ordem de chegada.\r\nOutra necessidade, é uma agenda que permitisse o atendimento em grupo, hoje para atender o cliente, foi orientado que na criação, ele considere uma agenda por tempo de consulta, entao o profissional tem varias agendas, por exemplo, ele atende 6 pessoas por consulta duarente 30min, entao foi criado uma agenda a cada 30min, ou seja, uma agenda das 08 as 08:30 para 6 consultas, oura agenda das 08:30 as 09 para mais 6 consultas, e assim por diante. É necessario que seja possivel agendar um grupo de pessoas por vez para a consulta, seja por ordem de chegada ou por horario marcado.",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "PROIEPP-19622",
+    "summary": "Integração eSUS - AF",
+    "description": "Entidade: *Bom Sucesso* e *Alto Paraná*\r\n\r\nAlguns clientes entraram em contato perguntando sobre a nova integração com o eSUS AF na parte da assistência farmacêutica, visto que o hórus será desativado.\r\n\r\nMe enviaram alguns documentos que vou compartilhar aqui:\r\n\r\nPlanilha Hórus:\r\nhttps://docs.google.com/spreadsheets/d/18aKJrPYQ6fzLX1slm18HjasDfKqAoVjX5wwkrCNE2_4/edit?usp=sharing\r\n\r\nApresentação do eSUS-AF:\r\nhttps://www.youtube.com/live/him-D9_ZHzE \r\n\r\nAtenção, gestores da Assistência Farmacêutica \r\n\r\nA partir de amanhã, começa o movimento de adesão ao novo modelo de informação da Assistência Farmacêutica no SUS.\r\nE isso muda o jogo.\r\n Embora muitos estejam vendo isso como novidade, essa mudança já estava prevista desde 2025.\r\nA Portaria GM/MS nº 7.947, de 21 de agosto de 2025 já estruturou essa transformação ao:\r\n reorganizar a governança do eSUS Assistência Farmacêutica (eSUSAF);\r\n instituir o HUB da Assistência Farmacêutica (HUB-AF);\r\n criar o MedSUS como repositório nacional de medicamentos.\r\n Ou seja: o modelo já estava desenhado.\r\n Agora, a implementação começou de fato.\r\nA partir disso:\r\nO eSUSAF passa a ser o sistema estruturante;\r\nO HUB-AF se consolida como ambiente colaborativo;\r\nO MedSUS organiza os medicamentos em nível nacional.\r\n \r\nE o mais importante:\r\nA gestão deixa de ser isolada, e passa a ser integrada, padronizada e colaborativa.\r\n E tem um ponto crítico que você NÃO pode ignorar:\r\n A adesão dos municípios começa amanhã (10/04)\r\n O sistema Hórus será descontinuado em até 180 dias após publicação da portaria operacional.\r\nOu seja:\r\n Não é só trocar sistema\r\n É mudar a forma de organizar dados, processos, equipes e gestão.\r\nAgora me responde:\r\nVocê vai entrar nesse processo de forma estratégica ou vai correr atrás depois?\r\n \r\nQuem se antecipa:\r\n organiza a transição\r\n evita retrabalho\r\n fortalece a gestão\r\n Quem deixa pra depois: vai lidar com pressão, prazo e problema.\r\nEsse é o tipo de movimento que separa gestão reativa de gestão estratégica.\r\n\r\n Me conta: seu município já está se preparando para essa transição?\r\n                 https://www.instagram.com/p/DW6suLtjRXR/?igsh=aTF0dmw3cGJjYXVw",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "CSMCSM-148215",
+    "summary": "Possibilidade de adicionar mais de um local/horário de desembarque do transporte",
+    "description": "1 - Descrição da dúvida:\r\n_Bom dia, novamente nós do transporte com mais uma demanda, mas acredito que seja melhor acertar alguns detalhes já neste inicio para ajustarmos nossos funcionamentos...\r\n\r\nDesta vez iremos pedir uma observação no campo de Desembarque, mas especificamente no horario de saída. Primeiramente não entendemos qual seria o objetivo deste campo, visto que o horario de saída já é configurado na hora de abrir a agenda. Não compreendemos por que haveria opção de trocar isto para apenas um paciente diferente dos demais na mesma viagem..._\r\n\r\nO cliente solicita que seja adicionado no sistema na hora do agendamento do paciente uma forma de adicionar mais de um local e horário de desembarque para pacientes que tem mais de um compromisso na mesma cidade de viagem no mesmo dia. Por exemplo: um paciente que tem um exame e uma consulta, um as 10h e um as 13h. Para que o motorista consiga se programar para levar o paciente nos dos locais.\r\n\r\n\r\n2 - Entidade:\r\nPrefeitura Municipal da Estância de Socorro - Socorro/SP\r\n\r\n\r\n4 - Passos para simulação e evidências:\r\nTransporte> Agendamentos> Agendar> local e horário de embarque.\r\n!imagem_2026-04-15_104309795.png|thumbnail!\r\n\r\n5 - Necessidade:\r\nPossibilitar que o usuário informe mais de um local e horário de desembarque do paciente ao agendar a viagem. ",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "DSI-33648",
+    "summary": "Bases e-SUS AF - BNAFAR e RNDS",
+    "description": "1 - Descrição da dúvida:\r\nCliente encaminhou documento a respeito do lançamento do e-SUS AF. Compartilho para registrar as informações recebidas no tocante às integrações relacionadas com BNAFAR e RNDS.\r\n\r\nPode ter relação com a necessidade DSI-30317.\r\n\r\n2 - Entidade:\r\nPM Pinheirinho do Vale\r\n\r\n3 - Acesso na entidade Cloud para o usuário:\r\nN/A\r\n\r\n4 - Passos para simulação e evidências:\r\n\r\n[^Resumo_eSUSAF.pdf]\r\n\r\nLive\r\nhttps://www.youtube.com/live/him-D9_ZHzE\r\n\r\n5 - Necessidade:\r\nVerificar se há necessidade de adequações no sistema.",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "BTHSC-305243",
+    "summary": "AFERIÇÃO DE PRESSÃO",
+    "description": "1 - Descrição da dúvida:\r\nAo realizar a triagem e a aferição de pressão, o sistema está apresentando os registros do mais antigo para o mais recente.\r\n\r\nNo entanto, para o nosso dia a dia, o mais adequado seria que as informações fossem exibidas ao contrário, ou seja, da data mais atual para a mais antiga. Dessa forma, a última aferição de pressão ficaria visível logo no início, facilitando a visualização.\r\n\r\nAtualmente, como está em ordem crescente (do mais antigo para o mais recente), acaba não sendo prático para uso.\r\n\r\nSeria possível inverter essa ordem, para que a data mais recente apareça primeiro e, em seguida, as mais antigas?",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "BTHSC-305114",
+    "summary": "Módulo cofinanciamento. ",
+    "description": "Solicita-se a inclusão do filtro por equipe (INE) no gráfico de evolução, considerando que diversas unidades possuem mais de uma equipe vinculada.\r\nA implementação permitirá análise mais detalhada e qualificada dos indicadores, facilitando o monitoramento e gestão por território.\r\n\r\no Gestor conseguiria analisar a evolução por equipe e de toda a unidade. ",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "SOL-4874",
+    "summary": "Necessidade de poder bloquear a impressão de resultado de procedimento via impressora na aba RES > PROCEDIMENTOS",
+    "description": "1 - Descrição da dúvida:\r\nApós a melhoria liberada em 31/03 do laudo assinado já vincular ao prontuário, foi verificado que o botão de impressora da tela RES > PROCEDIMENTOS ainda realiza a impressão do laudo do exame sem a assinatura digital. Foi verificado que não existe a permissão de revogar o acesso ao botão de imprimir da aba Procedimentos do RES, solicito verificação da funcionalidade, essa permissão não deveria ser revogavel como em outras rotinas? \r\n2 - Entidade:\r\nPREFEITURA MUNICIPAL DE TIMÓTEO\r\n\r\n3 - Acesso na entidade Cloud para o usuário:\r\nSolicitar\r\n\r\n4 - Passos para simulação e evidências:\r\nVerificar que o botão de imprimir gera o laudo sem assinatura\r\n[^Impressora de Procedimentos imprime sem assinatura e nao tem como revogar a permissao.mp4]\r\nE que não tem a opção para revogar o acesso apenas ao botão de imprimir\r\n!Não tem a permissão para revogar.png|thumbnail!\r\n\r\n5 - Necessidade:\r\nQual a necessidade a ser atendida?\r\nAcrescentar a revogação da permissão ao botão de imprimir",
+    "status": "Em avaliação"
+  },
+  {
+    "key": "BW-28416",
+    "summary": "Melhoria na tela de APAC da Central de Regulação",
+    "description": "1 - Descrição do incidente:\r\nO cliente deseja que na tela de APAC, possa dar continuidade nas solicitações igual acontece nas telas de procedimentos e consultas, deseja informar os passos, que está aguardando, agendado, informar data e assim por diante.\r\n\r\n2 - Cliente:\r\nPrefeitura Municipal de Neves Paulista",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "SOL-4865",
+    "summary": "Necessidade de anexação da assinatura eletronica com validação em exames laboratoriais no momento da liberação",
+    "description": "1 - Descrição da dúvida:\r\nNo sistema atualmente, ao ser liberado um exame, só é acoplada ao resultado do exame a assinatura digital (em imagem) ao resultado, mas de acordo com a RDC 978/25 exames laboratoriais precisam de assinatura eletronica com validação nos conformes da Lei n⁰ 14.063, de 20 de setembro de 2020. Atualmente no sistema a assinatura só é acoplada no momento de impressão e só vai a assinatura eletronica da pessoa que imprimiu o documento, mas os exames laboratoriais não podem ser impressos sem a assinatura eletronica da pessoa que liberou o exame. O resultado do exame não pode ser salvo no prontuario do paciente sem a assinatura eletronica da pessoa que liberou o exame.\r\n\r\n2 - Entidade:\r\nPREFEITURA MUNICIPAL DE TIMOTEO\r\n\r\nNecessidade \r\nInserir a assinatura digital do profissional liberador do exame no momento da liberação do exame, sem que ele precise ir na tela de resultados liberados e gerar uma impressão do resultado de exame.",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "SOL-4863",
+    "summary": "Não existe a revogação da permissão de Recepcionar ou Registrar ausencia via Agendamento",
+    "description": "1 - Descrição da dúvida:\r\nEm 31/03 foi liberada a melhoria de atalho para registrar presença ou ausencia via agendamento [https://saude.ajuda.betha.cloud/saude/novidades/2026/mar%c3%a7o/#atalho-para-confirmar-presen%C3%A7a-por-meio-do-agendamento], o cliente solicitou que essa funcionalidade fosse bloqueada, pois os profissionais que realizam o agendamento são oriundos de diversas unidades diferentes, e não devem poder conseguir recepcionar ou registrar ausencia via agendamento, foi verificado que não existe nas permissões de agendamento a opção de revogar as permissões dessa funcionalidade, o profissional recebe o acesso a funcionalidade se tiver o acesso a funcionalidade na unidade em que esta ativo o contexto, permitindo que ele recepcione ou registre ausencia em OUTRA UNIDADE, isso é uma falha crítica pois se um profissional realizando o agendamento em outra unidade quizer, ele poderia dar ausencia para clientes de outra unidade para liberar vagas para os clientes da sua unidade, solicito a verificação com urgencia, a funcionalidade deve ter uma permissão para ser revogada separado da funcionalidade Atendimento > Agenda. E não deve ser permitido registrar a Recepção ou Ausencia de outras unidades.\r\n2 - Entidade:\r\nPREFEITURA MUNICIPAL DE TIMÓTEO\r\n3 - Acesso na entidade Cloud para o usuário:\r\nN/A\r\n\r\n4 - Passos para simulação e evidências:\r\nVerificar que o sistema permite que os usuários recepcionem clientes em outras unidades mesmo não tendo a permissão na unidade em que o agendamento esta sendo criado.\r\n[^Sistema Permite recepcionar em outro contexto.mp4]\r\n!Permissão do usuario na unidade CENTRO DE SAUDE TESTE.png|thumbnail!\r\n!Permissão do usuario na unidade UBS Demonstração.png|thumbnail!\r\n\r\n\r\n5 - Necessidade:\r\nQual a necessidade a ser atendida?\r\nInclusão da permissão para revogar separado da permissão Atendimento > Agenda e validação da permissão da unidade em que o agendamento esta sendo feito. Pois mesmo sem a permissão na unidade em que o agendamento é marcado é possivel registrar presença ou ausencia do cliente.",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "DSI-33566",
+    "summary": "Corrigindo 'Código e-SUS' no CATMAT",
+    "description": "1 - Descrição da dúvida:\r\nA geração de inconsistências de CATMAT no exportador e-SUS tem gerado bastante ruído com alguns clientes, principalmente na forma com o ajuste ocorre. Por exemplo, ao clicar na chave pra corrigir um CATMAT 'Código e-SUS' BR0376767, o sistema abre o cadastro do produto, onde existe o CATMAT de envio ao BNDASAF - BR0376767U0042. No entanto, o ajuste necessário para corrigir a inconsistência é no modal CATMAT, em almox > cadastros > catmat, duplicando o registro padrão, informando novo CATMAT (o atual do BNAFAR) e salvando.\r\n\r\nO exportador e-SUS reprocessa rapidamente essas inconsistências.\r\n\r\n2 - Entidade:\r\nPM Crissiumal, PM Estrela Velha \r\n\r\n3 - Acesso na entidade Cloud para o usuário:\r\nN/A\r\n\r\n4 - Passos para simulação e evidências:\r\n\r\nAjustando CATMAT pelo exportador e-SUS\r\n!Screenshot_1.png|thumbnail!\r\n\r\nNão é o mesmo campo requerido\r\n!Screenshot_2.png|thumbnail!\r\n\r\nAjustando o registro padrão\r\n!Screenshot_3.png|thumbnail!\r\n!Screenshot_4.png|thumbnail!\r\n\r\nInformando CATMAT atual BNAFAR\r\n!Screenshot_5.png|thumbnail!\r\n!Screenshot_6.png|thumbnail!\r\n\r\n5 - Necessidade:\r\nAo clicar para corrigir a inconsistência pelo exportador e-SUS, deveria haver um facilitador para corrigir o CATMAT 'Código e-SUS' e não sugerir ao cliente o cadastro do produto, que não tem efeito no ajuste.\r\n\r\nNão seria interessante incluir no cadastro do produto o campo Código e-SUS também? Ou referenciar internamente pelo CATMAT BNAFAR, visto que o mesmo código tem permitido o reprocessamento das fichas inconsistentes.",
+    "status": "Em avaliação"
+  },
+  {
+    "key": "CSMCSM-147602",
+    "summary": "Tornar centros de custo obrigatórios na requisição externa de produtos",
+    "description": "1 - Descrição da dúvida:\r\nO cliente deseja que ao requisitar produtos na requisição externa os campos de centro de custo requisitante e requisitado sejam obrigatórios, assim como é na requisição interna, com a justificativa de que mesmo na externa, os profissionais devem selecionar o centro de custo correto para qual vão solicitar os produtos e qual vai receber, tendo em vista que são pessoas e centros de custo diferentes que gerenciam os tipos de produtos (medicamentos, limpeza, escritório, refeitório, etc). A opção de adicionar o centro de custo existe, mas os usuários não colocam.\r\n\r\n2 - Entidade:\r\nPrefeitura Municipal Orlândia - Orlândia/SP\r\n\r\n4 - Passos para simulação e evidências:\r\nAlmoxarifado> Requisições> Enviadas> +Requisição: Requisição Externa.\r\n!imagem_2026-04-02_141519230.png|thumbnail!\r\n\r\n5 - Necessidade:\r\nCriar uma parametrização (configuração) para tornar os centros de custo requisitante e requisitado obrigatórios na requisição externa do das requisições do almoxarifado.",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "SOL-4848",
+    "summary": "Vacina é Dose Única mas a aplicação é anual, sistema exige justificativa",
+    "description": "1 - Descrição da dúvida:\r\nAs vacinadoras do municipio de timóteo relataram que ao aplicar a dose anual do imuno INFLUENZA TRIVALENTE, o sistema esta exigindo justificativa para a reaplicação da dose. Entretanto a vacinação contra a Influenza apesar de ser dose unica é de aplicação anual. O cliente questiona que toda vez que se vai aplicar a dose anual da vacina, o sistema exige a justificativa de \"reaplicação da dose\" sendo que não é uma reaplicação, e sim a aplicação de rotina anual.\r\n\r\n2 - Entidade:\r\nPREFEITURA MUNICIPAL DE TIMÓTEO\r\n3 - Acesso na entidade Cloud para o usuário:\r\nN/A\r\n\r\n4 - Passos para simulação e evidências:\r\nTentar registrar a dose anual da Influenza trivalente e verificar que o sistema exige a justificativa mesmo que a dose seja anual.\r\n!Tela do cliente.jpeg|thumbnail!\r\n!Quadro do cobertura do imuno.png|thumbnail!\r\n\r\n5 - Necessidade:\r\nEsclarecimento da dúvida, existe alguma forma do sistema não solicitar a justificativa? Pois a dose é anual, toda vez que for aplicar iria exigir uma justificativa.",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "CSMCSM-147259",
+    "summary": "Criar alerta de exame repetido para paciente no agendamento",
+    "description": "1 - Descrição da dúvida:\r\nO cliente solicita que seja criado um alerta de \"exame repetido\" para o paciente em x dias (conforme configuração) no momento em que o usuário clicar para agendar um procedimento (seja pela regulação ou pela agenda direto). \r\nExpliquei ao solicitante que uma melhoria dessa foi aprovada para o atendimento, quando o médico por solicitar (chamado CSMCSM-137069), mas no município os médicos não utilizam o sistema. La só utilizam o laboratório.\r\nTambém informei que poderiam utilizar o histórico presente na tela do agendamento para verificar se o paciente não tinha o mesmo exame no período. Mas ainda sim querem o alerta.\r\n\r\n_Confirmei com os médicos auditores que trabalham aqui e responsáveis pelo protocolo de exames, o alerta pode ser de 90 dias. Precisamos sim do alerta/notificação. Nosso sistema antigo, já tinha esse alerta informando da data dos exames e também do valor da cota e com isso havia um controle melhor do dinheiro , faltas..É um pedido tanto do André (Diretor) quanto das unidades esse alerta/notificação._\r\n\r\nEntão seria o mesmo alerta que será feito no atendimento médico, mas no momento de agendar o procedimento para o paciente (Pela regulação e direto pela agenda).\r\n\r\n_O alerta /notificação dentro do período de 1 ano, seria emitido no momento em que as meninas do agendamento( UBS,Paulo Ricci,Paschoal Cagliari) vão liberar as guias para agendar o exame. _\r\n\r\n2 - Entidade:\r\nPrefeitura Municipal Santa Rosa de Viterbo - Santa Rosa de Viterbo/SP\r\n\r\n3 - Acesso na entidade Cloud para o usuário:\r\nHabilitar o parâmetro de Acesso Técnico na entidade, caso se trate de um cenário específico do cliente.\r\n\r\n4 - Passos para simulação e evidências:\r\nAgendamento> agendamento> procedimento> agendar um paciente.\r\n\r\n5 - Necessidade:\r\nCriar um alerta de exame repetido em x dias do paciente ao agendar um procedimento.",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "DSI-33468",
+    "summary": "Informações da aba 'Recursos do município'",
+    "description": "1 - Descrição da dúvida:\r\nCom base na dúvida respondida em DSI-32704, cliente aguarda a melhoria definitiva que vai mostrar as notas finais com seus estimados valores a receber, conforme a nota técnica relacionada.\r\n\r\n2 - Entidade:\r\nPM Crissiumal\r\n\r\n3 - Acesso na entidade Cloud para o usuário:\r\nN/A\r\n\r\n4 - Passos para simulação e evidências:\r\n\r\n!Screenshot_1.jpg|thumbnail!\r\n\r\n5 - Necessidade:\r\nAprimorar a visão do gestor.",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "CSMCSM-147174",
+    "summary": "Preciso que seja feito o interfaceamento dos aparelhos de Hematologia e Bioquimica com o Sistema da Beta",
+    "description": "1 - Descrição da dúvida:\r\nO cliente da entidade Socorro, realizou a seguinte solicitação:\r\n\"Com a instalação do Sistema da Beta aqui no Laboratório Municipal, necessito do interfacemanto dos aparelhos utilizados na rotina do laboratorio, pois com esse recurso conseguimos otimizar o trabalho diario.\r\nSendo assim estou encaminhando o manual de intrução de interfacemento dos aparelhos.\r\nFico a disposição para mais esclarecimento.\"\r\n\r\n2 - Entidade:\r\nMunicipio: Socorro/SP\r\n\r\n3 - Acesso na entidade Cloud para o usuário:\r\nHabilitar o parâmetro de Acesso Técnico na entidade, caso se trate de um cenário específico do cliente.\r\n\r\n4 - Passos para simulação e evidências:\r\nProcesso de interfaceamento \r\n\r\n5 - Necessidade:\r\nAlta, interfere no processo e rotina do laboratório",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "DSI-33447",
+    "summary": "Desobrigar preenchimendo dos campos adicionais - mamografia e citopatológico",
+    "description": "1 - Descrição da dúvida:\r\nDesobrigar o registro adicional que o sistema exibe ao lançar os procedimentos Coleta de material do colo de útero para exame citopatológico - 0201020033 e Mamografia - 0204030030, agilizando a requisição do exame. No e-SUS APS/PEC, esses campos não são carregados ao informar os exames na requisição, tornando o processo mais fluido e efetivo.\r\n\r\n2 - Entidade:\r\nPM Crissiumal\r\n\r\n3 - Acesso na entidade Cloud para o usuário:\r\nN/A\r\n\r\n4 - Passos para simulação e evidências:\r\n\r\n!Screenshot_2.png|thumbnail!\r\n!Screenshot_3.png|thumbnail!\r\n!Screenshot_4.png|thumbnail!\r\n\r\n5 - Necessidade:\r\nAgilizar a solicitação de exames nos atendimentos.",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "SOL-4836",
+    "summary": "Transferencia de clientes via Viagens > Transferir Clientes não deixa registros de Transferencia",
+    "description": "1 - Descrição da dúvida:\r\nMunicipio evidenciou que ao transferir os clientes que foram agendados em uma viagem via rotina TRANSPORTE > VIAGENS > TRANSFERIR CLIENTES (opção nos 3 pontos da viagem) o agendamento original do cliente na viagem continua marcado como planejado, sem mudança de situação para transferido, e também não é gerado nenhum outro registro de agendamento para o cliente na nova viagem para que se possa buscar para qual viagem ele foi transferido. Municipio solicita verificação da rotina pois dessa forma se torna inviável rastrear os clientes que foram transferidos para outras viagens.\r\n\r\nDetalhes do fluxo do transporte do municipio. São criadas agendas com veículos ficticios que são utilizadas para o agendamento das unidades, pois devido a rotatividade dos veiculos e necessidade de remanejamento não é possivel confirmar que um cliente agendado para um veiculo especifico ira viajar realmente naquele veiculo. Após o agendamento inicial das unidades de saúde os profissionais do transporte transferem os clientes para os veículos reais que foram utilizados na viagem. Por isso é de alta importancia que os pacientes transferidos possam ser rastreados.\r\n\r\n2 - Entidade:\r\nPREFEITURA MUNICIPAL DE TIMÓTEO\r\n\r\n3 - Acesso na entidade Cloud para o usuário:\r\nSolicitar\r\n4 - Passos para simulação e evidências:\r\nA cliente CRISTINA APARECIDA HORTA foi transferida da viagem de código 3302 para a viagem 12542 via Funcionalidade Transferir clientes, mas ao verificar o agendamento original, ele ainda demonstra a viagem 3302 como planejada para essa cliente.\r\n!Agendamento da viagem original continua em situação Não Confirmado e Não existe o novo agendamento.png|thumbnail!\r\n!Viagem Original continua no prontuário como Planejada.png|thumbnail!\r\n!Cliente é corretamente transferida para a nova viagem mas não fica nenhum registro da transferencia do cliente.png|thumbnail!\r\nVideo com o procedimento realizado pelo cliente:\r\n[https://drive.google.com/file/d/1HxD_lEG_5NxXrvoL5IOfaO6b-MTZw545/view?usp=drive_link]\r\nE não é apenas um caso isolado, a mesma situação já ocorreu com diversos outros clientes, e existem casos onde não foi possível identificar o que houve com a viagem para a qual o cliente foi transferido. A exemplo do cliente JOSE ALEIXO DE MIRANDA que possui um agendamento para a viagem de código 1083, que se encontra VAZIA, sem nenhum outro registro de viagem para o cliente.\r\n!Exemplo Jose Aleixo.jpeg|thumbnail!\r\n!Viagem Original Jose Aleixo.jpeg|thumbnail!\r\n!No prontuario de Jose Aleixo possui apenas a viagem original que está vazia.png|thumbnail!\r\n\r\n\r\n5 - Necessidade:\r\nQual a necessidade a ser atendida?\r\nVerificação e correção da rotina para que as transferencias possam ser rastreadas.",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "DSI-33435",
+    "summary": "Visualização do agente deve ser somente da sua equipe e microárea",
+    "description": "1 - Descrição da dúvida:\r\nCliente sugere como melhoria de rotinas no módulo 'Domiciliar e territorial' que a visão dos registros dos profissionais possa ser restringido somente para sua equipe e microárea. Por exemplo, agente Lucas vai ter permissão no usuário restrita para visualização de outros registros de outros profissionais em visitas, cadastros individuais, imóveis etc.\r\n\r\n2 - Entidade:\r\nPM Crissiumal.\r\n\r\n3 - Acesso na entidade Cloud para o usuário:\r\nN/A\r\n\r\n4 - Passos para simulação e evidências:\r\n\r\n!Screenshot_4.png|thumbnail!\r\n\r\n5 - Necessidade:\r\nRestringir acesso aos registros de outros profissionais por meio de permissão no usuário.",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "DSI-33430",
+    "summary": "Solicitação de exames/procedimentos OCI",
+    "description": "1 - Descrição da dúvida:\r\nCliente sugere como melhoria de rotinas que o sistema permita registrar requisições de Oferta de Cuidado Integrado - OCI, conforme e-SUS APS/PEC.\r\n\r\n2 - Entidade:\r\nPM Crissiumal\r\n\r\n3 - Acesso na entidade Cloud para o usuário:\r\nN/A\r\n\r\n4 - Passos para simulação e evidências:\r\n\r\n!Screenshot_2.png|thumbnail!\r\n!Screenshot_3.png|thumbnail!\r\n[^a5cca056-9e15-4b80-a5c9-2bcc03eb3e8a.pdf]\r\n\r\n5 - Necessidade:\r\nAdequação da tela de requisições conforme e-SUS APS/PEC.",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "DSI-33424",
+    "summary": "Inativar imóveis ",
+    "description": "1 - Descrição da dúvida:\r\nCliente sugere como melhoria nas rotinas de território que seja possível inativar imóveis.\r\n\r\n2 - Entidade:\r\nPM Crissiumal\r\n\r\n3 - Acesso na entidade Cloud para o usuário:\r\nN/A\r\n\r\n4 - Passos para simulação e evidências:\r\n\r\n!Screenshot_7.png|thumbnail!\r\n\r\n5 - Necessidade:\r\nNa visão do cliente, inativar imóveis pode ser um facilitador no gerenciamento de territórios.",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "CSMCSM-146969",
+    "summary": "Disponibilizar o total de saldo real de cotas",
+    "description": "1 - Descrição do incidente:\r\nDisponibilizar o total real da cota de exames que temos, no acesso aparece o valor geral, precisamos que apareça o valor que tem disponível não o valor geral inicial.\r\nAparecer as cotas sem necessidade de passar o mouse em cima:\r\n!imagem_2026-03-24_160606167.png|thumbnail!\r\n!imagem_2026-03-24_160917970.png|thumbnail!\r\n\r\n\r\n2 - Cliente:\r\nPrefeitura Municipal Andradas - Andradas/MG\r\n\r\n3 - Funcionalidade:\r\nVisualização de cotas da programação orçamentária\r\n\r\n4 - Versão do sistema:\r\nVersão: 1.122.10\r\n\r\n9 - Necessidade:\r\nAdicionar colunas na tela para exibir as informações que são exibidas ao passar o mouse em cima do campo \"consumo\" de cotas da visualização de cotas e da edição de cotas.",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "BTHSC-296613",
+    "summary": "Disponibilizar o campo observação por requisição item e não por requisição geral.",
+    "description": "1 - Descrição da dúvida:\r\nNo sistema Esus, as justificativas dos exames se dão por cada exame solicitado ( requisicoes itens) e não pele requisição global. Isso se da pelo fato de que cada requsição pode ter sua justificativa, onde disponibilizando uma observação geral, englobaria em uma única e perderia a rastreabilidade dos itens pelo qual houve a justificativa.\r\n\r\n2 - Entidade:\r\nPREFEITURA DA ESTÂNCIA DE ATIBAIA - SP\r\n\r\n3 - Acesso na entidade Cloud para o usuário:\r\nNão se aplica\r\n\r\n4 - Passos para simulação e evidências:\r\nAcessar o serviço de requisicoesItens e validar que não existe o campo observação. \r\nAcessar o serviço de requisicao e validar que existe o campo observação. \r\n\r\nValidar que no sistema PEC - Esus, existe um campo justificativa do procedimento para cada item e também o geral. \r\n\r\n\r\n\r\n5 - Necessidade:\r\nDisponibilizar o campo justificativa/observação tanto no sistema, quanto no srevice layer para cada item solicitado na requisição de exames do atendimento.\r\n\r\n",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "BTHSC-295799",
+    "summary": "INCLUSÃO DE BOTÃO \"SELECIONAR TODOS\" PARA TRANSFERIR AGENDAMENTOS",
+    "description": "Prezados,\r\n\r\nConforme conversa com o Sr. Tiago, solicitamos a viabilização de melhoria para adição de um botão \"SELECIONAR TODOS\" durante a transferência dos agendamentos de um profissional para outro. Tal medida otimiza e agiliza o processo de trabalho das unidades, tendo em vista que tornaria a seleção dos agendamentos muito mais rápida. Desde já agradeço a atenção.",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "SCCT-2053",
+    "summary": "Programa MedCasa",
+    "description": "1 - Descrição da dúvida:\r\nInclusão do Programa MedCasa\r\n\r\n2 - Entidade:\r\nFundo Municipal de Saúde de Xapuri\r\n\r\n3 - Acesso na entidade Cloud para o usuário:\r\nNão se Aplica\r\n4 - Passos para simulação e evidências:\r\nNão se Aplica\r\n\r\n5 - Necessidade:\r\nInclusão do Programa MedCasa na Dispensa de Medicamentos e/ou na Saúde Domiciliar",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "BTHSC-291218",
+    "summary": " observações não sai na impressão das medicações",
+    "description": "1 - Descrição da dúvida:\r\n\r\nProfissionais relatam que as observações não sai na impressão das medicações para Adm na unidade, dessa forma quando imprimo pra passar pra enf não aparece.\r\n\r\nESF Rio Pardinho\r\n\r\nSegue evidências para análise\r\n\r\n2 - Entidade:\r\n\r\nFMS de Santa Cruz do Sul\r\n\r\n3 - Funcionalidade\r\n\r\nAtendimento.\r\n\r\n4 - Passos para simulação e evidências:\r\n\r\nAnexo",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "BTHSC-290833",
+    "summary": "Erro de Transferência entre Unidades (Vinculação incorreta com NF de Origem)",
+    "description": "Bom dia pessoal, tudo bem?\r\n\r\nIdentificamos uma inconsistência crítica no módulo de Farmácia ao processar transferências de medicamentos entre unidades, o que está inviabilizando a nossa gestão de estoque e rastreabilidade.\r\n\r\nO Cenário (Exemplo Real):\r\nNo dia 02/03/2026, a UPA aceitou uma transferência de 100 unidades de Captopril 25mg, enviada pela USF Pedro Maturana (vide anexo COMPROVANTE-TRANSFERENCIA-UBS-CEREJEIRAS).\r\n\r\nO Erro:\r\nAo tentar gerar o relatório para impressão de etiquetas desta transferência, o sistema puxa automaticamente os dados da Nota Fiscal de Entrada original da unidade remetente (USF Pedro Maturana), e não os dados da transferência atual.\r\n\r\nConsequências:\r\n\r\nQuantidade Incorreta: O sistema tenta gerar etiquetas baseadas na quantidade total da Nota Fiscal original (que é altíssima), ignorando que recebemos apenas 100 unidades (vide anexo NF-TRANSFERENCIA).\r\n\r\nTravamento: Por ser uma quantidade massiva (da NF original), o sistema não suporta o processamento e gera erro.\r\n\r\nImpossibilidade de Edição: O campo de quantidade vem bloqueado, impedindo qualquer correção manual por parte do usuário (conforme demonstrado no vídeo em anexo).\r\n\r\nSolicitamos urgência na análise e correção, pois estamos sem conseguir etiquetar os insumos recebidos, o que compromete a segurança da dispensação e a prestação de contas da UPA.\r\n\r\nFicamos no aguardo.\r\n\r\nAtenciosamente,\r\nRafael Fernandes\r\nGestão TI UPA",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "CSMCSM-145346",
+    "summary": "Solicitação de melhoria no sistema – Inclusão de histórico de consumo na tela de requisição",
+    "description": "Com a finalidade de garantir a realização dos pedidos de medicamentos de forma mais assertiva, evitando excessos ou faltas no estoque, venho por meio deste solicitar uma melhoria no sistema de requisição.\r\n\r\nAtualmente, no momento da realização do pedido, o sistema disponibiliza apenas a posição de estoque atual do item. No entanto, para uma análise mais adequada da real necessidade de reposição, seria fundamental que também fossem exibidas as seguintes informações:\r\n\r\nConsumo dos últimos 30 dias;\r\n\r\nConsumo dos últimos 60 dias.\r\n\r\nA visualização conjunta da quantidade disponível em estoque e do consumo recente permitirá uma tomada de decisão mais precisa, baseada no perfil de saída dos medicamentos, contribuindo para:\r\n\r\nRedução de perdas por vencimento;\r\nPrevenção de desabastecimento;\r\nMelhor planejamento de compras;\r\nMaior controle e racionalização dos recursos públicos.\r\n\r\nDessa forma, solicitamos a avaliação da viabilidade de incluir essas informações na tela de requisição, preferencialmente de forma automática e vinculada a cada item listado.\r\nAssim como já trabalhamos com os pedidos para a Secretaria Estadual de Saúde de Minas Gerais\r\n\r\n\r\nEntidade: ANDRADAS - MG\r\n\r\n\r\n\r\n\r\n",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "CSMCSM-144694",
+    "summary": "Bloquear por perfil as impressões de documentos",
+    "description": "1 - Descrição da dúvida:\r\nNecessário criar uma permissão para que seja possível bloquear o acesso dos usuários a impressão de documentos da consulta médica. Em anexo imagens do local em que deve ser bloqueado o acesso. \r\nA intenção é não permitir que a recepção, que tem acesso ao menu atendimentos para verificar a fila, não possa imprimir os documentos da consulta, tendo assim, acesso ao que foi feito no atendimento do paciente.\r\nAtualmente, o nível de acesso \"documentos\" não bloqueia a impressão. E o compartilhamento de documentos também não funciona para esse caso. \r\n\r\n2 - Entidade:\r\nPrefeitura Municipal Serrana - Serrana/SP\r\n\r\n4 - Passos para simulação e evidências:\r\nFinalizar atendimento médico e imprimir documentos\r\n\r\n5 - Necessidade:\r\nNormal",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "BTHSC-277244",
+    "summary": "Informação do campo Observações de Enfermagem não é impressa na ficha de atendimento",
+    "description": "1 - Descrição da dúvida:\r\nAs informações inseridas no campo Observações de Enfermagem pelo técnico de enfermagem ou enfermeiro no atendimento da triagem  não são impressas na ficha de atendimento ao final do atendimento. Essas informações aparecem no RES porém, ao tentar imprimir o documento (FA, ou FAA) é impresso sem essas informações do campo.\r\n\r\n2 - Entidade:\r\nPrefeitura da Estância de Atibaia\r\n\r\n3 - Passos para simulação e evidências:\r\nAtendimento>triagem>campo Observações de Enfermagem\r\n\r\n5 - Necessidade:\r\nInformação desse campo também deve aparecer na impressão da ficha de atendimento",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "BTHSC-275821",
+    "summary": "Criar botão de \"Hoje\"",
+    "description": "1 - Descrição da dúvida:\r\nCliente solicita que seja criado um \"Botão\" de \"Hoje\" na agenda, uma vez que o sistema, muitas vezes acaba \"viciando em uma data\" e perdemos tempo tendo que clicar várias vezes até chegar na agenda do dia \r\n\r\n2 - Entidade:\r\nPM Atibaia\r\n\r\n5 - Necessidade:\r\nOtimizar o tempo e reduzir a quantidade de clicar várias vezes até chegar na agenda do dia.",
+    "status": "Em avaliação"
+  },
+  {
+    "key": "CSMCSM-143238",
+    "summary": "Vinculação do benefício com estoque",
+    "description": "1 - Descrição da dúvida:\r\nSolicitação do cliente:\r\nGostaria de ver a possibilidade de uma integração da solicitação de pacientes na aba de benefícios com o almoxarifado, assim, antes de selecionar o benefício, o profissional já consegue identificar se temos o produto na rede ou não!\r\nComo nós temos que cadastrar os benefício vinculado com os produtos com antecedência, pode a ver falta de estoque do material, mas sem a trava inicial de solicitar um novo benefício!\r\nO início do processo de autorizar o benefício para o paciente é iniciado pelas nutricionista da rede após a prescrição médica. Como as nutricionista não possuem acesso ao estoque de suplementos do município, pois o estoque é de responsabilidade do Almoxarifado municipal, as nutricionista acabam iniciando o processo de benefício com um suplemento que não temos em estoque!\r\nAssim, quando a nutricionista for iniciar o processo de solicitação do benefício, só aparecer para ela, a seleção dos suplementos que possuem estoque no almoxarifado, impedindo o início da solicitação de um suplemento com estoque zerado.\r\nAssim, o paciente não vai perder tempo indo até o almoxarifado retirar o suplemento e descobrir que não possui no estoque!\r\n\r\n2 - Entidade:\r\nPrefeitura Municipal Orlândia - Orlândia/SP\r\n\r\n\r\n4 - Passos para simulação e evidências:\r\nSolicitação de benefício para paciente.\r\n\r\n5 - Necessidade:\r\nMédia",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "BTHSC-271287",
+    "summary": "na aba Almoxarifado, cadastrar um motivo de baixa (essencial para garantir acesso a medicamentos do SUS) em situações especiais.",
+    "description": "No sistema Hórus do Ministério da saúde há a opção de saída de medicamentos com recurso de movimentação de estoque de nome: saída para usuário sus, sem cadastrar o paciente na base de dados. Onde no recurso saída há a justificativa de nome: saída para usuário su.\r\nOnde se preenche no campo justificativa o nome, crm, local de emissão de receita, data e escreve o pq não cadastrou( ex, sem cpf, mas estava com sus, sem comprovante de endereço, atendimento de pessoa em trânsito/passagem pelo município, pessoa em situação de vulnerabilidade social, endereço incerto, etc..\r\nEssa dispensa fica registrada nas baixas normalmente, aparece nos relatórios, livros de controle especial da portaria 344/98 e de antimicrobianos aparece como saída usuários sus e na justificativa aparece o escrito no campo justificativa, dando lisura ao ato farmacêutico da dispensação e garantindo o direito de acesso a saúde do paciente.\r\nPois  não se cadastra o paciente na base de dados, por motivos de não haver documentos completos como cpf, terceiros podem vir retirar e não termos acesso a dados obrigatórios do cadastro como município de nascimento e nome do pai, mas estar com SUS, ou não estar com comprovante de endereço e não ser possível atualizar os dados, ou ser uma pessoa que passou num pronto socorro e não é residente no município. Não tem como cadastrar essa pessoa, mas é necessário ter esse recurso nos moldes do sistema Hórus para garantir o acesso as medicações.",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "BTHSC-271131",
+    "summary": "ENTRADAS - BETHA SAÚDE",
+    "description": "Quando damos entradas no almoxarifado da saúde dos itens que não possuem lote nem validade, ele está indo para o estoque com uma informação do lote Genérico e não está puxando o fabricante que informamos no momento da entrada.\r\n\r\nIsso foi informado no whats da implatação com evidências, porém não houve retorno.",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "DSI-32602",
+    "summary": "Preencher CID automaticamente no procedimento",
+    "description": "1 - Descrição da dúvida:\r\nPreencher CID automaticamente no procedimento do atendimento quando houver apenas um CID obrigatório na tabela SIGTAP. Por exemplo, '03.01.01.023-4 - CONSULTA PRÉ-NATAL DO PARCEIRO' possui apenas o CID 'Z768 - Contatos com serviços de saúde por outras circunstâncias especificadas' obrigatório na competência 01/2026, portanto, o sistema preencheria automaticamente o campo na aba 'procedimentos'.\r\n\r\nQuando o procedimento possuir mais de um CID obrigatório para preenchimento, alterar a mensagem 'O CID do procedimento XXXXXX deve ser informado na aba 'Procedimentos'.' ou algo assim.\r\n\r\n2 - Entidade:\r\nPM Santiago\r\n\r\n4 - Passos para simulação e evidências:\r\n\r\n!Screenshot_1.jpg|thumbnail!\r\n!File.jpg|thumbnail!\r\n!File (1).jpg|thumbnail!\r\n\r\n5 - Necessidade:\r\nFacilitar o preenchimento das informações obrigatórias nos atendimentos.",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "SOL-4458",
+    "summary": "Dúvida sobre campo Intervenções e/ou procedimentos clínicos realizados",
+    "description": "1 - Descrição da dúvida:\r\nAo realizar o treinamento de um psicólogo do municipio, ele questionou sobre um campo que costuma preencher no atendimento no sistema PEC eSUS APS chamado Intervenções e/ou procedimentos clínicos realizados. !WhatsApp Image 2025-12-03 at 07.10.26.jpeg|thumbnail! no PEC esse campo possui duas caixas de seleção, uma para CIAP 2 e uma para SIGTAP, o sistema Saúde betha somente possui os procedimentos da tabela SIGTAP. Durante a validação da dúvida do cliente não foi possível encontrar esse campo no sistema, ele existe atualmente? Caso não exista solicito a inclusão do campo no sistema, pois o cliente relata que durante treinamentos que teve sobre o atendimento do PEC no passado, ele sempre deve preencher o campo com o código 58 Aconselhamento/Escuta Terapeutica.\r\n\r\n2 - Entidade:\r\nPREFEITURA MUNICIPAL DE CAPITÃO ANDRADE\r\n\r\n3 - Acesso na entidade Cloud para o usuário:\r\nN/A\r\n\r\n4 - Passos para simulação e evidências:\r\nAcessar a tela de atendimento ambulatorial presencial e verificar que não existe o campo \"Intervenções e/ou procedimentos clínicos realizados\".\r\n\r\n5 - Necessidade:\r\nQual a necessidade a ser atendida?\r\nEsclarecimento da dúvida.",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "STAFSIS-261739",
+    "summary": "Cadastro de Profissionais - Usuário do Sistema",
+    "description": "*1 - Descrição da melhoria:*\r\nAtualmente, no cadastro de profissionais, o campo “Usuário do Sistema” lista apenas os usuários vinculados ao local/unidade selecionado. Dessa forma, ao escolher, por exemplo, a UBS X, somente os usuários associados a essa unidade são exibidos para seleção.\r\n\r\n*Justificativa*\r\n– A “Secretaria” geralmente possui perfil administrativo com necessidade de acesso geral.\r\n– A limitação atual impede a correta vinculação de profissionais que atuam em diferentes locais ou possuem função de gestão.\r\n\r\n*2 - Cliente:*\r\nPrefeitura Municipal de Maracaju/MS\r\n\r\n*3 - Funcionalidade:*\r\nCadastros > Profissionais: Usuário do Sistema\r\n\r\n*4 - Necessidade:*\r\nQuando o local selecionado for “Secretaria”, o sistema deve interpretar essa escolha como um nível administrativo/gestor. Com isso, o campo “Usuário do Sistema” deve exibir todos os usuários da ENTIDADE, independentemente do local vinculado, permitindo a seleção ampla e não restrita a uma única unidade.\r\n!usuário do sistema.png|thumbnail!",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "DSI-32179",
+    "summary": "Rotina de reprocessamento avançada (alterações de cadastros em fichas geradas previamente)",
+    "description": "1 - Descrição do incidente:\r\nHoje, o sistema não reprocessa fichas com base em informações atualizadas posteriormente. Por exemplo, DSI-32122, por um erro cadastral no profissional, foi necessário realizar tratamento de dados para corrigir as fichas geradas antes da atualização do cadastro do profissional.\r\n\r\nOutro cenário ocorreu em Crissiumal, cliente recentemente migrado. Realizaram a exportação BPA de atendimentos realizados antes da revisão dos cadastros - sistema havia sido parametrizado para não validar CNS/CPF - e alguns pacientes foram exportados sem essa informação, invalidando na importação BPA/SIA. Sendo assim, para agilizarmos as rotinas cadastrais e reduzir as demandas encaminhadas como tratamento de dados, sugerimos uma rotina avançada de reprocessamento/geração de fichas pós-ajustes cadastrais, dessa forma:\r\n\r\n- ajuste realizado em cadastro de paciente, unidade ou profissional (os mais comuns) > rodar uma rotina específica que vai buscar nas fichas geradas até aquele momento essas informações e atualizá-las conforme encontrar dados novos, como CNS de pacientes/profissionais, vínculos CBO etc.\r\n- essa rotina deve ser restrita a administradore, nas configurações do sistema, longe de olhos curiosos : )\r\n- ao solicitar a rotina de reprocessamento avançado das exportações, permitir selecionar qual tipo (e-SUS, BPA, RAAS) e bloquear qualquer ação no respectivo exportador - como reprocessamento manual, nova exportação ou exclusão de arquivos gerados\r\n- para não onerar o desempenho do sistema num contexto geral, o reprocessamento seria com horário agendado (preferencialmente entre 19h e 4h)\r\n\r\nAcreditamos que a rotina vai facilitar muito o gerenciamento da produção entre o cliente e a revenda, reduzindo ao máximo chamados para essa finalidade.\r\n\r\n2 - Cliente:\r\nTodos\r\n\r\n3 - Funcionalidade:\r\nExportações\r\n\r\n8 - Passos para simulação e Evidências:\r\n\r\n!Screenshot_7.jpg|thumbnail!\r\n!Screenshot_8.jpg|thumbnail!\r\n\r\n9 - Necessidade:\r\nReduzir chamados de tratamento de dados oriundos de ajustes cadastrais e agilizar a resposta ao atendimento de faturamento.",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "BTHSC-252170",
+    "summary": "VEÍCULO DAS VIAGENS A PARTIR DA AGENDA",
+    "description": "1 - Descrição da dúvida:\r\nTeria a possibilidade de deixar liberado para alterar o veículo criado a partir da agenda na rotina do transporte?\r\n\r\n4 - Passos para simulação e evidências:\r\nQuais etapas estão sendo realizadas onde surgiu a dúvida?\r\n\r\nNa rotina de transporte, ao criar a agenda de viagens pelo caminho Transporte >> Viagens, é possível alterar o veículo quando a viagem é salva como planejada. Porém, quando a viagem é criada a partir da agenda, o veículo fica bloqueado e não permite alteração.\r\n\r\nNa prática, não há necessidade desse bloqueio, pois a quantidade de pacientes pode mudar no decorrer do dia. Foi o que ocorreu: iniciamos com um veículo de 15 lugares e, ao longo do dia, surgiram mais 5 pacientes, sendo necessário trocar para um veículo com 22 vagas. Como o sistema bloqueia a alteração, é preciso realizar a transferência, o que gera mais trabalho, pois obriga a criar outra viagem e redistribuir todos os pacientes.\r\n\r\n5 - Necessidade:\r\nQual a necessidade a ser atendida?\r\nDeixar liberado o veiculo para alteração a partir da viagem criada pela agenda.",
+    "status": "Em avaliação"
+  },
+  {
+    "key": "SOL-4431",
+    "summary": "Agendamento de procedimento especifico não é bloqueado na agenda geral quando existe uma especifica",
+    "description": "1 - Descrição da dúvida:\r\nO municipio de Timóteo precisa que os exames de Leishmaniose sejam agendados apenas no periodo da tarde no laboratório municipal. As opções de criação de agenda de procedimentos são, agenda geral e agenda especifica. O que acontece é que o laboratório possui uma agenda geral, e ao criar uma agenda especifica para o exame de leishmaniose, o sistema ainda permite que ele seja agendado na agenda geral, sem nenhuma possibilidade de realizar esse bloqueio. Isso não seria um erro do sistema? Pois se o procedimento possui uma agenda especifica na mesma unidade o sistema não deveria permitir o agendamento do procedimento na agenda geral, ou pelo menos possuir uma forma de fazer esse tipo de bloqueio, que não foi encontrado durante a validação.\r\n\r\n2 - Entidade:\r\nPREFEITURA MUNICIPAL DE TIMOTEO\r\n\r\n3 - Acesso na entidade Cloud para o usuário:\r\nN/A\r\n\r\n4 - Passos para simulação e evidências:\r\nCriar uma agenda geral e especifica na mesma unidade, verificar que o procedimento que possui agenda especifica ainda pode ser agendado na agenda geral. Vide teste realizado na base da revenda.\r\n\r\n5 - Necessidade:\r\nQual a necessidade a ser atendida?\r\nVerificação da funcionalidade.",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "STAFSIS-261236",
+    "summary": "Desbloqueio de Acesso Temporariamente Bloqueado",
+    "description": "*1. Solicitação:*\r\nImplementar, no módulo Gerenciador de Acessos → Gestão de Acessos, uma funcionalidade que permita aos usuários Administradores da Secretaria realizar o desbloqueio de usuários que tiveram o acesso bloqueado temporariamente devido a tentativas incorretas de senha. O fluxo desejado deve ser simples e intuitivo, semelhante ao do e-SUS.\r\n\r\n*2. Objetivo:*\r\nAgilizar o restabelecimento de acessos bloqueados, evitando interrupções no atendimento e reduzindo a dependência de outros setores.\r\n\r\n*3. Entidade:*\r\nPrefeitura Municipal de Maracaju/MS",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "STAFSIS-261234",
+    "summary": "Alteração de Senha pelo Administrador",
+    "description": "*1. Solicitação:*\r\nImplementar, no módulo Gerenciador de Acessos → Gestão de Acessos, a funcionalidade que permita aos usuários Administradores da Secretaria realizar a alteração de senha de qualquer profissional de forma simples e direta, semelhante ao fluxo disponível no e-SUS.\r\n\r\n*2. Objetivo:*\r\nFacilitar o suporte interno da Secretaria, permitindo que administradores redefinam senhas sem depender do suporte técnico ou de fluxos complexos.\r\n\r\n*3. Entidade:*\r\nPrefeitura Municipal de Maracaju/MS",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "STAFSIS-261233",
+    "summary": "Agendamento em massa – por profissional",
+    "description": "*1 - Descrição da melhoria:*\r\nConsiderando a alta demanda de agendamentos na nossa Central de Regulação/Agendamentos, o processo atual — que permite apenas o agendamento individual, seja pela central ou diretamente na agenda — acaba inviabilizando um fluxo mais ágil e eficiente.\r\n\r\nDiante disso, solicitamos a implementação de uma funcionalidade que permita realizar agendamentos em massa para um determinado profissional, tanto para atendimentos *regulados* quanto *não regulados*.\r\n\r\n*>> Proposta de melhoria*\r\n\r\nCriar uma nova interface de agendamento, similar ao layout das telas de _Requisição de Procedimentos/Consultas_ (Central de Regulação), contemplando:\r\n* *Aba de Agendamentos Não Regulados*\r\n* *Aba de Agendamentos Regulados*\r\n\r\n*>> Objetivo*\r\n\r\nEvitar o processo repetitivo do modelo atual, que exige:\r\nAgendar → Selecionar paciente → Confirmar agendamento → Repetir para cada paciente.\r\n\r\n*>> Funcionamento sugerido*\r\n\r\nEm uma única tela, o sistema deve permitir visualizar simultaneamente:\r\n* Lista de pacientes;\r\n* Seleção rápida dos pacientes a serem agendados;\r\n* Definição do profissional;\r\n* Datas e horários disponíveis.\r\n\r\nO cliente anexou um modelo visual (imagem) baseado na tela de Requisição de Procedimentos, editado para representar como poderia funcionar a nova ferramenta de agendamento em massa.\r\n!Modelo de agendamento em massa.jpg|thumbnail!\r\n\r\n*2 - Entidade:*\r\nPrefeitura Municipal de Maracaju/MS\r\n\r\n*3 - Acesso na entidade Cloud para o usuário:*\r\nHabilitado\r\n\r\n*4 - Necessidade:*\r\nSolicitamos a implementação de uma funcionalidade que permita realizar agendamentos em massa para um determinado profissional, tanto para atendimentos regulados quanto não regulados.",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "SOL-4349",
+    "summary": "Necessidade de poder atestar comparecimento ou falta em agendamentos externos da rotina Central de Regulação",
+    "description": "1 - Descrição da dúvida:\r\nA rotina do municipio para agendamento de consultas e exames externos a rede municipal, necessita que seja possível que ao realizar um agendamento externo, haja a possibilidade de atestar o comparecimento ou falta do munícipe ao agendamento. A melhoria funcionaria como um parametro para habilitar ou não o controle de comparecimento a agendamentos externos. Com o parâmetro ativo, após o agendamento externo a solicitação não seria mais dada como finalizada de imediato, iria aguardar a confirmação/baixa do agendamento pela regulação do municipio. Pois esse necessita confirmar o comparecimento ou não do munícipe para pagar os convênios terceirizados.\r\n\r\n2 - Entidade:\r\nPREFEITURA MUNICIPAL DE CAPITÃO ANDRADE",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "BTHSC-217586",
+    "summary": "Disponibilidade de atributos de vagas de viagem para ida e volta separadamente",
+    "description": "Ao utilizar o serviço transporteViagem nos deparamamos que o atributo, bem como o campo utilizado para definir para a quantidade de vagas utilizadas pelo trajeto do Tratamento Fora de Domicílio - TFD é apresentado de forma consolidada sem definição do sentido da viagem ( ida/volta). Acontece que alguns estabelecimentos fazem o controle de vagas visto que pacientes podem permanecer na localidade de destino e outros podem estar retornando com ou sem seus respectivos acompanhantes. \r\n\r\nDesta forma, registramos a melhoria levando em consideração a regra de negócio da entidade em questão como exemplo para que seja avaliada e implementada tal melhoria.\r\n\r\nPermaneço à disposição. \r\nAt.te",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "SOL-4107",
+    "summary": "Falha de segurança para visualizar PDFs",
+    "description": "1 - Descrição da dúvida:\r\nFoi realizado teste de acesso à URL de um PDF, por exemplo, de um relatório de resultado de exame, e o usuário conseguiu acessar sem precisar de um método de autenticação qualquer para checagem se realmente o solicitante pode acessar a informação.\r\nIsso nos deixou com extrema preocupação pois resultados de exames possuem informações sensíveis e deveriam estar acessível somente por pessoas que tem a permissão para tal ação.\r\n\r\nExemplo do cenário testado:\r\nO pdf gerado pelo gerenciador de relatório de resultao de exame tem o link abaixo:\r\nhttps://plataforma-assinador.betha.cloud/assinador/v1/api-download/documentos/68934fe168e1bf1371ac0821/download-assinado\r\n\r\nEsse link está acessível para qualquer pessoa com acesso a internet. Do nosso ponto de vista, isso é uma falha de segurança. Não poderia acontecer.\r\n\r\n2 - Entidade:\r\nPrefeitura Municipal de Timoteo\r\n\r\n3 - Acesso na entidade Cloud para o usuário:\r\nN/A\r\n\r\n4 - Passos para simulação e evidências:\r\nN/A\r\n\r\n5 - Necessidade:\r\nPermitir somente usuários autorizados a acessar o PDF de um relatório mesmo que seja por acesso direto pela URL.",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "SOL-4044",
+    "summary": "Necessidade de que a assinatura digital inserida pelo cadastro do profissional seja impressa com o QR code de validação ao lado da assinatura escaneada",
+    "description": "Descrição:\r\nComo citado no chamado SOL-4026, para que o laboratório possa se adequar à legislação vigente da RDC 978/25 e Lei n⁰ 14.063, de 20 de setembro de 2020. Será necessário que a assinatura do profissional liberador do exame seja impressa com QR code de validação. Necessito que esse QR code seja impresso juntamente com a assinatura digital escaneada que é acoplada ao cadastro do profissional. Ou seja, na mesma folha do laudo e não numa pagina separada. \r\n\r\nEntidade Requisitante:\r\nPrefeitura Municipal de Timóteo",
+    "status": "Aguardando avaliação"
+  },
+  {
+    "key": "SOL-4043",
+    "summary": "Necessidade de poder recepcionar na mesma unidade pacientes que terão exames enviados para laboratórios terceirizados",
+    "description": "1 - Descrição da dúvida:\r\nO laboratório municipal realiza a coleta dos exames que serão enviados para laboratórios terceirizados quando o cliente faz exames no laboratório municipal e no terceirizado ao mesmo tempo, para que o munícipe não tenha que realizar coleta em locais diferentes e serem perfurados para coleta de sangue mais de uma vez. Atualmente para que essa rotina possa ocorrer dentro do sistema, seria necessário marcar os exames do cliente, recepciona-los para que as etiquetas possam ser impressas e depois cancelar o atendimento. Já que os resultados não são lançados pelo laboratório municipal. Preciso que seja possivel diferenciar exames que serão enviado para os conveniados para que não sejam acoplados ao recipiente do laboratório municipal. Também preciso que não seja necessário dar continuidade ao atendimento do exame terceirizado após a coleta.\r\n\r\n2 - Entidade:\r\nPrefeitura Municipal de Timóteo\r\n",
+    "status": "Aguardando avaliação"
+  }
+]

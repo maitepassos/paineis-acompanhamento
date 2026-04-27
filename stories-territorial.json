@@ -1,0 +1,34 @@
+[
+  {
+    "key": "SAUD-70553",
+    "summary": "Cofinanciamento de vinculo e acompanhamento territorial"
+  },
+  {
+    "key": "SAUD-73464",
+    "summary": "Responsável do imóvel"
+  },
+  {
+    "key": "SAUD-61320",
+    "summary": "Dispor de Atendimento Complementar dentro de 24h\" no Atendimento Domiciliar"
+  },
+  {
+    "key": "SAUD-45540",
+    "summary": "[Visita domiciliar] Somente permitir registrar visitas para clientes com ficha de cadastro individual"
+  },
+  {
+    "key": "SAUD-63800",
+    "summary": "[Visita domiciliar] Salvar e adicionar nova visita, ao acessar pelo cadastro de imóveis"
+  },
+  {
+    "key": "SAUD-67863",
+    "summary": "[Visita domiciliar] Ao adicionar uma visita de acompanhamento diabetes/hipertenso, gerar ficha individual"
+  },
+  {
+    "key": "SAUD-57138",
+    "summary": "[Cadastro imóvel] Realizar mudança de profissional dos imóveis, conforme filtros aplicados  (Reterritorialização)"
+  },
+  {
+    "key": "SAUD-30812",
+    "summary": "Ao vincular o cliente no imóvel como dependente ou como responsável, o sistema deve atualizar o endereço."
+  }
+]

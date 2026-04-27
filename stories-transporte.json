@@ -1,0 +1,50 @@
+[
+  {
+    "key": "SAUD-45565",
+    "summary": "[VIAGEM] Permitir utilizar endereço do cliente como local de embarque"
+  },
+  {
+    "key": "SAUD-72827",
+    "summary": "[Transporte] Permitir adicionar mais de um acompanhante ao adicionar um cliente na viagem"
+  },
+  {
+    "key": "SAUD-72337",
+    "summary": "Visualizar pacientes viagem"
+  },
+  {
+    "key": "SAUD-51315",
+    "summary": "[VIAGEM] Permitir configurar os campos obrigatórios para preenchimento na viagem"
+  },
+  {
+    "key": "SAUD-49376",
+    "summary": "[VIAGEM] Adicionar campo de unidade de agendamento ao cadastrar viagem"
+  },
+  {
+    "key": "SAUD-49365",
+    "summary": "[VIAGEM] Permitir registros na viagem por profissionais simultâneos "
+  },
+  {
+    "key": "SAUD-69326",
+    "summary": "Adicionar anexo na despesa de viagem"
+  },
+  {
+    "key": "SAUD-72679",
+    "summary": "Alterar veículo do Agendamento de Viagem"
+  },
+  {
+    "key": "SAUD-58358",
+    "summary": "[TFD] Definir parametrização para ligação por voicebot para agendamento de TFD"
+  },
+  {
+    "key": "SAUD-46087",
+    "summary": "[VIAGEM] Validar se local de destino dos passageiros, estão na rota da viagem"
+  },
+  {
+    "key": "SAUD-45458",
+    "summary": "[VIAGEM] Permitir flexibilização dos procedimentos faturados nas viagens"
+  },
+  {
+    "key": "SAUD-46090",
+    "summary": "[VIAGEM] Adicionar mais destinos para um mesmo passageiro"
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "key": "SAUD-12765",
+    "summary": "[TFD] Cadastrar Veículos para Transporte de TFD"
+  },
+  {
+    "key": "SAUD-25168",
+    "summary": "[TFD] Fonte de dados cadastro de viagem "
+  },
+  {
+    "key": "SAUD-69922",
+    "summary": "Viagem"
+  },
+  {
+    "key": "SAUD-7576",
+    "summary": "Deverá permitir a definição de um valor para cada viagem, gerando um custo do transporte de cada paciente em todas as viagens"
+  },
+  {
+    "key": "SAUD-8024",
+    "summary": "Permitir o cadastro de solicitações para remoção de pacientes de TFD (Tratamento dora do Domicílio), possibilitando a consulta às informações cadastradas no laudo e no pedido de TFD (condições do paciente, tipo de transporte indicado, necessidade de acomp"
+  },
+  {
+    "key": "SAUD-8050",
+    "summary": "Permitir o vínculo dos laudos para TFD (Tratamento Fora do Domicílio) aos pedidos para transporte do paciente, possibilitando mais assertividade nas decisões tomadas pelos profissionais avaliadores, tanto no que se refere à necessidade do paciente, quanto"
+  },
+  {
+    "key": "SAUD-25161",
+    "summary": "[TFD] Cadastro de locais "
+  },
+  {
+    "key": "SAUD-7570",
+    "summary": "[TFD] Cadastro de rotas "
+  },
+  {
+    "key": "SAUD-69239",
+    "summary": "Adicionando paciente na viagem"
+  },
+  {
+    "key": "SAUD-68898",
+    "summary": "Horário no agendamento de viagem"
+  }
+]

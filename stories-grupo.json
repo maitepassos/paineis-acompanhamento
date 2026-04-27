@@ -1,0 +1,22 @@
+[
+  {
+    "key": "SAUD-70016",
+    "summary": "Correção de Fichas e-SUS em massa"
+  },
+  {
+    "key": "SAUD-61859",
+    "summary": "[Programação orçamentária] Replicar convênio"
+  },
+  {
+    "key": "SAUD-45675",
+    "summary": "Possibilitar a alteração do campo \"Acréscimo/desconto\" do percentual de procedimento em 'massa'"
+  },
+  {
+    "key": "SAUD-53649",
+    "summary": "[Gestante] replicar dados já informados na triagem, na rotina de gestação"
+  },
+  {
+    "key": "SAUD-58340",
+    "summary": "[Entidade] Atualizar o logo do Saúde Cloud e replicar essa informação internamente, nos relatórios e comprovantes da entidade e também na seleção do contexto."
+  }
+]

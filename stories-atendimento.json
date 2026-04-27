@@ -1,0 +1,82 @@
+[
+  {
+    "key": "SAUD-13315",
+    "summary": "Cancelar \"Laudo APAC\""
+  },
+  {
+    "key": "SAUD-68530",
+    "summary": "[STA CRUZ] Adicionar material a examinar no encaminhamento para especialidades/na regulação"
+  },
+  {
+    "key": "SAUD-68538",
+    "summary": "[STA CRUZ] Na central de regulação, demonstrar o nome do profissional autorizador"
+  },
+  {
+    "key": "SAUD-57142",
+    "summary": "[Central de regulação] Integração entre sistemas próprios e os sistemas GERCON/GERINT"
+  },
+  {
+    "key": "SAUD-49978",
+    "summary": "Intercorrências no atendimento"
+  },
+  {
+    "key": "SAUD-42050",
+    "summary": "Ao inserir CID/CIAP de finalização de gestação, sugerir finalizar a gestação"
+  },
+  {
+    "key": "SAUD-50145",
+    "summary": "Configurar por UNIDADE se irá enviar as solicitações/requisições da central de regulação direto para a fila de Aguardando ou Autorizados"
+  },
+  {
+    "key": "SAUD-73453",
+    "summary": "Procedimento de avaliação do idoso automático"
+  },
+  {
+    "key": "SAUD-26528",
+    "summary": "ANEXOS - Anexar documentos no atendimento"
+  },
+  {
+    "key": "SAUD-56989",
+    "summary": "Usabilidade ao finalizar atendimento"
+  },
+  {
+    "key": "SAUD-39763",
+    "summary": "[Atendimento] Melhoria na prescrição"
+  },
+  {
+    "key": "SAUD-63776",
+    "summary": "Refatorar SL Atendimento"
+  },
+  {
+    "key": "SAUD-72489",
+    "summary": "Coluna no Atendimento Laboratório"
+  },
+  {
+    "key": "SAUD-52730",
+    "summary": "[Atendimento] Melhorar prescrições anteriores"
+  },
+  {
+    "key": "SAUD-71931",
+    "summary": "Sugestão de procedimentos no Odontograma"
+  },
+  {
+    "key": "SAUD-56320",
+    "summary": "[USABILIDADE] Melhoria layout no atendimento > ações rápidas (novo atendimento)"
+  },
+  {
+    "key": "SAUD-46543",
+    "summary": "[ATENDIMENTO] Deve adicionar a vacina, somente após finalizar o atendimento."
+  },
+  {
+    "key": "SAUD-45618",
+    "summary": "[ATENDIMENTO] Permitir enviar paciente para atendimento, após enviado para medicação. "
+  },
+  {
+    "key": "SAUD-35675",
+    "summary": "Atendimento em aberto, permitir novo atendimento conforme parâmetro"
+  },
+  {
+    "key": "SAUD-61320",
+    "summary": "Dispor de Atendimento Complementar dentro de 24h\" no Atendimento Domiciliar"
+  }
+]

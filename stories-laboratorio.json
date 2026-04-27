@@ -1,0 +1,82 @@
+[
+  {
+    "key": "SAUD-59962",
+    "summary": "[Laboratório] Melhorias ao realizar liberação do exame"
+  },
+  {
+    "key": "SAUD-58336",
+    "summary": "[Laboratório] Permitir realizar coleta/resultado de testes rápidos (0214)"
+  },
+  {
+    "key": "SAUD-58795",
+    "summary": "[Laboratório] Permitir definir prazo para 'repetir' exame, liberando mediante senha caso liberação antes do prazo definido"
+  },
+  {
+    "key": "SAUD-56340",
+    "summary": "Dispor de natureza e modal de documentos na rotina de laboratório > atendimento, para emitir comprovante de resultado"
+  },
+  {
+    "key": "SAUD-56345",
+    "summary": "[Laboratório] Ao finalizar a digitação que o sistema fecha a tela dos resultados e volte para a fila de atendimento."
+  },
+  {
+    "key": "SAUD-72489",
+    "summary": "Coluna no Atendimento Laboratório"
+  },
+  {
+    "key": "SAUD-13315",
+    "summary": "Cancelar \"Laudo APAC\""
+  },
+  {
+    "key": "SAUD-69043",
+    "summary": "[Laudo LME] Alterar as ações do Laudo LME dentro do atendimento"
+  },
+  {
+    "key": "SAUD-44952",
+    "summary": "[Laboratório] Permitir a visualização agrupada por cliente"
+  },
+  {
+    "key": "SAUD-69338",
+    "summary": "Incluir laboratório/fabricante na carteira de vacinas"
+  },
+  {
+    "key": "SAUD-12995",
+    "summary": "Visualizar AUTORIZAÇÃO do \"Laudo AIH\""
+  },
+  {
+    "key": "SAUD-67818",
+    "summary": "[Laboratório] Registros 'sem requisição' deve possuir um código de requisição"
+  },
+  {
+    "key": "SAUD-44680",
+    "summary": "Permitir alterar a situação do exame requisitado, quando paciente retornar da observação"
+  },
+  {
+    "key": "SAUD-13032",
+    "summary": "Permitir ao Profissional de saúde realizar AUTORIZAÇÃO do Laudo BPA-I\""
+  },
+  {
+    "key": "SAUD-58774",
+    "summary": "[Assinatura digital] Permitir utilizar REGISTRO DO CONSELHO DE CLASSE  (ex: CRM) na assinatura digital do Saúde"
+  },
+  {
+    "key": "SAUD-50519",
+    "summary": "Ao digitar o resultado usando ENTER, deve navegar entre os campos e ir ao próximo resultado respeitando os filtros"
+  },
+  {
+    "key": "SAUD-67867",
+    "summary": "[Avaliar exames] Alerta para resultados alterados "
+  },
+  {
+    "key": "SAUD-72712",
+    "summary": "Fonte para listagem de resultados do cofinanciamento"
+  },
+  {
+    "key": "SAUD-47675",
+    "summary": "Melhoria na busca do cliente, ordenar por ordem alfabética o resultado"
+  },
+  {
+    "key": "SAUD-45757",
+    "summary": "[Atividade coletiva] Registrar aferição da pressão arterial e o resultado da glicemia capilar dos participantes"
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "key": "SAUD-1962",
+    "summary": "Permitir parametrizar a periodicidade e a obrigatoriedade na troca de senha de acesso do usuário."
+  },
+  {
+    "key": "SAUD-1969",
+    "summary": "Permitir registrar acesso pessoal ao sistema possibilitando acessar o sistema com login e senha."
+  },
+  {
+    "key": "SAUD-4306",
+    "summary": "Autenticação assinatura "
+  },
+  {
+    "key": "SAUD-14608",
+    "summary": "Segurança / Licenciamento"
+  },
+  {
+    "key": "SAUD-7857",
+    "summary": "Deverá possuir, em uma área restrita aos administradores e técnicos, a configuração do WebService, permitindo ativa-lo e desativa-lo e os usuários e senhas para acesso"
+  },
+  {
+    "key": "SAUD-7760",
+    "summary": "Deverá possuir, em uma área restrita aos administradores e técnicos, a configuração do WebService, permitindo ativa-lo e desativa-lo e os usuários e senhas para acesso"
+  },
+  {
+    "key": "SAUD-8444",
+    "summary": "Os sistemas devem permitir a autenticação dos usuários através de autenticação por assinatura digital eCPF padrão ICPBrasil"
+  },
+  {
+    "key": "SAUD-8442",
+    "summary": "Os sistemas devem permitir a autenticação dos usuários através de autenticação identificação biométrica"
+  },
+  {
+    "key": "SAUD-7724",
+    "summary": "Os sistemas devem permitir a autenticação dos usuários através de autenticação por assinatura digital eCPF padrão ICPBrasil"
+  },
+  {
+    "key": "SAUD-1896",
+    "summary": "Permitir informar ao usuário quando houve a última autenticação"
+  }
+]

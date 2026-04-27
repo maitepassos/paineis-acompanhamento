@@ -1,0 +1,42 @@
+[
+  {
+    "key": "SAUD-7690",
+    "summary": "Agendar a execução de procedimentos para clientes conforme agendas cadastradas previamente."
+  },
+  {
+    "key": "SAUD-7677",
+    "summary": "Agendar consultas de especialidade para clientes conforme agendas cadastradas previamente."
+  },
+  {
+    "key": "SAUD-8134",
+    "summary": "Agendar consultas autorizadas na central de regulação com agenda do prestador interna ou externa"
+  },
+  {
+    "key": "SAUD-8174",
+    "summary": "AGENDAR - Deverá exibir diretamente ao usuário/profissional o primeiro dia com vaga para agendamento em nível de agendamento eletivo;"
+  },
+  {
+    "key": "SAUD-8132",
+    "summary": "Agendar atendimento de retorno do cliente no desfecho dos atendimentos originados por agendamento"
+  },
+  {
+    "key": "SAUD-8175",
+    "summary": "Imprimir comprovante de agendamento do cliente após agendar consulta de especialidade "
+  },
+  {
+    "key": "SAUD-7791",
+    "summary": "Imprimir comprovante de agendamento do cliente após agendar execução de procedimento"
+  },
+  {
+    "key": "SAUD-11382",
+    "summary": "Agendar procedimentos autorizados na central de regulação na central de regulação com agenda do prestador interna ou externa"
+  },
+  {
+    "key": "SAUD-8136",
+    "summary": "Filtrar e listar na tela de agendamento todas as agendas cadastradas conforme cotas e agendas disponíveis para realizar agendamento a clientes."
+  },
+  {
+    "key": "SAUD-8030",
+    "summary": "Visualizar as solicitações dos agendamentos do cliente no agendamento da central de regulação possibilitando agendar consultas para as solicitações que não necessitam de regulação."
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "key": "SAUD-28801",
+    "summary": "Configurações do Voicebot"
+  },
+  {
+    "key": "SAUD-17683",
+    "summary": "Comunicar Pendência de Confirmação do SMS/E-mail ao Agendamento"
+  },
+  {
+    "key": "SAUD-9289",
+    "summary": "Possibilitar a configuração para assinar documentos automaticamente após a primeira confirmação de assinatura"
+  },
+  {
+    "key": "SAUD-8580",
+    "summary": "Deverá permitir que os exames estejam prontos para serem agendados/regulados após a confirmação do atendimento"
+  },
+  {
+    "key": "SAUD-8554",
+    "summary": "Deverá permitir que as receitas estejam prontas para serem dispensadas na farmácia após a confirmação do atendimento"
+  },
+  {
+    "key": "SAUD-8301",
+    "summary": "Deverá permitir que os exames estejam prontos para serem agendados/regulados após a confirmação do atendimento"
+  },
+  {
+    "key": "SAUD-8335",
+    "summary": "Deverá possuir parâmetro que permita ativar a confirmação de presença do cliente para o exame na recepção"
+  },
+  {
+    "key": "SAUD-8313",
+    "summary": "Deverá permitir que as receitas estejam prontas para serem dispensadas na farmácia após a confirmação do atendimento"
+  },
+  {
+    "key": "SAUD-7506",
+    "summary": "Solicitar a confirmação para cancelar ou voltar o preenchimento do atendimento  e retornar o cliente para fila."
+  },
+  {
+    "key": "SAUD-7491",
+    "summary": "Deverá solicitar a confirmação de um dos dados do usuário para efetivar a transferência da consulta."
+  }
+]

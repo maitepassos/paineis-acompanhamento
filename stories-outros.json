@@ -1,0 +1,82 @@
+[
+  {
+    "key": "SAUD-56267",
+    "summary": "Cadastrar no resgate vacinas que não fazem parte da rede SUS, para registro na carteira de vacinação "
+  },
+  {
+    "key": "SAUD-73717",
+    "summary": "Relatório cofinanciamento "
+  },
+  {
+    "key": "SAUD-40835",
+    "summary": "Melhoria no cadastro de ausência do profissional."
+  },
+  {
+    "key": "SAUD-69720",
+    "summary": "Tela Visão Geral Cofinanciamento "
+  },
+  {
+    "key": "SAUD-19267",
+    "summary": "Cartão de Vacinação"
+  },
+  {
+    "key": "SAUD-57138",
+    "summary": "[Cadastro imóvel] Realizar mudança de profissional dos imóveis, conforme filtros aplicados  (Reterritorialização)"
+  },
+  {
+    "key": "SAUD-70553",
+    "summary": "Cofinanciamento de vinculo e acompanhamento territorial"
+  },
+  {
+    "key": "SAUD-72712",
+    "summary": "Fonte para listagem de resultados do cofinanciamento"
+  },
+  {
+    "key": "SAUD-17165",
+    "summary": "Cadastrar e Manter Campanha de Vacinação"
+  },
+  {
+    "key": "SAUD-49527",
+    "summary": "[Vacina] Parâmetro para não controlar estoque de vacinas"
+  },
+  {
+    "key": "SAUD-70886",
+    "summary": "Apresentar inconsistência do profissional logado"
+  },
+  {
+    "key": "SAUD-46543",
+    "summary": "[ATENDIMENTO] Deve adicionar a vacina, somente após finalizar o atendimento."
+  },
+  {
+    "key": "SAUD-61717",
+    "summary": "[Documento] Emitir Cartão de vacina com Ordem e-SUS"
+  },
+  {
+    "key": "SAUD-68476",
+    "summary": "[e-SUS] Declaração na de aplicação de vacina"
+  },
+  {
+    "key": "SAUD-68466",
+    "summary": "[e-SUS] Aplicação de vacina, pela fila de atendimento"
+  },
+  {
+    "key": "SAUD-58848",
+    "summary": "[Vacina] Permitir que quando for aplicar uma vacina e o lote não é suficiente, que possa ser complementado com outro lote"
+  },
+  {
+    "key": "SAUD-49911",
+    "summary": "Inativar vinculo de equipe, ao inativar profissional"
+  },
+  {
+    "key": "SAUD-61778",
+    "summary": "Melhorias na impressão do profissional dos Atestados"
+  },
+  {
+    "key": "SAUD-21807",
+    "summary": "Demonstrar Cotas disponível no momento do Agendamento"
+  },
+  {
+    "key": "SAUD-46060",
+    "summary": "[Profissional] Melhorar o processo de Vínculo do profissional em mais de uma unidade"
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "key": "SAUD-8377",
+    "summary": "Deverá indicar e permitir a dispensação de medicamentos e materiais a partir da recepção do paciente na farmácia"
+  },
+  {
+    "key": "SAUD-8560",
+    "summary": "Deverá efetuar informar a reserva dos medicamentos prescritos na rede de farmácia básica (enquanto não for feita a dispensação ou a receita possuir validade)"
+  },
+  {
+    "key": "SAUD-8312",
+    "summary": "Deverá efetuar informar a reserva dos medicamentos prescritos na rede de farmácia básica (enquanto não for feita a dispensação ou a receita possuir validade)"
+  },
+  {
+    "key": "SAUD-8013",
+    "summary": "Deverá permitir a dispensação de medicamentos e materiais a partir do processo"
+  },
+  {
+    "key": "SAUD-8209",
+    "summary": "Exibir opções de Medicamento Similar na Dispensa "
+  },
+  {
+    "key": "SAUD-8565",
+    "summary": "Permitir realizar a prescrição de medicamentos que não estejam cadastrados na farmácia básica"
+  },
+  {
+    "key": "SAUD-7804",
+    "summary": "Deverá permitir a prescrição de medicamentos que não estejam cadastrados na farmácia básica"
+  },
+  {
+    "key": "SAUD-27577",
+    "summary": "Histórico de Dispensa de medicamentos na dispensa do cliente"
+  },
+  {
+    "key": "SAUD-64468",
+    "summary": "Integração de Registro Eletrônico de Dispensação ou Fornecimento de Medicamentos à RNDS"
+  },
+  {
+    "key": "SAUD-8008",
+    "summary": "Deverá permitir o total controle de dispensação de medicamentos e materiais para o processo"
+  }
+]

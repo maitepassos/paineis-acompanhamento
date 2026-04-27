@@ -1,0 +1,42 @@
+[
+  {
+    "key": "SAUD-69960",
+    "summary": "Apresentar na impressao do PEP o fornecimento de atestados"
+  },
+  {
+    "key": "SAUD-69927",
+    "summary": "relatório para impressão das oficinas."
+  },
+  {
+    "key": "SAUD-61778",
+    "summary": "Melhorias na impressão do profissional dos Atestados"
+  },
+  {
+    "key": "SAUD-56330",
+    "summary": "Abrir documentos enviados para impressão automaticamente no atendimento"
+  },
+  {
+    "key": "SAUD-68811",
+    "summary": "Botão para Impressão de requisições anteriores(histórico de requisições)"
+  },
+  {
+    "key": "SAUD-59238",
+    "summary": "Dispor de ação e natureza para impressão dos formulários do IDOSO"
+  },
+  {
+    "key": "SAUD-63168",
+    "summary": "Deverá permitir a inclusão e impressão da RAAT (relatorio de atendimento ao acidentado do trabalho)"
+  },
+  {
+    "key": "SAUD-68155",
+    "summary": "[ATIBAIA] Ajustar Impressão da FA e FAA está \"comendo\" alguns dados da prescrição"
+  },
+  {
+    "key": "SAUD-72297",
+    "summary": "Permitir que um usuário tenha acesso somente ao gerenciador de acessos e não tenha acesso ao sistema de saúde."
+  },
+  {
+    "key": "SAUD-54957",
+    "summary": "Notificar os gestores ou responsáveis, os acessos concedidos"
+  }
+]

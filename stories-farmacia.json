@@ -1,0 +1,82 @@
+[
+  {
+    "key": "SAUD-59960",
+    "summary": "[Dispensa] Melhoria na listagem de prescrições ao dispensar "
+  },
+  {
+    "key": "SAUD-61313",
+    "summary": "[Dispensa] Parâmetro para realizar dupla checagem em dispensa de medicamentos controlados"
+  },
+  {
+    "key": "SAUD-52719",
+    "summary": "[DISPENSA] Permitir  bloqueio na dispensa antes do término do tratamento apenas para medicamentos controlados"
+  },
+  {
+    "key": "SAUD-46125",
+    "summary": "[DISPENSA] Configurar por unidade do profissional, a liberação de medicamentos antes do término, com senha"
+  },
+  {
+    "key": "SAUD-45549",
+    "summary": "[DISPENSA] Permitir dispensa a pacientes externos, mediante senha"
+  },
+  {
+    "key": "SAUD-46127",
+    "summary": "[Dispensa] Paciente judicial"
+  },
+  {
+    "key": "SAUD-67870",
+    "summary": "Salvar dispensa em digitação/autosave"
+  },
+  {
+    "key": "SAUD-56328",
+    "summary": "Permitir registrar dispensa com data retroativa"
+  },
+  {
+    "key": "SAUD-59024",
+    "summary": "Refatoração layout na DISPENSA de produtos"
+  },
+  {
+    "key": "SAUD-49709",
+    "summary": "Adicionar campo de duração de dias no cadastro de medicamento contínuo."
+  },
+  {
+    "key": "SAUD-70869",
+    "summary": "[Atendimento] Possibilitar excluir mais de um medicamento de uso continuo"
+  },
+  {
+    "key": "SAUD-69439",
+    "summary": "Relatório de Administração de Medicamentos"
+  },
+  {
+    "key": "SAUD-67872",
+    "summary": "Validar dispensa de produtos próximos ao vencimento x quantidade"
+  },
+  {
+    "key": "SAUD-72485",
+    "summary": "Adicionar aba de medicamentos Administrados do RES"
+  },
+  {
+    "key": "SAUD-30441",
+    "summary": "Permitir informar a Classificação do risco do uso do medicamento durante a gestação, conforme categorização por letras"
+  },
+  {
+    "key": "SAUD-46116",
+    "summary": "[DISPENSA/PRESCRIÇÃO] Poder definir quais tipos de prescrições os profissionais podem realizar"
+  },
+  {
+    "key": "SAUD-34441",
+    "summary": "Envio de SMS para medicamentos de uso contínuo"
+  },
+  {
+    "key": "SAUD-57897",
+    "summary": "Efetuar a reserva dos medicamentos prescritos, no saldo total da unidade"
+  },
+  {
+    "key": "SAUD-28563",
+    "summary": "Consulta/notificações de medicamentos com validade próximo ao vencimento"
+  },
+  {
+    "key": "SAUD-19197",
+    "summary": "Cadastrar e Manter medicamentos/materiais indisponíveis como demanda reprimida"
+  }
+]

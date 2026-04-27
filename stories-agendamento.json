@@ -1,0 +1,82 @@
+[
+  {
+    "key": "SAUD-46162",
+    "summary": "Permitir na mesma agenda, quantidade diferente de agendamento para dias da semana"
+  },
+  {
+    "key": "SAUD-68580",
+    "summary": "Agenda de procedimentos com profissionais"
+  },
+  {
+    "key": "SAUD-58730",
+    "summary": "[CAPS] Ao criar agenda, criar oficina automaticamente"
+  },
+  {
+    "key": "SAUD-70888",
+    "summary": "Vincular referência na agenda de consultas"
+  },
+  {
+    "key": "SAUD-23316",
+    "summary": "+ AGENDAMENTO - Transferir individualmente agendamentos de PROCEDIMENTOS"
+  },
+  {
+    "key": "SAUD-47050",
+    "summary": "[Agenda] Avisar caso o período esteja chocando com alguma agenda bloqueada"
+  },
+  {
+    "key": "SAUD-53320",
+    "summary": "[Agendamento] Verificar horário do agendamento em tempo real"
+  },
+  {
+    "key": "SAUD-53989",
+    "summary": "Permitir enviar SMS de confirmação por agenda cadastrada"
+  },
+  {
+    "key": "SAUD-58728",
+    "summary": "[CAPS] Auditoria/SL/FD agenda de Oficinas, e Atividades "
+  },
+  {
+    "key": "SAUD-59314",
+    "summary": "[Agenda procedimentos] Demonstrar quantidade de vagas disponíveis por dia"
+  },
+  {
+    "key": "SAUD-46062",
+    "summary": "[Agenda] Limitar quantidade de vagas por dia, por unidade"
+  },
+  {
+    "key": "SAUD-56509",
+    "summary": "[CAPS] Realizar agendamento de Oficinas, atividades"
+  },
+  {
+    "key": "SAUD-45483",
+    "summary": "Manutenção em agendamento do tipo 'Externo'"
+  },
+  {
+    "key": "SAUD-21807",
+    "summary": "Demonstrar Cotas disponível no momento do Agendamento"
+  },
+  {
+    "key": "SAUD-72679",
+    "summary": "Alterar veículo do Agendamento de Viagem"
+  },
+  {
+    "key": "SAUD-45547",
+    "summary": "[Agendamento] Integração entre sistemas próprios e o sistema do consórcio para o agendamento de consultas"
+  },
+  {
+    "key": "SAUD-57771",
+    "summary": "[Agendamento] bloquear/alertar no agendamento quando paciente possuir X ausências em determinado período"
+  },
+  {
+    "key": "SAUD-35022",
+    "summary": "Permitir realizar o agendamento para solicitações de atendimento em domicilio, ou agendamento de visita dos profissionais."
+  },
+  {
+    "key": "SAUD-56564",
+    "summary": "[CAPS] Atualizar RES com dados do agendamento em oficinas/atividades"
+  },
+  {
+    "key": "SAUD-19271",
+    "summary": "Transferência de agendamento de consultas considerar os horários estendidos"
+  }
+]

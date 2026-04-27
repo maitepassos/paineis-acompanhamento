@@ -1,0 +1,78 @@
+[
+  {
+    "key": "SAUD-29550",
+    "summary": "[Atibaia] Incluir restrição por centro de custo"
+  },
+  {
+    "key": "SAUD-27585",
+    "summary": "[Fazenda Rio Grande] Realizar a requisição de produtos, de modo automático com base no estoque crítico"
+  },
+  {
+    "key": "SAUD-9872",
+    "summary": "Integração com sistema almoxarifado"
+  },
+  {
+    "key": "SAUD-68699",
+    "summary": "Ordenação dos lotes no estoque"
+  },
+  {
+    "key": "SAUD-69389",
+    "summary": "REQUISIÇÃO DE MAMOGRAFIA"
+  },
+  {
+    "key": "SAUD-69316",
+    "summary": "Relatório de requisição Citopatológico "
+  },
+  {
+    "key": "SAUD-68154",
+    "summary": "[ATIBAIA] Relatório de estoque zerados com datas"
+  },
+  {
+    "key": "SAUD-67818",
+    "summary": "[Laboratório] Registros 'sem requisição' deve possuir um código de requisição"
+  },
+  {
+    "key": "SAUD-49696",
+    "summary": "Permitir cadastrar e dar manutenção na localização dos produtos no almoxarifado "
+  },
+  {
+    "key": "SAUD-69935",
+    "summary": "Lentidão no SL - Erro ao integrar Contratos X Almoxarifado Saude"
+  },
+  {
+    "key": "SAUD-46132",
+    "summary": "Observação por item indeferido na requisição"
+  },
+  {
+    "key": "SAUD-49406",
+    "summary": "Bloquear cancelamento da requisição, após deferida"
+  },
+  {
+    "key": "SAUD-70347",
+    "summary": "Acrescentar campos no Receituário, Encaminhamento e Requisição"
+  },
+  {
+    "key": "SAUD-73627",
+    "summary": "Adicionar CPF na Requisição de exames"
+  },
+  {
+    "key": "SAUD-49527",
+    "summary": "[Vacina] Parâmetro para não controlar estoque de vacinas"
+  },
+  {
+    "key": "SAUD-63796",
+    "summary": "Permitir realizar requisição de exames Alta complexidade no atendimento"
+  },
+  {
+    "key": "SAUD-58742",
+    "summary": "Deve ser possível \"copiar\" uma solicitação/requisição para novo agendamento"
+  },
+  {
+    "key": "SAUD-57785",
+    "summary": "[Inventário] dispor de uma opção para listar somente Produtos/lotes com estoque"
+  },
+  {
+    "key": "SAUD-45595",
+    "summary": "[REQUISIÇÃO] Permitir validar se possui saldo dos produtos na unidade requisitada"
+  }
+]

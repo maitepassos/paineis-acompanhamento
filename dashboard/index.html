@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard de Gestão</title>
+  <script src="data.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #f0f4f8; color: #1a202c; min-height: 100vh; }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%);
+      color: white; padding: 1rem 2rem;
+      display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;
+    }
+    header h1 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.01em; }
+    .header-right { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+    .header-meta { font-size: 0.8rem; opacity: 0.85; line-height: 1.5; }
+    .stale-badge { background: #f6ad55; color: #7b341e; padding: 0.2rem 0.6rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
+
+    /* ── Main Tabs (nav) ── */
+    .main-nav { background: #1a365d; border-top: 1px solid rgba(255,255,255,0.1); display: flex; padding: 0 1.5rem; gap: 0.25rem; }
+    .main-tab {
+      color: rgba(255,255,255,0.6); background: none; border: none; border-bottom: 3px solid transparent;
+      padding: 0.65rem 1.2rem; font-size: 0.88rem; font-weight: 600; cursor: pointer;
+      transition: color 0.15s, border-color 0.15s; white-space: nowrap;
+    }
+    .main-tab:hover { color: white; }
+    .main-tab.active { color: white; border-bottom-color: #63b3ed; }
+
+    /* ── Layout ── */
+    .container { max-width: 1440px; margin: 0 auto; padding: 1.5rem; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* ── Summary Cards ── */
+    .summary-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+    .card { background: white; border-radius: 10px; padding: 1.1rem 1.3rem; box-shadow: 0 1px 4px rgba(0,0,0,0.08); border-top: 4px solid #cbd5e0; text-decoration: none; color: inherit; display: block; }
+    .card[href] { cursor: pointer; transition: box-shadow 0.15s, transform 0.1s; }
+    .card[href]:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.15); transform: translateY(-2px); }
+    .card[href]:active { transform: translateY(0); }
+    .card.red    { border-color: #fc8181; }
+    .card.orange { border-color: #f6ad55; }
+    .card.blue   { border-color: #63b3ed; }
+    .card.purple { border-color: #b794f4; }
+    .card.green  { border-color: #68d391; }
+    .card-label { font-size: 0.7rem; color: #718096; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.45rem; }
+    .card-value { font-size: 2.2rem; font-weight: 800; line-height: 1; }
+    .card.red    .card-value { color: #e53e3e; }
+    .card.orange .card-value { color: #dd6b20; }
+    .card.blue   .card-value { color: #3182ce; }
+    .card.purple .card-value { color: #805ad5; }
+    .card.green  .card-value { color: #38a169; }
+    .card-sub { font-size: 0.75rem; color: #a0aec0; margin-top: 0.25rem; }
+
+    /* ── Two-column grid ── */
+    .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+
+    /* ── Section ── */
+    .section { background: white; border-radius: 10px; padding: 1.4rem; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    .section + .section { margin-top: 1.5rem; }
+    .section-title { font-size: 0.9rem; font-weight: 700; color: #2d3748; text-transform: uppercase; letter-spacing: 0.05em; padding-bottom: 0.7rem; border-bottom: 2px solid #e2e8f0; margin-bottom: 1rem; }
+
+    /* ── Fila block ── */
+    .fila-block { margin-bottom: 1.3rem; }
+    .fila-block:last-child { margin-bottom: 0; }
+    .fila-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem; }
+    .fila-name { font-size: 0.85rem; font-weight: 600; color: #4a5568; }
+    .fila-total { font-size: 1.4rem; font-weight: 800; color: #2d3748; }
+    .fila-rows { display: flex; flex-direction: column; gap: 0.3rem; }
+    .fila-row { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; }
+    .fila-row-label { flex: 1; color: #4a5568; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .fila-row-count { font-weight: 700; color: #2d3748; min-width: 2rem; text-align: right; }
+    .bar-track { flex: 1; height: 5px; background: #e2e8f0; border-radius: 3px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 3px; background: #4299e1; transition: width 0.4s; }
+
+    /* ── Badges ── */
+    .badge { display: inline-flex; align-items: center; gap: 0.2rem; padding: 0.15rem 0.45rem; border-radius: 9999px; font-size: 0.72rem; font-weight: 600; white-space: nowrap; }
+    .badge-ok      { background: #c6f6d5; color: #276749; }
+    .badge-estouro { background: #feebc8; color: #7b341e; }
+    .badge-alerta  { background: #fed7d7; color: #822727; }
+    .badge-sem     { background: #e2e8f0; color: #4a5568; }
+    .badge-atendida     { background: #c6f6d5; color: #276749; }
+    .badge-natoatendida { background: #fed7d7; color: #822727; }
+
+    .horas { font-weight: 700; font-family: "SF Mono","Consolas",monospace; font-size: 0.85rem; }
+    .origem-tag { font-size: 0.7rem; color: #a0aec0; }
+
+    /* ── Issues table ── */
+    .issues-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    .issues-table th { text-align: left; padding: 0.5rem 0.7rem; background: #f7fafc; color: #718096; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+    .issues-table td { padding: 0.5rem 0.7rem; border-top: 1px solid #edf2f7; }
+    .issues-table tr:hover td { background: #f7fafc; }
+    .issue-key { font-weight: 600; color: #3182ce; font-size: 0.8rem; }
+
+    /* ── Alertas ── */
+    .alertas { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
+    .alerta { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.6rem 0.9rem; border-radius: 6px; font-size: 0.82rem; }
+    .alerta.warn  { background: #fffbeb; border-left: 3px solid #f6ad55; color: #7b341e; }
+    .alerta.info  { background: #ebf8ff; border-left: 3px solid #63b3ed; color: #2c5282; }
+    .alerta.error { background: #fff5f5; border-left: 3px solid #fc8181; color: #742a2a; }
+
+    /* ── No data ── */
+    .no-data { text-align: center; padding: 5rem 2rem; color: #a0aec0; }
+    .no-data h2 { font-size: 1.5rem; margin-bottom: 0.6rem; color: #718096; }
+
+    /* ═══════════════════════════════════════
+       APONTAMENTOS TAB
+    ═══════════════════════════════════════ */
+
+    /* Sub-tabs */
+    .sub-tabs-bar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
+    .sub-tabs { display: flex; background: white; border-radius: 10px; padding: 0.3rem; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    .sub-tab {
+      padding: 0.5rem 1.6rem; border: none; background: none; cursor: pointer;
+      font-size: 0.85rem; font-weight: 600; color: #718096; border-radius: 7px;
+      transition: all 0.15s;
+    }
+    .sub-tab:hover:not(.active) { background: #edf2f7; color: #2d3748; }
+    .sub-tab.active { background: #3182ce; color: white; }
+    .sub-tab-content { display: none; }
+    .sub-tab-content.active { display: block; }
+
+    /* Period info bar */
+    .period-info {
+      display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+      background: white; border-radius: 10px; padding: 0.85rem 1.2rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 1.2rem; font-size: 0.85rem;
+    }
+    .period-info .pi-label { color: #718096; font-weight: 600; text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.05em; }
+    .period-info .pi-value { color: #2d3748; font-weight: 700; }
+    .period-info .pi-sep { color: #e2e8f0; }
+
+    /* Summary mini cards */
+    .apt-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.2rem; }
+    .apt-card { background: white; border-radius: 8px; padding: 0.9rem 1.1rem; box-shadow: 0 1px 4px rgba(0,0,0,0.08); text-align: center; }
+    .apt-card-label { font-size: 0.68rem; color: #718096; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3rem; }
+    .apt-card-value { font-size: 1.5rem; font-weight: 800; }
+    .apt-card-value.ok-color  { color: #38a169; }
+    .apt-card-value.al-color  { color: #e53e3e; }
+    .apt-card-value.ex-color  { color: #dd6b20; }
+    .apt-card-value.sem-color { color: #718096; }
+
+    /* Alertas list */
+    .apt-alertas { margin-bottom: 1.2rem; }
+    .apt-alerta-item {
+      display: flex; align-items: center; gap: 0.7rem;
+      padding: 0.55rem 0.9rem; border-radius: 6px; font-size: 0.82rem;
+      background: #fff5f5; border-left: 3px solid #fc8181; color: #742a2a; margin-bottom: 0.4rem;
+    }
+    .apt-alerta-item.sem { background: #f7fafc; border-color: #a0aec0; color: #4a5568; }
+    .apt-alerta-name { font-weight: 700; flex: 1; }
+    .apt-alerta-detail { font-size: 0.78rem; opacity: 0.85; }
+
+    /* Apontamentos table */
+    .apt-table-wrap { background: white; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); overflow: hidden; }
+    .apt-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    .apt-table th {
+      text-align: left; padding: 0.5rem 0.8rem;
+      background: #f7fafc; color: #718096;
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .apt-table th.right { text-align: right; }
+    .apt-table td { padding: 0.5rem 0.8rem; border-top: 1px solid #edf2f7; vertical-align: middle; }
+    .apt-table td.right { text-align: right; }
+    .apt-table tr.s-ok      td { background: #f0fff4; }
+    .apt-table tr.s-estouro td { background: #fffaf0; }
+    .apt-table tr.s-alerta  td { background: #fff8f8; }
+    .apt-table tr.s-sem     td { background: #fafafa; color: #a0aec0; }
+    .apt-table tr.totals-row td { background: #f7fafc; font-weight: 700; border-top: 2px solid #e2e8f0; }
+
+    /* Progress mini bar */
+    .pct-bar { display: flex; align-items: center; gap: 0.4rem; min-width: 100px; }
+    .pct-track { flex: 1; height: 5px; background: #e2e8f0; border-radius: 3px; overflow: hidden; }
+    .pct-fill { height: 100%; border-radius: 3px; }
+    .pct-fill.ok-fill  { background: #68d391; }
+    .pct-fill.al-fill  { background: #fc8181; }
+    .pct-fill.ex-fill  { background: #f6ad55; }
+    .pct-fill.sem-fill { background: #e2e8f0; }
+    .pct-label { font-size: 0.72rem; color: #718096; white-space: nowrap; min-width: 2.5rem; text-align: right; }
+
+    /* Carga tag */
+    .carga-tag { font-size: 0.68rem; color: #805ad5; background: #faf5ff; border: 1px solid #e9d8fd; border-radius: 4px; padding: 0.1rem 0.35rem; margin-left: 0.3rem; white-space: nowrap; }
+
+    @media (max-width: 1100px) {
+      .summary-grid { grid-template-columns: repeat(3, 1fr); }
+      .main-grid { grid-template-columns: 1fr; }
+      .apt-summary { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .summary-grid { grid-template-columns: repeat(2, 1fr); }
+      .apt-summary { grid-template-columns: repeat(2, 1fr); }
+      header { padding: 0.8rem 1rem; }
+      .container { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>📊 Dashboard de Gestão</h1>
+  <div class="header-right">
+    <span id="stale-badge" class="stale-badge" style="display:none">⚠️ Dados desatualizados</span>
+    <div class="header-meta" id="header-meta">Aguardando dados...</div>
+  </div>
+</header>
+
+<nav class="main-nav">
+  <button class="main-tab active" data-tab="visao-geral">Visão Geral</button>
+  <button class="main-tab" data-tab="apontamentos">⏱️ Apontamentos</button>
+</nav>
+
+<div class="container">
+
+  <!-- ══ TAB: NO DATA ══ -->
+  <div id="no-data-state" class="no-data" style="display:none">
+    <h2>📭 Sem dados disponíveis</h2>
+    <p>O relatório será carregado automaticamente no primeiro horário útil do dia.</p>
+  </div>
+
+  <!-- ══ TAB: VISÃO GERAL ══ -->
+  <div id="tab-visao-geral" class="tab-content active">
+
+    <div class="summary-grid">
+      <a class="card red" href="https://desenv.betha.com.br/issues/?filter=121810" target="_blank" title="Abrir filtro no Jira Desenv">
+        <div class="card-label">Incidentes Desenv ↗</div>
+        <div class="card-value" id="sum-incidentes">—</div>
+        <div class="card-sub" id="sum-incidentes-sub"></div>
+      </a>
+      <a class="card orange" href="https://atendimento.betha.com.br/issues/?filter=165415" target="_blank" title="Abrir filtro no Jira Atendimento">
+        <div class="card-label">Suporte N2 ↗</div>
+        <div class="card-value" id="sum-n2">—</div>
+      </a>
+      <a class="card blue" href="https://atendimento.betha.com.br/issues/?filter=146414" target="_blank" title="Abrir filtro no Jira Atendimento">
+        <div class="card-label">Melhorias Mercado ↗</div>
+        <div class="card-value" id="sum-melhorias">—</div>
+      </a>
+      <a class="card purple" href="https://atendimento.betha.com.br/issues/?filter=122108" target="_blank" title="Abrir filtro no Jira Atendimento">
+        <div class="card-label">Exigência Legal ↗</div>
+        <div class="card-value" id="sum-legal">—</div>
+      </a>
+      <div class="card green">
+        <div class="card-label">Entregues (últ. dia útil)</div>
+        <div class="card-value" id="sum-entregues">—</div>
+        <div class="card-sub" id="sum-entregues-sub"></div>
+      </div>
+    </div>
+
+    <div class="main-grid">
+      <div class="section">
+        <div class="section-title">Filas de Chamados</div>
+        <div class="fila-block" id="fila-incidentes"></div>
+        <div class="fila-block" id="fila-n2"></div>
+        <div class="fila-block" id="fila-melhorias"></div>
+        <div class="fila-block" id="fila-legal"></div>
+      </div>
+      <div class="section">
+        <div class="section-title">Alertas e Recomendações</div>
+        <div class="alertas" id="alertas-content"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title" id="entregues-title">Chamados Entregues</div>
+      <div id="entregues-content"></div>
+    </div>
+
+  </div><!-- /tab-visao-geral -->
+
+  <!-- ══ TAB: APONTAMENTOS ══ -->
+  <div id="tab-apontamentos" class="tab-content">
+
+    <div class="sub-tabs-bar">
+      <div class="sub-tabs">
+        <button class="sub-tab active" data-subtab="diario">📅 Diária</button>
+        <button class="sub-tab" data-subtab="semanal">📆 Semanal</button>
+        <button class="sub-tab" data-subtab="mensal">🗓️ Mensal</button>
+      </div>
+    </div>
+
+    <div id="subtab-diario"  class="sub-tab-content active"></div>
+    <div id="subtab-semanal" class="sub-tab-content"></div>
+    <div id="subtab-mensal"  class="sub-tab-content"></div>
+
+  </div><!-- /tab-apontamentos -->
+
+
+</div><!-- /container -->
+
+<script>
+const DATA = window.RELATORIO_DATA;
+
+/* ── Helpers ── */
+function fmt(secs) {
+  if (!secs) return '0h00m';
+  const sign = secs < 0 ? '-' : '';
+  secs = Math.abs(secs);
+  return sign + Math.floor(secs / 3600) + 'h' + String(Math.floor((secs % 3600) / 60)).padStart(2, '0') + 'm';
+}
+
+function pct(actual, expected) {
+  if (!expected) return 0;
+  return Math.min(Math.round((actual / expected) * 100), 200);
+}
+
+function aptRowClass(s) {
+  return { OK: 's-ok', ESTOURO: 's-estouro', ALERTA: 's-alerta', SEM_REGISTRO: 's-sem' }[s] || '';
+}
+
+function aptBadge(s) {
+  const map = {
+    OK:           ['badge-ok',      '✅ OK'],
+    ESTOURO:      ['badge-estouro', '⚠️ Estouro'],
+    ALERTA:       ['badge-alerta',  '🚨 Alerta'],
+    SEM_REGISTRO: ['badge-sem',     '🔴 Sem reg.'],
+  };
+  const [cls, label] = map[s] || ['badge-sem', s || '—'];
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+
+function pctFillClass(s) {
+  return { OK: 'ok-fill', ESTOURO: 'ex-fill', ALERTA: 'al-fill', SEM_REGISTRO: 'sem-fill' }[s] || 'sem-fill';
+}
+
+/* ── Carga especial ── */
+const CARGAS_ESPECIAIS = {
+  'diogo.paiano':                 '4h/dia (Seg-Qui)',
+  'gabriel.boaventura':           '6h/dia (Seg-Qui)',
+  'joao.santos':                  '6h/dia',
+  'kamila.silva@betha.com.br':    '4h/dia (Seg-Qui)',
+};
+
+function cargaTag(username) {
+  const tag = CARGAS_ESPECIAIS[username];
+  return tag ? `<span class="carga-tag">${tag}</span>` : '';
+}
+
+/* ── renderFila ── */
+function renderFila(id, nome, fila) {
+  if (!fila) return;
+  const el = document.getElementById(id);
+  const sorted = Object.entries(fila.por_status || {}).sort((a, b) => b[1] - a[1]);
+  const maxVal = sorted[0]?.[1] || 1;
+  el.innerHTML = `
+    <div class="fila-header">
+      <span class="fila-name">${nome}</span>
+      <span class="fila-total">${fila.total}</span>
+    </div>
+    <div class="fila-rows">
+      ${sorted.map(([s, n]) => `
+        <div class="fila-row">
+          <span class="fila-row-label" title="${s}">${s}</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${(n/maxVal*100).toFixed(0)}%"></div></div>
+          <span class="fila-row-count">${n}</span>
+        </div>`).join('')}
+    </div>`;
+}
+
+/* ── renderApontamentosTab ── */
+function renderAptView(containerId, apontamentos, periodLabel, rangeLabel) {
+  const el = document.getElementById(containerId);
+  if (!apontamentos || apontamentos.length === 0) {
+    el.innerHTML = '<p style="color:#a0aec0;padding:2rem;text-align:center">Sem dados de apontamentos.</p>';
+    return;
+  }
+
+  // Contagens por status
+  const counts = { OK: 0, ESTOURO: 0, ALERTA: 0, SEM_REGISTRO: 0 };
+  apontamentos.forEach(a => counts[a.status] = (counts[a.status] || 0) + 1);
+
+  // Totais
+  const totalApontado = apontamentos.reduce((s, a) => s + a.total_segundos, 0);
+  const totalEsperado = apontamentos.reduce((s, a) => s + a.esperado_segundos, 0);
+  const totalDiff = totalApontado - totalEsperado;
+
+  // Ordenação: ALERTA → SEM_REGISTRO → ESTOURO → OK
+  const ordem = { ALERTA: 0, SEM_REGISTRO: 1, ESTOURO: 2, OK: 3 };
+  const sorted = [...apontamentos].sort((a, b) => (ordem[a.status] ?? 4) - (ordem[b.status] ?? 4) || b.total_segundos - a.total_segundos);
+
+  el.innerHTML = `
+    <!-- Period info -->
+    <div class="period-info">
+      <span class="pi-label">Período</span>
+      <span class="pi-value">${periodLabel}</span>
+      <span class="pi-sep">|</span>
+      <span class="pi-label">Referência</span>
+      <span class="pi-value">${rangeLabel}</span>
+      <span class="pi-sep">|</span>
+      <span class="pi-label">Margem de alerta</span>
+      <span class="pi-value">10%</span>
+    </div>
+
+    <!-- Mini summary -->
+    <div class="apt-summary">
+      <div class="apt-card">
+        <div class="apt-card-label">✅ OK</div>
+        <div class="apt-card-value ok-color">${counts.OK}</div>
+      </div>
+      <div class="apt-card">
+        <div class="apt-card-label">🚨 Alerta</div>
+        <div class="apt-card-value al-color">${counts.ALERTA}</div>
+      </div>
+      <div class="apt-card">
+        <div class="apt-card-label">⚠️ Estouro</div>
+        <div class="apt-card-value ex-color">${counts.ESTOURO}</div>
+      </div>
+      <div class="apt-card">
+        <div class="apt-card-label">🔴 Sem Reg.</div>
+        <div class="apt-card-value sem-color">${counts.SEM_REGISTRO}</div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="apt-table-wrap">
+      <table class="apt-table">
+        <thead><tr>
+          <th>Colaborador</th>
+          <th>Origem</th>
+          <th class="right">Esperado</th>
+          <th class="right">Apontado</th>
+          <th>Progresso</th>
+          <th class="right">Diferença</th>
+          <th>Status</th>
+        </tr></thead>
+        <tbody>
+          ${sorted.map(a => {
+            const diff = a.total_segundos - a.esperado_segundos;
+            const p = pct(a.total_segundos, a.esperado_segundos);
+            return `<tr class="${aptRowClass(a.status)}">
+              <td>${a.nome}${cargaTag(a.username || '')}</td>
+              <td><span class="origem-tag">${a.origem}</span></td>
+              <td class="right"><span class="horas">${fmt(a.esperado_segundos)}</span></td>
+              <td class="right"><span class="horas">${fmt(a.total_segundos)}</span></td>
+              <td>
+                <div class="pct-bar">
+                  <div class="pct-track"><div class="pct-fill ${pctFillClass(a.status)}" style="width:${Math.min(p,100)}%"></div></div>
+                  <span class="pct-label">${p}%</span>
+                </div>
+              </td>
+              <td class="right" style="color:${diff >= 0 ? '#38a169' : '#e53e3e'}">
+                <span class="horas">${diff >= 0 ? '+' : ''}${fmt(diff)}</span>
+              </td>
+              <td>${aptBadge(a.status)}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+        <tfoot>
+          <tr class="totals-row">
+            <td colspan="2">TOTAL</td>
+            <td class="right"><span class="horas">${fmt(totalEsperado)}</span></td>
+            <td class="right"><span class="horas">${fmt(totalApontado)}</span></td>
+            <td><div class="pct-bar">
+              <div class="pct-track"><div class="pct-fill ${pct(totalApontado, totalEsperado) >= 90 ? 'ok-fill' : 'al-fill'}" style="width:${Math.min(pct(totalApontado, totalEsperado),100)}%"></div></div>
+              <span class="pct-label">${pct(totalApontado, totalEsperado)}%</span>
+            </div></td>
+            <td class="right" style="color:${totalDiff >= 0 ? '#38a169' : '#e53e3e'}">
+              <span class="horas">${totalDiff >= 0 ? '+' : ''}${fmt(totalDiff)}</span>
+            </td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  `;
+}
+
+/* ── Main render ── */
+function render() {
+  if (!DATA) {
+    document.getElementById('no-data-state').style.display = 'block';
+    document.getElementById('tab-visao-geral').style.display = 'none';
+    document.getElementById('tab-apontamentos').style.display = 'none';
+    document.querySelector('.main-nav').style.display = 'none';
+    return;
+  }
+
+  /* Header */
+  const geradoEm = new Date(DATA.gerado_em);
+  if ((new Date() - geradoEm) / (1000 * 60 * 60 * 24) > 1.5)
+    document.getElementById('stale-badge').style.display = 'inline-block';
+  document.getElementById('header-meta').innerHTML =
+    `Referência: <strong>${DATA.data_referencia}</strong> &nbsp;|&nbsp; Gerado: ${geradoEm.toLocaleString('pt-BR')}`;
+
+  /* Cards */
+  const fi = DATA.filas.incidentes_desenv;
+  const aguardando = fi?.por_status?.['Aguardando análise'] || 0;
+  document.getElementById('sum-incidentes').textContent = fi?.total ?? '—';
+  document.getElementById('sum-incidentes-sub').textContent = aguardando ? `${aguardando} aguardando análise` : '';
+  document.getElementById('sum-n2').textContent = DATA.filas.suporte_n2?.total ?? '—';
+  document.getElementById('sum-melhorias').textContent = DATA.filas.melhorias_mercado?.total ?? '—';
+  document.getElementById('sum-legal').textContent = DATA.filas.exigencia_legal?.total ?? '—';
+  document.getElementById('sum-entregues').textContent = DATA.entregues?.total ?? '—';
+  document.getElementById('sum-entregues-sub').textContent = DATA.data_referencia || '';
+
+  /* Filas */
+  renderFila('fila-incidentes', 'Incidentes Desenvolvimento', DATA.filas.incidentes_desenv);
+  renderFila('fila-n2', 'Suporte N2 Aguardando', DATA.filas.suporte_n2);
+  renderFila('fila-melhorias', 'Melhorias de Mercado', DATA.filas.melhorias_mercado);
+  renderFila('fila-legal', 'Exigência Legal', DATA.filas.exigencia_legal);
+
+  /* Alertas automáticos */
+  const alertas = [];
+  if (fi) {
+    const p = Math.round((aguardando / fi.total) * 100);
+    if (p >= 70) alertas.push({ tipo: 'error', txt: `🔴 ${p}% dos incidentes (${aguardando}/${fi.total}) em "Aguardando análise" — gargalo crítico de triagem.` });
+    else if (p >= 50) alertas.push({ tipo: 'warn', txt: `⚠️ ${p}% dos incidentes aguardando análise (${aguardando}/${fi.total}).` });
+  }
+  const apts = DATA.apontamentos_diario || [];
+  const semReg = apts.filter(a => a.status === 'SEM_REGISTRO');
+  const alerta  = apts.filter(a => a.status === 'ALERTA');
+  if (semReg.length) alertas.push({ tipo: 'warn', txt: `⚠️ ${semReg.length} colaborador(es) sem apontamento ontem.` });
+  if (alerta.length) alertas.push({ tipo: 'warn', txt: `🚨 ${alerta.length} colaborador(es) com horas abaixo do esperado ontem.` });
+  if (!alertas.length) alertas.push({ tipo: 'info', txt: '✅ Nenhum alerta crítico no momento.' });
+  document.getElementById('alertas-content').innerHTML = alertas.map(a =>
+    `<div class="alerta ${a.tipo}">${a.txt}</div>`).join('');
+
+  /* Chamados entregues */
+  document.getElementById('entregues-title').textContent =
+    `Chamados Entregues — ${DATA.data_referencia} (${DATA.entregues?.total ?? 0})`;
+  const issues = DATA.entregues?.issues || [];
+  document.getElementById('entregues-content').innerHTML = issues.length === 0
+    ? '<p style="color:#a0aec0;text-align:center;padding:1.5rem;font-size:0.85rem">Nenhum chamado entregue no período</p>'
+    : `<table class="issues-table">
+        <thead><tr><th>ID</th><th>Título</th><th>Projeto</th><th>Status</th><th>Responsável</th></tr></thead>
+        <tbody>${issues.map(i => `
+          <tr>
+            <td><span class="issue-key">${i.key}</span></td>
+            <td style="color:#4a5568">${i.summary}</td>
+            <td>${i.project}</td>
+            <td><span class="badge ${i.status === 'Atendida' ? 'badge-atendida' : 'badge-natoatendida'}">${i.status}</span></td>
+            <td style="font-size:0.8rem;color:#4a5568">${i.assignee}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>`;
+
+  /* ── Apontamentos views ── */
+  const mesObj  = DATA.mes  || {};
+  const semObj  = DATA.semana || {};
+
+  renderAptView(
+    'subtab-diario',
+    DATA.apontamentos_diario,
+    'Diária — último dia útil',
+    DATA.data_referencia
+  );
+  renderAptView(
+    'subtab-semanal',
+    DATA.apontamentos_semanal,
+    'Semanal — semana atual (Seg–Sex)',
+    semObj.inicio && semObj.fim ? `${semObj.inicio} a ${semObj.fim}` : '—'
+  );
+  renderAptView(
+    'subtab-mensal',
+    DATA.apontamentos_mensal,
+    'Mensal — competência atual',
+    mesObj.inicio && mesObj.fim ? `${mesObj.inicio} a ${mesObj.fim}` : '—'
+  );
+}
+
+/* ── Tab switching ── */
+document.querySelectorAll('.main-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    const el = document.getElementById('tab-' + tab.dataset.tab);
+    if (el) el.classList.add('active');
+  });
+});
+
+document.querySelectorAll('.sub-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const wrapper = tab.closest('.sub-tabs');
+    wrapper.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const container = tab.closest('.tab-content');
+    container.querySelectorAll('.sub-tab-content').forEach(c => c.classList.remove('active'));
+    const target = document.getElementById('subtab-' + tab.dataset.subtab);
+    if (target) target.classList.add('active');
+  });
+});
+
+render();
+</script>
+</body>
+</html>

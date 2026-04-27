@@ -1,0 +1,42 @@
+[
+  {
+    "key": "SAUD-8317",
+    "summary": "Permitir configurar se o exame usa interfaceamento com equipamentos"
+  },
+  {
+    "key": "SAUD-7995",
+    "summary": "Possuir parâmetro que permita definir o resultado do exame como assinado quando este for recebido através de interfaceamento com equipamentos"
+  },
+  {
+    "key": "SAUD-8351",
+    "summary": "Possuir camada de controle e comunicação entre os equipamentos do laboratório e o sistema, permitindo a obtenção automática dos resultados de exames advindos de equipamentos"
+  },
+  {
+    "key": "SAUD-26192",
+    "summary": "LABORATÓRIO - Fila de atendimento do laboratório"
+  },
+  {
+    "key": "SAUD-26198",
+    "summary": "LABORATÓRIO - Registrando resultado"
+  },
+  {
+    "key": "SAUD-26196",
+    "summary": "LABORATÓRIO - Registrar coleta"
+  },
+  {
+    "key": "SAUD-26194",
+    "summary": "LABORATÓRIO - Realizar coleta"
+  },
+  {
+    "key": "SAUD-7987",
+    "summary": "Possuir módulo de comunicação e controle para exame que usa interfaceamento"
+  },
+  {
+    "key": "SAUD-26189",
+    "summary": "LABORATÓRIO - Filtros da fila de atendimento do laboratório"
+  },
+  {
+    "key": "SAUD-26197",
+    "summary": "LABORATÓRIO - Assinatura digital do profissional"
+  }
+]
