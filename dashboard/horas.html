@@ -252,7 +252,7 @@ const HOLIDAYS = new Set([
 // ── Auth ──────────────────────────────────────────────────────────────
 function checkAuth() {
   const email = sessionStorage.getItem('gestao_email');
-  if (email?.toLowerCase().endsWith('@betha.com.br')) {
+  if (email?.toLowerCase() === 'maite.passos@betha.com.br') {
     document.getElementById('login-overlay').classList.add('hidden');
     document.getElementById('user-pill').textContent = '👤 ' + email.split('@')[0];
     return true;
@@ -268,7 +268,7 @@ function doLogin() {
   errEl.textContent = '';
   inpEl.classList.remove('error');
   if (!email) { errEl.textContent = 'Informe o e-mail.'; inpEl.classList.add('error'); return; }
-  if (!email.endsWith('@betha.com.br')) { errEl.textContent = 'Apenas e-mails @betha.com.br são permitidos.'; inpEl.classList.add('error'); return; }
+  if (email !== 'maite.passos@betha.com.br') { errEl.textContent = 'Acesso não autorizado para este e-mail.'; inpEl.classList.add('error'); return; }
   sessionStorage.setItem('gestao_email', email);
   document.getElementById('login-overlay').classList.add('hidden');
   document.getElementById('user-pill').textContent = '👤 ' + email.split('@')[0];
