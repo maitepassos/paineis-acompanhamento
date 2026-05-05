@@ -66,7 +66,7 @@
     .period-tab.active { color: white; border-bottom-color: #63b3ed; }
 
     /* Layout */
-    .container { max-width: 860px; margin: 0 auto; padding: 1.25rem 1.5rem; }
+    .container { max-width: 100%; margin: 0 auto; padding: 1.25rem 1.5rem; }
     .period-content { display: none; }
     .period-content.active { display: block; }
 
@@ -117,11 +117,38 @@
     .badge-alert { background: #fed7d7; color: #742a2a; }
     .badge-empty { background: #e2e8f0; color: #4a5568; }
 
-    /* Weekly/Monthly breakdown rows */
-    .sub-row td { padding: 0.5rem 1rem; background: #f7fafc; border-bottom: 1px solid #edf2f7; }
-    .sub-row:last-child td { border-bottom: none; }
-    .sub-day { font-size: 0.78rem; color: #718096; padding-left: 2.2rem; }
-    .sub-num  { text-align: right; font-size: 0.82rem; font-family: "SF Mono","Consolas",monospace; color: #4a5568; }
+    /* Scrollable table wrapper */
+    .table-scroll { overflow-x: auto; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.07); }
+    .table-scroll .hours-table { border-radius: 0; box-shadow: none; }
+
+    /* Day columns */
+    .th-day {
+      text-align: center; padding: 0.35rem 0.5rem;
+      font-size: 0.63rem; font-weight: 700; color: #718096;
+      text-transform: uppercase; letter-spacing: 0.04em;
+      border-bottom: 2px solid #e2e8f0; white-space: nowrap;
+      min-width: 52px;
+    }
+    .th-day.today-col { color: #2b6cb0; background: #ebf8ff; }
+    .td-day {
+      text-align: right; padding: 0.4rem 0.5rem;
+      font-size: 0.8rem; font-family: "SF Mono","Consolas",monospace;
+      color: #2d3748; border-bottom: 1px solid #edf2f7; white-space: nowrap;
+    }
+    .td-day.today-col { background: #f0f9ff; }
+    .td-day.zero  { color: #e2e8f0; }
+    .td-day.off   { text-align: center; color: #e2e8f0; font-size: 0.7rem; }
+    .col-total {
+      text-align: right; padding: 0.4rem 0.7rem;
+      font-size: 0.9rem; font-weight: 700; font-family: "SF Mono","Consolas",monospace;
+      color: #2d3748; border-bottom: 1px solid #edf2f7; border-left: 2px solid #e2e8f0;
+    }
+    .th-total {
+      text-align: right; padding: 0.35rem 0.7rem;
+      font-size: 0.68rem; font-weight: 700; color: #718096;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      border-bottom: 2px solid #e2e8f0; border-left: 2px solid #e2e8f0; white-space: nowrap;
+    }
 
     /* Loading */
     .loading { display: flex; align-items: center; justify-content: center; gap: 0.75rem; padding: 4rem; color: #718096; }
@@ -179,22 +206,12 @@
     <div class="period-content" id="pane-weekly">
       <div class="period-label" id="lbl-weekly"></div>
       <div class="summary-row"  id="sum-weekly"></div>
-      <table class="hours-table"><thead><tr>
-        <th>Colaborador</th>
-        <th class="right">Total Apontado</th>
-        <th class="right">Hora Esperada</th>
-        <th>Alerta</th>
-      </tr></thead><tbody id="tbody-weekly"></tbody></table>
+      <div class="table-scroll" id="table-weekly"></div>
     </div>
     <div class="period-content" id="pane-monthly">
       <div class="period-label" id="lbl-monthly"></div>
       <div class="summary-row"  id="sum-monthly"></div>
-      <table class="hours-table"><thead><tr>
-        <th>Colaborador</th>
-        <th class="right">Total Apontado</th>
-        <th class="right">Hora Esperada</th>
-        <th>Alerta</th>
-      </tr></thead><tbody id="tbody-monthly"></tbody></table>
+      <div class="table-scroll" id="table-monthly"></div>
     </div>
   </div>
 </div>
@@ -338,40 +355,110 @@ function renderSummary(elId, totalWorked, totalExpected) {
     </div>`;
 }
 
-function renderPeriod(period, from, to, label, worklogs) {
+function teamGroupRow(colspan, label) {
+  return `<tr><td colspan="${colspan}" style="padding:0.4rem 0.9rem 0.25rem;background:#f0f4f8;font-size:0.67rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#718096;border-bottom:1px solid #e2e8f0">${label}</td></tr>`;
+}
+
+// ── Daily: single-column summary table ───────────────────────────────
+function renderDaily(from, to, label, worklogs) {
   const dates = dateRange(from, to);
   const workdays = dates.filter(isWorkday).length;
-  document.getElementById(`lbl-${period}`).textContent =
+  document.getElementById('lbl-daily').textContent =
     label + ` · ${fmtDate(from)}${from!==to?' – '+fmtDate(to):''} · ${workdays} dia${workdays!==1?'s':''} útil${workdays!==1?'eis':''}`;
 
-  let totalWorked=0, totalExpected=0;
-  let bodyHtml = '';
-
+  let totalWorked=0, totalExpected=0, bodyHtml='';
   for (const team of TEAMS) {
-    bodyHtml += `<tr><td colspan="4" style="padding:0.4rem 0.9rem 0.25rem;background:#f0f4f8;font-size:0.67rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#718096;border-bottom:1px solid #e2e8f0">${team.label}</td></tr>`;
+    bodyHtml += teamGroupRow(4, team.label);
     for (const u of team.users) {
       const logs = worklogs[u.handle] || {};
-      const workedSec = dates.reduce((s,d) => s+(logs[d]||0), 0);
-      const workedH   = secToH(workedSec);
+      const workedH   = secToH(dates.reduce((s,d) => s+(logs[d]||0), 0));
       const expDays   = countExpectedDays(dates, u.schedule);
       const expectedH = expDays * u.dailyHours;
-      totalWorked   += workedH;
-      totalExpected += expectedH;
-      bodyHtml += `
-    <tr>
-      <td>
-        <div class="col-name">${u.name}</div>
-        <div class="col-handle">${u.handle}</div>
-      </td>
-      <td class="col-num">${fmtH(workedH)}</td>
-      <td class="col-exp">${fmtH(expectedH)}</td>
-      <td>${badge(workedH, expectedH)}</td>
-    </tr>`;
+      totalWorked += workedH; totalExpected += expectedH;
+      bodyHtml += `<tr>
+        <td><div class="col-name">${u.name}</div><div class="col-handle">${u.handle}</div></td>
+        <td class="col-num">${fmtH(workedH)}</td>
+        <td class="col-exp">${fmtH(expectedH)}</td>
+        <td>${badge(workedH, expectedH)}</td>
+      </tr>`;
+    }
+  }
+  renderSummary('sum-daily', totalWorked, totalExpected);
+  document.getElementById('tbody-daily').innerHTML = bodyHtml;
+}
+
+// ── Weekly / Monthly: one column per workday ─────────────────────────
+function renderWithDays(period, from, to, label, worklogs) {
+  const todayStr = today();
+  const allDates  = dateRange(from, to);
+  const wdays     = allDates.filter(isWorkday);   // workdays only, no weekends/holidays
+  const nCols     = wdays.length;
+  const totalCols = 1 + nCols + 3;               // name + days + Total + Esperado + Alerta
+
+  document.getElementById(`lbl-${period}`).textContent =
+    label + ` · ${fmtDate(from)} – ${fmtDate(to)} · ${nCols} dia${nCols!==1?'s':''} útil${nCols!==1?'eis':''}`;
+
+  // ── Header ──
+  const dayHeaders = wdays.map(d => {
+    const dt  = new Date(d+'T12:00:00');
+    const wd  = dt.toLocaleDateString('pt-BR',{weekday:'short'}).replace('.','');
+    const dm  = dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+    const cls = d === todayStr ? ' today-col' : '';
+    return `<th class="th-day${cls}">${wd}<br>${dm}</th>`;
+  }).join('');
+
+  // ── Rows ──
+  let totalWorked=0, totalExpected=0, bodyHtml='';
+  for (const team of TEAMS) {
+    bodyHtml += teamGroupRow(totalCols, team.label);
+    for (const u of team.users) {
+      const logs = worklogs[u.handle] || {};
+      let userTotal = 0;
+
+      const dayCells = wdays.map(d => {
+        if (u.schedule === 'monThu' && isFriday(d)) {
+          return `<td class="td-day off${d===todayStr?' today-col':''}">—</td>`;
+        }
+        const h = secToH(logs[d] || 0);
+        userTotal += h;
+        const cls = h === 0 ? ' zero' : '';
+        return `<td class="td-day${cls}${d===todayStr?' today-col':''}">${h > 0 ? fmtH(h) : ''}</td>`;
+      }).join('');
+
+      const expDays   = countExpectedDays(wdays, u.schedule);
+      const expectedH = expDays * u.dailyHours;
+      totalWorked += userTotal; totalExpected += expectedH;
+
+      bodyHtml += `<tr>
+        <td style="padding:0.4rem 0.9rem;border-bottom:1px solid #edf2f7;white-space:nowrap">
+          <div class="col-name">${u.name}</div>
+          <div class="col-handle">${u.handle}</div>
+        </td>
+        ${dayCells}
+        <td class="col-total">${fmtH(userTotal)}</td>
+        <td class="col-exp" style="padding:0.4rem 0.7rem;border-bottom:1px solid #edf2f7;white-space:nowrap">${fmtH(expectedH)}</td>
+        <td style="padding:0.4rem 0.7rem;border-bottom:1px solid #edf2f7;white-space:nowrap">${badge(userTotal, expectedH)}</td>
+      </tr>`;
     }
   }
 
   renderSummary(`sum-${period}`, totalWorked, totalExpected);
-  document.getElementById(`tbody-${period}`).innerHTML = bodyHtml;
+  document.getElementById(`table-${period}`).innerHTML = `
+    <table class="hours-table" style="width:100%">
+      <thead><tr>
+        <th style="padding:0.35rem 0.9rem;font-size:0.68rem;font-weight:700;color:#718096;text-transform:uppercase;letter-spacing:0.05em;border-bottom:2px solid #e2e8f0;white-space:nowrap">Colaborador</th>
+        ${dayHeaders}
+        <th class="th-total">Total</th>
+        <th class="th-total">Esperado</th>
+        <th class="th-total" style="border-left:none">Alerta</th>
+      </tr></thead>
+      <tbody>${bodyHtml}</tbody>
+    </table>`;
+}
+
+function renderPeriod(period, from, to, label, worklogs) {
+  if (period === 'daily') renderDaily(from, to, label, worklogs);
+  else renderWithDays(period, from, to, label, worklogs);
 }
 
 async function loadData() {
