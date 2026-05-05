@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "painel-horas",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "dashboard", "-p", "3001", "--no-clipboard"],
+      "startupUrl": "http://localhost:3001/horas.html",
+      "port": 3001
+    }
+  ]
+}

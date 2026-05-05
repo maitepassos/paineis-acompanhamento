@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apontamento de Horas — Gestão</title>
+  <script src="hours-data.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #f0f4f8; color: #1a202c; min-height: 100vh; }
+
+    /* Login */
+    #login-overlay {
+      position: fixed; inset: 0; z-index: 100;
+      background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%);
+      display: flex; align-items: center; justify-content: center;
+    }
+    #login-overlay.hidden { display: none; }
+    .login-box {
+      background: white; border-radius: 14px; padding: 2.5rem 2rem;
+      width: 100%; max-width: 360px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); text-align: center;
+    }
+    .login-box h2 { font-size: 1.25rem; font-weight: 700; color: #1a365d; margin-bottom: 0.25rem; }
+    .login-box p { font-size: 0.83rem; color: #718096; margin-bottom: 1.6rem; }
+    .login-box input {
+      width: 100%; padding: 0.7rem 1rem; border: 2px solid #e2e8f0; border-radius: 8px;
+      font-size: 0.93rem; outline: none; transition: border-color 0.15s; margin-bottom: 0.6rem;
+    }
+    .login-box input:focus { border-color: #3182ce; }
+    .login-box input.error { border-color: #e53e3e; }
+    .login-error { color: #e53e3e; font-size: 0.78rem; margin-bottom: 0.6rem; min-height: 1rem; }
+    .login-btn {
+      width: 100%; padding: 0.75rem; background: #2b6cb0; color: white; border: none;
+      border-radius: 8px; font-size: 0.93rem; font-weight: 600; cursor: pointer; transition: background 0.15s;
+    }
+    .login-btn:hover { background: #1a365d; }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%);
+      color: white; padding: 0.85rem 1.5rem;
+      display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;
+    }
+    header h1 { font-size: 1.1rem; font-weight: 700; }
+    header p  { font-size: 0.75rem; opacity: 0.72; margin-top: 0.1rem; }
+    .hdr-right { display: flex; align-items: center; gap: 0.75rem; font-size: 0.78rem; }
+    .hdr-right span { opacity: 0.75; }
+    .hdr-btn {
+      background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.3);
+      color: white; padding: 0.28rem 0.8rem; border-radius: 5px; font-size: 0.76rem;
+      font-weight: 600; cursor: pointer; transition: background 0.15s;
+    }
+    .hdr-btn:hover { background: rgba(255,255,255,0.28); }
+
+    /* Period tabs */
+    .period-bar {
+      background: #1a365d; border-top: 1px solid rgba(255,255,255,0.1);
+      display: flex; padding: 0 1.5rem;
+    }
+    .period-tab {
+      color: rgba(255,255,255,0.55); background: none; border: none;
+      border-bottom: 3px solid transparent; padding: 0.6rem 1.2rem;
+      font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: color 0.15s, border-color 0.15s;
+    }
+    .period-tab:hover { color: white; }
+    .period-tab.active { color: white; border-bottom-color: #63b3ed; }
+
+    /* Layout */
+    .container { max-width: 860px; margin: 0 auto; padding: 1.25rem 1.5rem; }
+    .period-content { display: none; }
+    .period-content.active { display: block; }
+
+    /* Period label */
+    .period-label {
+      font-size: 0.72rem; color: #718096; text-transform: uppercase;
+      letter-spacing: 0.06em; font-weight: 600; margin-bottom: 0.9rem;
+    }
+
+    /* Summary row */
+    .summary-row { display: flex; gap: 1rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+    .sum-card {
+      background: white; border-radius: 8px; padding: 0.8rem 1.1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.07); border-left: 4px solid #cbd5e0; flex: 1; min-width: 130px;
+    }
+    .sum-card.blue   { border-color: #63b3ed; }
+    .sum-card.green  { border-color: #68d391; }
+    .sum-card.orange { border-color: #f6ad55; }
+    .sum-card.red    { border-color: #fc8181; }
+    .sum-label { font-size: 0.67rem; color: #718096; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+    .sum-value { font-size: 1.5rem; font-weight: 800; color: #2d3748; margin-top: 0.15rem; line-height: 1; }
+    .sum-sub   { font-size: 0.7rem; color: #a0aec0; margin-top: 0.2rem; }
+
+    /* Table */
+    .hours-table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.07); }
+    .hours-table thead tr { background: #f7fafc; }
+    .hours-table th {
+      text-align: left; padding: 0.45rem 0.9rem;
+      font-size: 0.68rem; font-weight: 700; color: #718096;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      border-bottom: 2px solid #e2e8f0;
+    }
+    .hours-table th.right { text-align: right; }
+    .hours-table td { padding: 0.45rem 0.9rem; border-bottom: 1px solid #edf2f7; vertical-align: middle; }
+    .hours-table tr:last-child td { border-bottom: none; }
+    .hours-table tr:hover td { background: #f7fafc; }
+
+    /* Columns */
+    .col-name   { font-weight: 600; font-size: 0.85rem; color: #2d3748; }
+    .col-handle { font-size: 0.7rem; color: #a0aec0; }
+    .col-num    { text-align: right; font-size: 1rem; font-weight: 700; font-family: "SF Mono","Consolas",monospace; color: #2d3748; }
+    .col-exp    { text-align: right; font-size: 0.88rem; color: #718096; }
+
+    /* Alert badge */
+    .badge { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.25rem 0.65rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; }
+    .badge-ok    { background: #c6f6d5; color: #22543d; }
+    .badge-warn  { background: #feebc8; color: #7b341e; }
+    .badge-alert { background: #fed7d7; color: #742a2a; }
+    .badge-empty { background: #e2e8f0; color: #4a5568; }
+
+    /* Weekly/Monthly breakdown rows */
+    .sub-row td { padding: 0.5rem 1rem; background: #f7fafc; border-bottom: 1px solid #edf2f7; }
+    .sub-row:last-child td { border-bottom: none; }
+    .sub-day { font-size: 0.78rem; color: #718096; padding-left: 2.2rem; }
+    .sub-num  { text-align: right; font-size: 0.82rem; font-family: "SF Mono","Consolas",monospace; color: #4a5568; }
+
+    /* Loading */
+    .loading { display: flex; align-items: center; justify-content: center; gap: 0.75rem; padding: 4rem; color: #718096; }
+    .spinner { width: 24px; height: 24px; border: 3px solid #e2e8f0; border-top-color: #3182ce; border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+<!-- Login -->
+<div id="login-overlay">
+  <div class="login-box">
+    <h2>⏱ Painel de Horas</h2>
+    <p>Acesso restrito a colaboradores Betha.<br>Informe seu e-mail corporativo.</p>
+    <input type="email" id="login-email" placeholder="seu@betha.com.br" autocomplete="email">
+    <div class="login-error" id="login-error"></div>
+    <button class="login-btn" id="login-btn">Acessar</button>
+  </div>
+</div>
+
+<!-- Header -->
+<header>
+  <div>
+    <h1>⏱ Apontamento de Horas — Betha</h1>
+    <p id="header-date"></p>
+  </div>
+  <div class="hdr-right">
+    <span id="last-update-label"></span>
+    <button class="hdr-btn" onclick="loadData()">↺ Atualizar</button>
+    <span id="user-pill"></span>
+    <button class="hdr-btn" onclick="logout()">Sair</button>
+  </div>
+</header>
+
+<!-- Tabs -->
+<nav class="period-bar">
+  <button class="period-tab active" data-period="daily"   onclick="switchPeriod('daily')">Hoje</button>
+  <button class="period-tab"        data-period="weekly"  onclick="switchPeriod('weekly')">Esta Semana</button>
+  <button class="period-tab"        data-period="monthly" onclick="switchPeriod('monthly')">Este Mês</button>
+</nav>
+
+<div class="container">
+  <div id="loading-state" class="loading"><div class="spinner"></div> Carregando dados do Jira...</div>
+  <div id="main-content" style="display:none">
+    <div class="period-content active" id="pane-daily">
+      <div class="period-label" id="lbl-daily"></div>
+      <div class="summary-row"  id="sum-daily"></div>
+      <table class="hours-table"><thead><tr>
+        <th>Colaborador</th>
+        <th class="right">Total Apontado</th>
+        <th class="right">Hora Esperada</th>
+        <th>Alerta</th>
+      </tr></thead><tbody id="tbody-daily"></tbody></table>
+    </div>
+    <div class="period-content" id="pane-weekly">
+      <div class="period-label" id="lbl-weekly"></div>
+      <div class="summary-row"  id="sum-weekly"></div>
+      <table class="hours-table"><thead><tr>
+        <th>Colaborador</th>
+        <th class="right">Total Apontado</th>
+        <th class="right">Hora Esperada</th>
+        <th>Alerta</th>
+      </tr></thead><tbody id="tbody-weekly"></tbody></table>
+    </div>
+    <div class="period-content" id="pane-monthly">
+      <div class="period-label" id="lbl-monthly"></div>
+      <div class="summary-row"  id="sum-monthly"></div>
+      <table class="hours-table"><thead><tr>
+        <th>Colaborador</th>
+        <th class="right">Total Apontado</th>
+        <th class="right">Hora Esperada</th>
+        <th>Alerta</th>
+      </tr></thead><tbody id="tbody-monthly"></tbody></table>
+    </div>
+  </div>
+</div>
+
+<script>
+const TEAMS = [
+  { label: 'Atendimento', users: [
+    { name: 'Alana Pinheiro',  handle: 'alana.silva@betha.com.br',    dailyHours: 8, schedule: 'all' },
+    { name: 'Juliana França',  handle: 'juliana.franca@betha.com.br', dailyHours: 8, schedule: 'all' },
+    { name: 'Kamila de Souza', handle: 'kamila.silva@betha.com.br',   dailyHours: 4, schedule: 'monThu' },
+  ]},
+  { label: 'Desenv', users: [
+    { name: 'Andrew Jorge',       handle: 'andrew.jorge',       dailyHours: 8, schedule: 'all' },
+    { name: 'Arthur Coelho',      handle: 'arthur.coelho',      dailyHours: 8, schedule: 'all' },
+    { name: 'Bruno Lima',         handle: 'bruno.lima',         dailyHours: 8, schedule: 'all' },
+    { name: 'Diogo Paiano',       handle: 'diogo.paiano',       dailyHours: 4, schedule: 'monThu' },
+    { name: 'Gabriel Boaventura', handle: 'gabriel.boaventura', dailyHours: 6, schedule: 'monThu' },
+    { name: 'Gustavo Bett',       handle: 'gustavo.bett',       dailyHours: 8, schedule: 'all' },
+    { name: 'Ivo Oliani',         handle: 'ivo.oliani',         dailyHours: 8, schedule: 'all' },
+    { name: 'Jhon Steiner',       handle: 'jhon.steiner',       dailyHours: 8, schedule: 'all' },
+    { name: 'João Marcos Santos', handle: 'joao.santos',        dailyHours: 6, schedule: 'all' },
+    { name: 'João Miguel Rita',   handle: 'joao.rita',          dailyHours: 8, schedule: 'all' },
+    { name: 'Max Fertig',         handle: 'max.fertig',         dailyHours: 8, schedule: 'all' },
+    { name: 'Rai Martins',        handle: 'rai.martins',        dailyHours: 8, schedule: 'all' },
+    { name: 'Sandro Filho',       handle: 'sandro.filho',       dailyHours: 8, schedule: 'all' },
+    { name: 'Tiago Waide',        handle: 'tiago.waide',        dailyHours: 8, schedule: 'all' },
+  ]},
+];
+const ALL_USERS = TEAMS.flatMap(t => t.users);
+const ALERT_MARGIN = 0.10;
+const HOLIDAYS = new Set([
+  '2025-01-01','2025-03-03','2025-03-04','2025-04-18','2025-04-21','2025-05-01',
+  '2025-06-19','2025-09-07','2025-10-12','2025-11-02','2025-11-15','2025-11-20','2025-12-25',
+  '2026-01-01','2026-02-16','2026-02-17','2026-04-03','2026-04-21','2026-05-01',
+  '2026-06-04','2026-09-07','2026-10-12','2026-11-02','2026-11-15','2026-11-20','2026-12-25',
+]);
+
+// ── Auth ──────────────────────────────────────────────────────────────
+function checkAuth() {
+  const email = sessionStorage.getItem('gestao_email');
+  if (email?.toLowerCase().endsWith('@betha.com.br')) {
+    document.getElementById('login-overlay').classList.add('hidden');
+    document.getElementById('user-pill').textContent = '👤 ' + email.split('@')[0];
+    return true;
+  }
+  return false;
+}
+document.getElementById('login-btn').addEventListener('click', doLogin);
+document.getElementById('login-email').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+function doLogin() {
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const errEl = document.getElementById('login-error');
+  const inpEl = document.getElementById('login-email');
+  errEl.textContent = '';
+  inpEl.classList.remove('error');
+  if (!email) { errEl.textContent = 'Informe o e-mail.'; inpEl.classList.add('error'); return; }
+  if (!email.endsWith('@betha.com.br')) { errEl.textContent = 'Apenas e-mails @betha.com.br são permitidos.'; inpEl.classList.add('error'); return; }
+  sessionStorage.setItem('gestao_email', email);
+  document.getElementById('login-overlay').classList.add('hidden');
+  document.getElementById('user-pill').textContent = '👤 ' + email.split('@')[0];
+  loadData();
+}
+function logout() { sessionStorage.removeItem('gestao_email'); location.reload(); }
+
+// ── Date utils ────────────────────────────────────────────────────────
+const isWeekend = d => { const w = new Date(d+'T12:00:00').getDay(); return w===0||w===6; };
+const isHoliday = d => HOLIDAYS.has(d);
+const isWorkday  = d => !isWeekend(d) && !isHoliday(d);
+const isFriday   = d => new Date(d+'T12:00:00').getDay() === 5;
+function countExpectedDays(dates, schedule) {
+  return dates.filter(d => isWorkday(d) && (schedule === 'all' || !isFriday(d))).length;
+}
+function dateRange(from, to) {
+  const dates=[]; const cur=new Date(from+'T12:00:00'); const end=new Date(to+'T12:00:00');
+  while(cur<=end){ dates.push(cur.toISOString().split('T')[0]); cur.setDate(cur.getDate()+1); }
+  return dates;
+}
+function today() { return new Date().toISOString().split('T')[0]; }
+function weekStart(d) {
+  const dt=new Date(d+'T12:00:00'); const day=dt.getDay();
+  dt.setDate(dt.getDate()+(day===0?-6:1-day)); return dt.toISOString().split('T')[0];
+}
+const monthStart = d => d.substring(0,7)+'-01';
+const fmtDate = d => new Date(d+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
+const fmtDateShort = d => new Date(d+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit'});
+const fmtMonthName = d => new Date(d+'T12:00:00').toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+const secToH = s => s/3600;
+const fmtH  = h => (Math.round(h*100)/100).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:2});
+
+// ── Data ──────────────────────────────────────────────────────────────
+async function loadAllWorklogs(from, to) {
+  if (window.HOURS_DATA) {
+    const data = {};
+    for (const u of ALL_USERS) {
+      const raw = window.HOURS_DATA.users?.[u.handle] || {};
+      const filtered = {};
+      for (const [date,sec] of Object.entries(raw)) if (date>=from && date<=to) filtered[date]=sec;
+      data[u.handle] = filtered;
+    }
+    return data;
+  }
+  const data = {};
+  for (const u of ALL_USERS) {
+    try {
+      const r = await fetch(`/api/hours?username=${encodeURIComponent(u.handle)}&from=${from}&to=${to}`,{credentials:'include'});
+      data[u.handle] = (await r.json()).worklogs || {};
+    } catch { data[u.handle] = {}; }
+  }
+  return data;
+}
+
+// ── Render ────────────────────────────────────────────────────────────
+function badge(workedH, expectedH) {
+  if (expectedH === 0) return `<span class="badge badge-ok">—</span>`;
+  const pct = Math.round(workedH/expectedH*100);
+  if (workedH === 0) return `<span class="badge badge-empty">Sem apontamentos</span>`;
+  if (workedH >= expectedH) return `<span class="badge badge-ok">✔ ${pct}%</span>`;
+  if (workedH >= expectedH*(1-ALERT_MARGIN)) return `<span class="badge badge-warn">⚠ ${pct}% — faltam ${fmtH(expectedH-workedH)}</span>`;
+  return `<span class="badge badge-alert">✖ ${pct}% — faltam ${fmtH(expectedH-workedH)}</span>`;
+}
+
+function renderSummary(elId, totalWorked, totalExpected) {
+  const pct = totalExpected>0 ? Math.round(totalWorked/totalExpected*100) : 0;
+  const saldo = totalWorked - totalExpected;
+  const saldoCls = saldo >= 0 ? 'green' : saldo >= -totalExpected*ALERT_MARGIN ? 'orange' : 'red';
+  document.getElementById(elId).innerHTML = `
+    <div class="sum-card blue">
+      <div class="sum-label">Total Apontado</div>
+      <div class="sum-value">${fmtH(totalWorked)}</div>
+      <div class="sum-sub">${pct}% do esperado</div>
+    </div>
+    <div class="sum-card blue">
+      <div class="sum-label">Total Esperado</div>
+      <div class="sum-value">${fmtH(totalExpected)}</div>
+      <div class="sum-sub">${ALL_USERS.length} colaboradores</div>
+    </div>
+    <div class="sum-card ${saldoCls}">
+      <div class="sum-label">Saldo</div>
+      <div class="sum-value">${saldo>=0?'+':''}${fmtH(saldo)}</div>
+      <div class="sum-sub">${saldo>=0?'Dentro do esperado':'Abaixo do esperado'}</div>
+    </div>`;
+}
+
+function renderPeriod(period, from, to, label, worklogs) {
+  const dates = dateRange(from, to);
+  const workdays = dates.filter(isWorkday).length;
+  document.getElementById(`lbl-${period}`).textContent =
+    label + ` · ${fmtDate(from)}${from!==to?' – '+fmtDate(to):''} · ${workdays} dia${workdays!==1?'s':''} útil${workdays!==1?'eis':''}`;
+
+  let totalWorked=0, totalExpected=0;
+  let bodyHtml = '';
+
+  for (const team of TEAMS) {
+    bodyHtml += `<tr><td colspan="4" style="padding:0.4rem 0.9rem 0.25rem;background:#f0f4f8;font-size:0.67rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#718096;border-bottom:1px solid #e2e8f0">${team.label}</td></tr>`;
+    for (const u of team.users) {
+      const logs = worklogs[u.handle] || {};
+      const workedSec = dates.reduce((s,d) => s+(logs[d]||0), 0);
+      const workedH   = secToH(workedSec);
+      const expDays   = countExpectedDays(dates, u.schedule);
+      const expectedH = expDays * u.dailyHours;
+      totalWorked   += workedH;
+      totalExpected += expectedH;
+      bodyHtml += `
+    <tr>
+      <td>
+        <div class="col-name">${u.name}</div>
+        <div class="col-handle">${u.handle}</div>
+      </td>
+      <td class="col-num">${fmtH(workedH)}</td>
+      <td class="col-exp">${fmtH(expectedH)}</td>
+      <td>${badge(workedH, expectedH)}</td>
+    </tr>`;
+    }
+  }
+
+  renderSummary(`sum-${period}`, totalWorked, totalExpected);
+  document.getElementById(`tbody-${period}`).innerHTML = bodyHtml;
+}
+
+async function loadData() {
+  document.getElementById('loading-state').style.display = 'flex';
+  document.getElementById('main-content').style.display  = 'none';
+
+  const todayStr = today();
+  const from = monthStart(todayStr);
+  let worklogs;
+  try { worklogs = await loadAllWorklogs(from, todayStr); }
+  catch(e) {
+    document.getElementById('loading-state').innerHTML =
+      `<div style="text-align:center;color:#718096"><p>Erro ao carregar dados: ${e.message}</p>
+       <button class="hdr-btn" style="margin-top:1rem;color:#2d3748;background:#e2e8f0;border:none" onclick="loadData()">Tentar novamente</button></div>`;
+    return;
+  }
+
+  const genAt = window.HOURS_DATA?.generatedAt;
+  document.getElementById('last-update-label').textContent = genAt
+    ? 'Atualizado: '+new Date(genAt).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})
+    : 'Dados ao vivo';
+
+  const wStart = weekStart(todayStr);
+  renderPeriod('daily',   todayStr, todayStr, 'Hoje — '+fmtDateShort(todayStr), worklogs);
+  renderPeriod('weekly',  wStart,   todayStr, 'Esta Semana', worklogs);
+  renderPeriod('monthly', from,     todayStr, 'Mês de '+fmtMonthName(from), worklogs);
+
+  document.getElementById('loading-state').style.display = 'none';
+  document.getElementById('main-content').style.display  = 'block';
+}
+
+function switchPeriod(p) {
+  document.querySelectorAll('.period-tab').forEach(t => t.classList.toggle('active', t.dataset.period===p));
+  document.querySelectorAll('.period-content').forEach(c => c.classList.toggle('active', c.id===`pane-${p}`));
+}
+
+document.getElementById('header-date').textContent =
+  new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+
+if (checkAuth()) loadData();
+</script>
+</body>
+</html>
