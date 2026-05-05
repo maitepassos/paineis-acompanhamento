@@ -185,25 +185,14 @@
 
 <!-- Tabs -->
 <nav class="period-bar">
-  <button class="period-tab active" data-period="daily"   onclick="switchPeriod('daily')">Hoje</button>
-  <button class="period-tab"        data-period="weekly"  onclick="switchPeriod('weekly')">Esta Semana</button>
+  <button class="period-tab active" data-period="weekly"  onclick="switchPeriod('weekly')">Esta Semana</button>
   <button class="period-tab"        data-period="monthly" onclick="switchPeriod('monthly')">Este Mês</button>
 </nav>
 
 <div class="container">
   <div id="loading-state" class="loading"><div class="spinner"></div> Carregando dados do Jira...</div>
   <div id="main-content" style="display:none">
-    <div class="period-content active" id="pane-daily">
-      <div class="period-label" id="lbl-daily"></div>
-      <div class="summary-row"  id="sum-daily"></div>
-      <table class="hours-table"><thead><tr>
-        <th>Colaborador</th>
-        <th class="right">Total Apontado</th>
-        <th class="right">Hora Esperada</th>
-        <th>Alerta</th>
-      </tr></thead><tbody id="tbody-daily"></tbody></table>
-    </div>
-    <div class="period-content" id="pane-weekly">
+    <div class="period-content active" id="pane-weekly">
       <div class="period-label" id="lbl-weekly"></div>
       <div class="summary-row"  id="sum-weekly"></div>
       <div class="table-scroll" id="table-weekly"></div>
@@ -482,9 +471,8 @@ async function loadData() {
     : 'Dados ao vivo';
 
   const wStart = weekStart(todayStr);
-  renderPeriod('daily',   todayStr, todayStr, 'Hoje — '+fmtDateShort(todayStr), worklogs);
-  renderPeriod('weekly',  wStart,   todayStr, 'Esta Semana', worklogs);
-  renderPeriod('monthly', from,     todayStr, 'Mês de '+fmtMonthName(from), worklogs);
+  renderPeriod('weekly',  wStart, todayStr, 'Esta Semana', worklogs);
+  renderPeriod('monthly', from,   todayStr, 'Mês de '+fmtMonthName(from), worklogs);
 
   document.getElementById('loading-state').style.display = 'none';
   document.getElementById('main-content').style.display  = 'block';
