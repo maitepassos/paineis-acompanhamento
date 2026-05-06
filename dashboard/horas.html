@@ -229,7 +229,7 @@
       font-size: 0.72rem; color: #a0aec0; margin-left: auto; white-space: nowrap;
     }
 
-    /* ── Gaps: sub-abas internas ────────────────────────────────────────── */
+    /* ── Sub-abas internas (Gaps, Suporte) ──────────────────────────────── */
     .gaps-sub-tab {
       font-size: 0.82rem; font-weight: 600; padding: 0.4rem 1rem;
       border: none; border-bottom: 2px solid transparent; background: none;
@@ -240,6 +240,15 @@
     .gaps-sub-tab:hover:not(.active) { color: #2d3748; background: #edf2f7; }
     .gaps-sub-pane { display: none; }
     .gaps-sub-pane.active { display: block; }
+
+    /* ── Suporte: toggle Semanal / Mensal ────────────────────────────────── */
+    .prod-period-btn {
+      font-size: 0.8rem; font-weight: 600; padding: 0.35rem 1rem;
+      border: 1.5px solid #e2e8f0; border-radius: 6px; background: #f7fafc;
+      color: #718096; cursor: pointer; transition: all 0.15s;
+    }
+    .prod-period-btn.active { background: #2b6cb0; color: #fff; border-color: #2b6cb0; }
+    .prod-period-btn:hover:not(.active) { background: #edf2f7; color: #2d3748; }
 
     /* ── Demandas: tabela de issues ────────────────────────────────────── */
     .issue-table { width: 100%; border-collapse: collapse; }
@@ -362,6 +371,7 @@
     <button class="period-tab active" data-demand="incidentes"    onclick="switchDemand('incidentes')">🔴 Incidentes</button>
     <button class="period-tab"        data-demand="gaps"          onclick="switchDemand('gaps')">🟡 Gaps Funcionais</button>
     <button class="period-tab"        data-demand="produtividade" onclick="switchDemand('produtividade')">📊 Produtividade</button>
+    <button class="period-tab"        data-demand="suporte"       onclick="switchDemand('suporte')">🎧 Suporte</button>
   </nav>
   <div class="container">
 
@@ -389,6 +399,20 @@
     <div id="pane-produtividade" class="demand-pane">
       <div id="produtividade-loading" class="loading"><div class="spinner"></div> Carregando dados...</div>
       <div id="produtividade-content" style="display:none"></div>
+    </div>
+
+    <!-- Suporte -->
+    <div id="pane-suporte" class="demand-pane">
+      <div id="suporte-loading" class="loading"><div class="spinner"></div> Carregando dados...</div>
+      <div id="suporte-content" style="display:none">
+        <!-- Sub-navegação interna de Suporte -->
+        <nav style="display:flex;gap:0.25rem;padding:0.75rem 1.2rem 0;border-bottom:2px solid #e2e8f0;background:#f7fafc">
+          <button id="suporte-sub-atendimento"  class="gaps-sub-tab active" onclick="switchSuporteSub('atendimento')">📋 Atendimento</button>
+          <button id="suporte-sub-produtividade" class="gaps-sub-tab"       onclick="switchSuporteSub('produtividade')">📊 Produtividade</button>
+        </nav>
+        <div id="suporte-pane-atendimento"  class="gaps-sub-pane active"></div>
+        <div id="suporte-pane-produtividade" class="gaps-sub-pane"></div>
+      </div>
     </div>
 
   </div>
@@ -503,8 +527,10 @@ function switchMain(name) {
   document.querySelectorAll('.main-section').forEach(s => s.classList.toggle('active', s.id === `section-${name}`));
   if (name === 'demandas') {
     const activeDemand = document.querySelector('#section-demandas .period-tab.active')?.dataset?.demand || 'incidentes';
-    if (activeDemand === 'incidentes') tryRenderIncidentes();
+    if (activeDemand === 'incidentes')    tryRenderIncidentes();
     else if (activeDemand === 'produtividade') tryRenderProdutividade();
+    else if (activeDemand === 'gaps')     tryRenderGaps();
+    else if (activeDemand === 'suporte')  tryRenderSuporte();
   }
 }
 
@@ -519,11 +545,17 @@ function switchDemand(name) {
   if (name === 'incidentes')    tryRenderIncidentes();
   if (name === 'gaps')          tryRenderGaps();
   if (name === 'produtividade') tryRenderProdutividade();
+  if (name === 'suporte')       tryRenderSuporte();
 }
 
 function refreshCurrent() {
-  if (currentMain === 'apontamentos') loadData();
-  else { window.DEMANDAS_DATA = null; loadDemandasData(); }
+  if (currentMain === 'apontamentos') { loadData(); return; }
+  const activeDemand = document.querySelector('#section-demandas .period-tab.active')?.dataset?.demand || 'incidentes';
+  if (activeDemand === 'suporte') {
+    window.SUPORTE_DATA = null; suporteRendered = false; loadSuporteData();
+  } else {
+    window.DEMANDAS_DATA = null; loadDemandasData();
+  }
 }
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -1240,6 +1272,249 @@ function renderProdutividade() {
 }
 
 /* ══════════════════════════════════════════════════════════════════════
+   SUPORTE — render
+══════════════════════════════════════════════════════════════════════ */
+let suporteRendered = false;
+let suporteProdPeriod = 'semanal';
+
+function tryRenderSuporte() {
+  if (suporteRendered) return;
+  if (!window.SUPORTE_DATA) {
+    document.getElementById('suporte-loading').style.display = 'flex';
+    document.getElementById('suporte-content').style.display = 'none';
+    return;
+  }
+  document.getElementById('suporte-loading').style.display = 'none';
+  document.getElementById('suporte-content').style.display = 'block';
+  renderSuporteAtendimento();
+  renderSuporteProdutividade('semanal');
+  suporteRendered = true;
+}
+
+function switchSuporteSub(name) {
+  document.querySelectorAll('#suporte-content .gaps-sub-tab').forEach(t => t.classList.toggle('active', t.id === `suporte-sub-${name}`));
+  document.querySelectorAll('#suporte-content .gaps-sub-pane').forEach(p => p.classList.toggle('active', p.id === `suporte-pane-${name}`));
+}
+
+function switchSuporteProd(period) {
+  suporteProdPeriod = period;
+  document.querySelectorAll('.prod-period-btn').forEach(b => b.classList.toggle('active', b.dataset.period === period));
+  document.getElementById('sp-pane-semanal').style.display = period === 'semanal' ? 'block' : 'none';
+  document.getElementById('sp-pane-mensal').style.display  = period === 'mensal'  ? 'block' : 'none';
+}
+
+function loadSuporteData() {
+  document.getElementById('suporte-loading').style.display = 'flex';
+  document.getElementById('suporte-content').style.display = 'none';
+  const ss = document.createElement('script');
+  ss.src = 'suporte-data.js?v=' + Date.now();
+  ss.onload  = () => tryRenderSuporte();
+  ss.onerror = () => {
+    document.getElementById('suporte-loading').innerHTML =
+      '<div style="text-align:center;color:#718096"><p>Erro ao carregar dados de suporte.</p></div>';
+  };
+  document.head.appendChild(ss);
+}
+
+function sloAtendimentoBadge(slo) {
+  if (!slo) return '<span style="color:#e2e8f0">—</span>';
+  if (slo.breached) {
+    const elapsed = Math.abs(slo.remainingTime);
+    const totalMin = Math.round(elapsed / 60000);
+    const h = Math.floor(totalMin / 60), m = totalMin % 60;
+    const extra = h > 0 ? `${h}h${m > 0 ? ' ' + m + 'min' : ''}` : `${m}min`;
+    return `<span style="font-size:0.72rem;font-weight:700;background:#fed7d7;color:#742a2a;padding:0.2rem 0.6rem;border-radius:8px;white-space:nowrap">⚠ Vencido +${extra}</span>`;
+  }
+  const totalMin = Math.round(slo.remainingTime / 60000);
+  const h = Math.floor(totalMin / 60), m = totalMin % 60;
+  const label = h > 0 ? `${h}h ${m}min` : `${m}min`;
+  let bg, color;
+  if (totalMin < 60)       { bg = '#fed7d7'; color = '#742a2a'; }
+  else if (totalMin < 240) { bg = '#feebc8'; color = '#7b341e'; }
+  else                      { bg = '#c6f6d5'; color = '#22543d'; }
+  return `<span style="font-size:0.72rem;font-weight:600;background:${bg};color:${color};padding:0.2rem 0.6rem;border-radius:8px;white-space:nowrap">${label}</span>`;
+}
+
+const SUPORTE_STATUS_STYLE = {
+  'Aguardando atendimento N2 (SUP)': { bg: '#feebc8', color: '#7b341e' },
+  'Aguardando Triagem (SUP)':        { bg: '#bee3f8', color: '#1a4d7a' },
+  'Em atendimento (SUP)':            { bg: '#c6f6d5', color: '#22543d' },
+  'Atendida':                        { bg: '#e2e8f0', color: '#4a5568' },
+};
+
+function renderSuporteAtendimento() {
+  const data = window.SUPORTE_DATA;
+  if (!data) return;
+  const at = data.atendimento;
+
+  const genAt = data.generatedAt
+    ? 'Atualizado: ' + new Date(data.generatedAt).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})
+    : '';
+
+  // ── Totalizadores: por status e por responsável
+  let html = `<div style="padding:1rem 1.2rem 0">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem">
+      <h2 style="font-size:1rem;font-weight:700;color:#1a202c;margin:0">📋 Fila de Atendimento — Suporte</h2>
+      <span style="font-size:0.7rem;color:#a0aec0">${genAt} ·
+        <a href="${at.filterUrl}" target="_blank" style="color:#3182ce">Ver no Jira ↗</a>
+      </span>
+    </div>`;
+
+  // Cards de totalizadores por status
+  html += `<div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:1.25rem">`;
+  html += `<div class="sum-card blue" style="min-width:130px">
+    <div class="sum-label">Total Aguardando</div>
+    <div class="sum-value" style="color:#2b6cb0">${at.total}</div>
+    <div class="sum-sub">issues na fila</div>
+  </div>`;
+  for (const [status, count] of Object.entries(at.byStatus || {})) {
+    const ss = SUPORTE_STATUS_STYLE[status] || { bg:'#e2e8f0', color:'#4a5568' };
+    html += `<div class="sum-card" style="min-width:180px;border-left-color:${ss.color}">
+      <div class="sum-label" style="color:${ss.color}">${escHtml(status)}</div>
+      <div class="sum-value" style="color:${ss.color}">${count}</div>
+      <div class="sum-sub">issues</div>
+    </div>`;
+  }
+  // Por responsável
+  const byResp = at.byResponsavel || {};
+  for (const [resp, count] of Object.entries(byResp)) {
+    if (resp === 'Sem responsável') continue;
+    html += `<div class="sum-card green" style="min-width:150px">
+      <div class="sum-label">Responsável</div>
+      <div class="sum-value" style="font-size:1rem;color:#2f855a">${escHtml(resp)}</div>
+      <div class="sum-sub">${count} issues</div>
+    </div>`;
+  }
+  html += `</div>`;
+
+  // ── Tabela de issues
+  html += `<div class="filter-section">
+    <div style="overflow-x:auto">
+      <table class="issue-table" style="min-width:700px">
+        <thead><tr>
+          <th style="width:120px">Código</th>
+          <th>Resumo</th>
+          <th style="width:210px">Situação</th>
+          <th style="width:115px;text-align:center">SLO Atend.</th>
+          <th style="width:155px">Responsável (SUP)</th>
+          <th style="width:220px">Entidade</th>
+        </tr></thead>
+        <tbody>`;
+
+  for (const issue of (at.issues || [])) {
+    const ss = SUPORTE_STATUS_STYLE[issue.status] || { bg:'#e2e8f0', color:'#4a5568' };
+    const project = issue.key.split('-')[0];
+    const browseUrl = `https://atendimento.betha.com.br/browse/${issue.key}`;
+    html += `<tr>
+      <td>
+        <a href="${browseUrl}" target="_blank" class="issue-key">${escHtml(issue.key)}</a>
+        <div style="font-size:0.67rem;color:#a0aec0;margin-top:2px">${escHtml(project)}</div>
+      </td>
+      <td class="issue-summary">${escHtml(issue.summary)}</td>
+      <td><span style="font-size:0.78rem;font-weight:600;background:${ss.bg};color:${ss.color};padding:0.2rem 0.6rem;border-radius:12px;white-space:nowrap">${escHtml(issue.status)}</span></td>
+      <td style="text-align:center">${sloAtendimentoBadge(issue.sloAtendimento)}</td>
+      <td class="issue-assignee">${issue.responsavelSup ? escHtml(issue.responsavelSup) : '<span style="color:#a0aec0;font-size:0.75rem">— sem responsável</span>'}</td>
+      <td style="font-size:0.78rem;color:#4a5568">${issue.entidade ? escHtml(issue.entidade) : '<span style="color:#e2e8f0">—</span>'}</td>
+    </tr>`;
+  }
+  html += `</tbody></table></div></div></div>`;
+
+  document.getElementById('suporte-pane-atendimento').innerHTML = html;
+}
+
+function renderSuporteProdutividade(period) {
+  const data = window.SUPORTE_DATA;
+  if (!data) return;
+  const prod = data.produtividade;
+
+  const ORIGEM_COLOR = {
+    'Nível 1':                { bg:'#bee3f8', color:'#1a4d7a', bar:'#3182ce' },
+    'Portal/Cliente':         { bg:'#c6f6d5', color:'#22543d', bar:'#38a169' },
+    'Chat/Whatsapp':          { bg:'#fefcbf', color:'#744210', bar:'#d69e2e' },
+    'Atendimento Telefônico': { bg:'#e9d8fd', color:'#44337a', bar:'#805ad5' },
+  };
+
+  function buildPeriodPanel(pd, periodLabel) {
+    const maxResp   = pd.byResponsavel[0]?.total || 1;
+    const maxOrigem = Math.max(...pd.byOrigem.map(o=>o.total), 1);
+
+    let h = `<div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;flex-wrap:wrap">
+      <div style="background:#ebf8ff;color:#2b6cb0;font-size:1rem;font-weight:700;padding:0.5rem 1.2rem;border-radius:10px;border:1.5px solid #bee3f8">
+        ${pd.total} issues
+      </div>
+      <span style="font-size:0.72rem;color:#a0aec0">
+        <a href="${pd.filterUrl}" target="_blank" style="color:#3182ce">Ver filtro no Jira ↗</a>
+      </span>
+    </div>
+    <div style="display:flex;gap:1.5rem;flex-wrap:wrap;align-items:flex-start">`;
+
+    // Por Responsável
+    h += `<div class="filter-section" style="flex:1;min-width:240px;margin-bottom:0">
+      <div class="filter-header">
+        <div class="filter-dot" style="background:#3182ce"></div>
+        <span class="filter-title">Por Responsável (SUP)</span>
+      </div>`;
+    for (const { name, total } of pd.byResponsavel) {
+      const pct = Math.round((total / maxResp) * 100);
+      const ini = name.split(' ').filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join('');
+      h += `<div style="display:flex;align-items:center;gap:0.75rem;padding:0.55rem 1.2rem;border-bottom:1px solid #f0f4f8">
+        <div style="width:34px;height:34px;border-radius:50%;background:#2b6cb0;color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:700;flex-shrink:0">${escHtml(ini)}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:0.83rem;font-weight:600;color:#2d3748;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(name)}</div>
+          <div style="height:7px;background:#edf2f7;border-radius:4px;margin-top:4px;overflow:hidden">
+            <div style="height:100%;width:${pct}%;background:#3182ce;border-radius:4px"></div>
+          </div>
+        </div>
+        <div style="font-size:1.05rem;font-weight:700;color:#2b6cb0;min-width:28px;text-align:right">${total}</div>
+      </div>`;
+    }
+    h += `</div>`;
+
+    // Por Origem
+    h += `<div class="filter-section" style="flex:1;min-width:240px;margin-bottom:0">
+      <div class="filter-header">
+        <div class="filter-dot" style="background:#805ad5"></div>
+        <span class="filter-title">Por Origem da Solicitação</span>
+      </div>`;
+    for (const { name, total } of pd.byOrigem) {
+      const pct = Math.round((total / maxOrigem) * 100);
+      const oc  = ORIGEM_COLOR[name] || { bg:'#e2e8f0', color:'#4a5568', bar:'#a0aec0' };
+      h += `<div style="display:flex;align-items:center;gap:0.75rem;padding:0.55rem 1.2rem;border-bottom:1px solid #f0f4f8">
+        <span style="font-size:0.72rem;font-weight:600;background:${oc.bg};color:${oc.color};padding:0.18rem 0.55rem;border-radius:8px;white-space:nowrap;min-width:120px;text-align:center">${escHtml(name)}</span>
+        <div style="flex:1;height:7px;background:#edf2f7;border-radius:4px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:${oc.bar};border-radius:4px"></div>
+        </div>
+        <div style="font-size:1.05rem;font-weight:700;color:${oc.color};min-width:28px;text-align:right">${total}</div>
+      </div>`;
+    }
+    h += `</div>`;
+
+    h += `</div>`; // flex row
+    return h;
+  }
+
+  const genAt = data.generatedAt
+    ? 'Atualizado: ' + new Date(data.generatedAt).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})
+    : '';
+
+  let html = `<div style="padding:1rem 1.2rem 0">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.5rem">
+      <h2 style="font-size:1rem;font-weight:700;color:#1a202c;margin:0">📊 Produtividade — Suporte</h2>
+      <span style="font-size:0.7rem;color:#a0aec0">${genAt}</span>
+    </div>
+    <!-- Toggle Semanal / Mensal -->
+    <div style="display:flex;gap:0.5rem;margin-bottom:1.25rem">
+      <button class="prod-period-btn active" data-period="semanal" onclick="switchSuporteProd('semanal')">📅 Semanal</button>
+      <button class="prod-period-btn"        data-period="mensal"  onclick="switchSuporteProd('mensal')">🗓 Mensal</button>
+    </div>
+    <div id="sp-pane-semanal">${buildPeriodPanel(prod.semanal, 'Semanal')}</div>
+    <div id="sp-pane-mensal"  style="display:none">${buildPeriodPanel(prod.mensal, 'Mensal')}</div>
+  </div>`;
+
+  document.getElementById('suporte-pane-produtividade').innerHTML = html;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
    INICIALIZAÇÃO
 ══════════════════════════════════════════════════════════════════════ */
 document.getElementById('header-date').textContent =
@@ -1270,6 +1545,12 @@ document.getElementById('header-date').textContent =
   sg.onload  = () => { if (currentMain === 'demandas') tryRenderGaps(); };
   sg.onerror = () => {};
   document.head.appendChild(sg);
+
+  const ss2 = document.createElement('script');
+  ss2.src = 'suporte-data.js?v=' + Date.now();
+  ss2.onload  = () => { if (currentMain === 'demandas') tryRenderSuporte(); };
+  ss2.onerror = () => {};
+  document.head.appendChild(ss2);
 })();
 </script>
 </body>
