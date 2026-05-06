@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Apontamento de Horas — Gestão</title>
-  <!-- hours-data.js é carregado dinamicamente com cache-buster (ver fim do script) -->
+  <title>Painel de Gestão — Betha</title>
+  <!-- hours-data.js e demandas-data.js são carregados dinamicamente (ver fim do script) -->
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #f0f4f8; color: #1a202c; min-height: 100vh; }
 
-    /* Login */
+    /* ── Login ─────────────────────────────────────────────────────────── */
     #login-overlay {
       position: fixed; inset: 0; z-index: 100;
       background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%);
@@ -21,7 +21,7 @@
       width: 100%; max-width: 360px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); text-align: center;
     }
     .login-box h2 { font-size: 1.25rem; font-weight: 700; color: #1a365d; margin-bottom: 0.25rem; }
-    .login-box p { font-size: 0.83rem; color: #718096; margin-bottom: 1.6rem; }
+    .login-box p  { font-size: 0.83rem; color: #718096; margin-bottom: 1.6rem; }
     .login-box input {
       width: 100%; padding: 0.7rem 1rem; border: 2px solid #e2e8f0; border-radius: 8px;
       font-size: 0.93rem; outline: none; transition: border-color 0.15s; margin-bottom: 0.6rem;
@@ -35,7 +35,7 @@
     }
     .login-btn:hover { background: #1a365d; }
 
-    /* Header */
+    /* ── Header ────────────────────────────────────────────────────────── */
     header {
       background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%);
       color: white; padding: 0.85rem 1.5rem;
@@ -52,7 +52,26 @@
     }
     .hdr-btn:hover { background: rgba(255,255,255,0.28); }
 
-    /* Period tabs */
+    /* ── Navegação principal (Apontamentos / Demandas) ──────────────────── */
+    .main-nav-bar {
+      background: #0f2744;
+      display: flex; padding: 0 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+    .main-nav-tab {
+      color: rgba(255,255,255,0.5); background: none; border: none;
+      border-bottom: 3px solid transparent; padding: 0.65rem 1.3rem;
+      font-size: 0.88rem; font-weight: 700; cursor: pointer; letter-spacing: 0.02em;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .main-nav-tab:hover { color: rgba(255,255,255,0.85); }
+    .main-nav-tab.active { color: white; border-bottom-color: #f6ad55; }
+
+    /* ── Seções principais ─────────────────────────────────────────────── */
+    .main-section { display: none; }
+    .main-section.active { display: block; }
+
+    /* ── Sub-navegação de período (Esta Semana / Este Mês / Incidentes / Gaps) */
     .period-bar {
       background: #1a365d; border-top: 1px solid rgba(255,255,255,0.1);
       display: flex; padding: 0 1.5rem;
@@ -65,18 +84,20 @@
     .period-tab:hover { color: white; }
     .period-tab.active { color: white; border-bottom-color: #63b3ed; }
 
-    /* Layout */
+    /* ── Layout geral ──────────────────────────────────────────────────── */
     .container { max-width: 100%; margin: 0 auto; padding: 1.25rem 1.5rem; }
     .period-content { display: none; }
     .period-content.active { display: block; }
+    .demand-pane { display: none; }
+    .demand-pane.active { display: block; }
 
-    /* Period label */
+    /* ── Period label ──────────────────────────────────────────────────── */
     .period-label {
       font-size: 0.72rem; color: #718096; text-transform: uppercase;
       letter-spacing: 0.06em; font-weight: 600; margin-bottom: 0.9rem;
     }
 
-    /* Summary row */
+    /* ── Summary row ───────────────────────────────────────────────────── */
     .summary-row { display: flex; gap: 1rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
     .sum-card {
       background: white; border-radius: 8px; padding: 0.8rem 1.1rem;
@@ -90,44 +111,40 @@
     .sum-value { font-size: 1.5rem; font-weight: 800; color: #2d3748; margin-top: 0.15rem; line-height: 1; }
     .sum-sub   { font-size: 0.7rem; color: #a0aec0; margin-top: 0.2rem; }
 
-    /* Table */
+    /* ── Tabela de horas ───────────────────────────────────────────────── */
     .hours-table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.07); }
     .hours-table thead tr { background: #f7fafc; }
     .hours-table th {
       text-align: left; padding: 0.45rem 0.9rem;
       font-size: 0.68rem; font-weight: 700; color: #718096;
-      text-transform: uppercase; letter-spacing: 0.05em;
-      border-bottom: 2px solid #e2e8f0;
+      text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 2px solid #e2e8f0;
     }
     .hours-table th.right { text-align: right; }
     .hours-table td { padding: 0.45rem 0.9rem; border-bottom: 1px solid #edf2f7; vertical-align: middle; }
     .hours-table tr:last-child td { border-bottom: none; }
     .hours-table tr:hover td { background: #f7fafc; }
-
-    /* Columns */
     .col-name   { font-weight: 600; font-size: 0.85rem; color: #2d3748; }
     .col-handle { font-size: 0.7rem; color: #a0aec0; }
     .col-num    { text-align: right; font-size: 1rem; font-weight: 700; font-family: "SF Mono","Consolas",monospace; color: #2d3748; }
     .col-exp    { text-align: right; font-size: 0.88rem; color: #718096; }
 
-    /* Alert badge */
+    /* ── Alert badge ───────────────────────────────────────────────────── */
     .badge { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.25rem 0.65rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; }
     .badge-ok    { background: #c6f6d5; color: #22543d; }
     .badge-warn  { background: #feebc8; color: #7b341e; }
     .badge-alert { background: #fed7d7; color: #742a2a; }
     .badge-empty { background: #e2e8f0; color: #4a5568; }
 
-    /* Scrollable table wrapper */
+    /* ── Scrollable table wrapper ──────────────────────────────────────── */
     .table-scroll { overflow-x: auto; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.07); }
     .table-scroll .hours-table { border-radius: 0; box-shadow: none; }
 
-    /* Day columns */
+    /* ── Day columns ───────────────────────────────────────────────────── */
     .th-day {
       text-align: center; padding: 0.35rem 0.5rem;
       font-size: 0.63rem; font-weight: 700; color: #718096;
       text-transform: uppercase; letter-spacing: 0.04em;
-      border-bottom: 2px solid #e2e8f0; white-space: nowrap;
-      min-width: 52px;
+      border-bottom: 2px solid #e2e8f0; white-space: nowrap; min-width: 52px;
     }
     .th-day.today-col { color: #2b6cb0; background: #ebf8ff; }
     .td-day {
@@ -150,7 +167,96 @@
       border-bottom: 2px solid #e2e8f0; border-left: 2px solid #e2e8f0; white-space: nowrap;
     }
 
-    /* Loading */
+    /* ── Demandas: seção de filtro ─────────────────────────────────────── */
+    .filter-section {
+      background: white; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+      margin-bottom: 1.5rem; overflow: hidden;
+    }
+    .filter-header {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.9rem 1.2rem; border-bottom: 2px solid #edf2f7;
+      background: #f7fafc;
+    }
+    .filter-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .filter-title { font-size: 0.95rem; font-weight: 700; color: #2d3748; }
+    .filter-count-badge {
+      font-size: 0.82rem; font-weight: 800; padding: 0.18rem 0.65rem;
+      border-radius: 20px; line-height: 1.4;
+    }
+    .filter-link {
+      margin-left: auto; font-size: 0.76rem; color: #3182ce;
+      text-decoration: none; font-weight: 600; white-space: nowrap;
+      padding: 0.25rem 0.65rem; border: 1px solid #bee3f8; border-radius: 6px;
+      transition: background 0.15s;
+    }
+    .filter-link:hover { background: #ebf8ff; }
+
+    /* ── Demandas: breakdown de status ────────────────────────────────── */
+    .status-row {
+      display: flex; flex-wrap: wrap; gap: 0.45rem;
+      padding: 0.75rem 1.2rem; border-bottom: 1px solid #edf2f7;
+      background: #fafbfc;
+    }
+    .status-chip {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      padding: 0.22rem 0.7rem; border-radius: 20px; font-size: 0.74rem; font-weight: 600;
+      cursor: default; border: 1px solid transparent;
+    }
+    .status-chip-count {
+      background: rgba(0,0,0,0.12); border-radius: 10px;
+      padding: 0.05rem 0.45rem; font-size: 0.7rem; font-weight: 800;
+    }
+
+    /* ── Demandas: tabela de issues ────────────────────────────────────── */
+    .issue-table { width: 100%; border-collapse: collapse; }
+    .issue-table th {
+      text-align: left; padding: 0.4rem 1rem;
+      font-size: 0.66rem; font-weight: 700; color: #a0aec0;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      border-bottom: 1px solid #edf2f7; background: #f7fafc; white-space: nowrap;
+    }
+    .issue-table td {
+      padding: 0.5rem 1rem; border-bottom: 1px solid #f0f4f8;
+      vertical-align: middle; font-size: 0.82rem;
+    }
+    .issue-table tbody tr:hover td { background: #f7fafc; }
+    .issue-table tbody tr:last-child td { border-bottom: none; }
+    .issue-key {
+      font-family: "SF Mono","Consolas",monospace; font-size: 0.78rem;
+      font-weight: 700; color: #3182ce; text-decoration: none; white-space: nowrap;
+    }
+    .issue-key:hover { text-decoration: underline; }
+    .issue-summary { color: #2d3748; line-height: 1.4; max-width: 420px; }
+    .issue-assignee { color: #718096; white-space: nowrap; font-size: 0.78rem; }
+    .prio-badge {
+      display: inline-flex; align-items: center; gap: 0.25rem;
+      padding: 0.18rem 0.55rem; border-radius: 20px;
+      font-size: 0.72rem; font-weight: 700; white-space: nowrap;
+    }
+
+    /* ── Demand: resumo cards no topo ─────────────────────────────────── */
+    .demand-overview { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .demand-card {
+      flex: 1; min-width: 160px; background: white; border-radius: 10px;
+      padding: 1rem 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+      border-top: 4px solid #cbd5e0; text-decoration: none; color: inherit;
+      transition: box-shadow 0.15s, transform 0.1s; display: block; cursor: pointer;
+    }
+    .demand-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.12); transform: translateY(-1px); }
+    .demand-card-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #718096; margin-bottom: 0.5rem; }
+    .demand-card-num   { font-size: 2rem; font-weight: 800; line-height: 1; margin-bottom: 0.25rem; }
+    .demand-card-sub   { font-size: 0.72rem; color: #a0aec0; }
+
+    /* ── Placeholder Gaps ─────────────────────────────────────────────── */
+    .placeholder-box {
+      text-align: center; padding: 4rem 2rem;
+      background: white; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+      color: #a0aec0;
+    }
+    .placeholder-box .icon { font-size: 2.5rem; margin-bottom: 1rem; }
+    .placeholder-box p { font-size: 0.88rem; }
+
+    /* ── Loading ───────────────────────────────────────────────────────── */
     .loading { display: flex; align-items: center; justify-content: center; gap: 0.75rem; padding: 4rem; color: #718096; }
     .spinner { width: 24px; height: 24px; border: 3px solid #e2e8f0; border-top-color: #3182ce; border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
     @keyframes spin { to { transform: rotate(360deg); } }
@@ -161,8 +267,8 @@
 <!-- Login -->
 <div id="login-overlay">
   <div class="login-box">
-    <h2>⏱ Painel de Horas</h2>
-    <p>Acesso restrito a colaboradores Betha.<br>Informe seu e-mail corporativo.</p>
+    <h2>Painel de Gestão</h2>
+    <p>Acesso restrito.<br>Informe seu e-mail corporativo.</p>
     <input type="email" id="login-email" placeholder="seu@betha.com.br" autocomplete="email">
     <div class="login-error" id="login-error"></div>
     <button class="login-btn" id="login-btn">Acessar</button>
@@ -172,40 +278,80 @@
 <!-- Header -->
 <header>
   <div>
-    <h1>⏱ Apontamento de Horas — Betha</h1>
+    <h1>Painel de Gestão — Betha · Vertical Saúde</h1>
     <p id="header-date"></p>
   </div>
   <div class="hdr-right">
     <span id="last-update-label"></span>
-    <button class="hdr-btn" onclick="loadData()">↺ Atualizar</button>
+    <button class="hdr-btn" onclick="refreshCurrent()">↺ Atualizar</button>
     <span id="user-pill"></span>
     <button class="hdr-btn" onclick="logout()">Sair</button>
   </div>
 </header>
 
-<!-- Tabs -->
-<nav class="period-bar">
-  <button class="period-tab active" data-period="weekly"  onclick="switchPeriod('weekly')">Esta Semana</button>
-  <button class="period-tab"        data-period="monthly" onclick="switchPeriod('monthly')">Este Mês</button>
+<!-- Navegação principal -->
+<nav class="main-nav-bar">
+  <button class="main-nav-tab active" data-main="apontamentos" onclick="switchMain('apontamentos')">⏱ Apontamentos</button>
+  <button class="main-nav-tab"        data-main="demandas"     onclick="switchMain('demandas')">📋 Demandas</button>
 </nav>
 
-<div class="container">
-  <div id="loading-state" class="loading"><div class="spinner"></div> Carregando dados do Jira...</div>
-  <div id="main-content" style="display:none">
-    <div class="period-content active" id="pane-weekly">
-      <div class="period-label" id="lbl-weekly"></div>
-      <div class="summary-row"  id="sum-weekly"></div>
-      <div class="table-scroll" id="table-weekly"></div>
-    </div>
-    <div class="period-content" id="pane-monthly">
-      <div class="period-label" id="lbl-monthly"></div>
-      <div class="summary-row"  id="sum-monthly"></div>
-      <div class="table-scroll" id="table-monthly"></div>
+<!-- ═══════════════════════════════════════════════════════════════════════
+     SEÇÃO: APONTAMENTOS
+════════════════════════════════════════════════════════════════════════ -->
+<div id="section-apontamentos" class="main-section active">
+  <nav class="period-bar">
+    <button class="period-tab active" data-period="weekly"  onclick="switchPeriod('weekly')">Esta Semana</button>
+    <button class="period-tab"        data-period="monthly" onclick="switchPeriod('monthly')">Este Mês</button>
+  </nav>
+  <div class="container">
+    <div id="loading-state" class="loading"><div class="spinner"></div> Carregando dados do Jira...</div>
+    <div id="main-content" style="display:none">
+      <div class="period-content active" id="pane-weekly">
+        <div class="period-label" id="lbl-weekly"></div>
+        <div class="summary-row"  id="sum-weekly"></div>
+        <div class="table-scroll" id="table-weekly"></div>
+      </div>
+      <div class="period-content" id="pane-monthly">
+        <div class="period-label" id="lbl-monthly"></div>
+        <div class="summary-row"  id="sum-monthly"></div>
+        <div class="table-scroll" id="table-monthly"></div>
+      </div>
     </div>
   </div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════════════════════════
+     SEÇÃO: DEMANDAS
+════════════════════════════════════════════════════════════════════════ -->
+<div id="section-demandas" class="main-section">
+  <nav class="period-bar">
+    <button class="period-tab active" data-demand="incidentes" onclick="switchDemand('incidentes')">🔴 Incidentes</button>
+    <button class="period-tab"        data-demand="gaps"       onclick="switchDemand('gaps')">🟡 Gaps Funcionais</button>
+  </nav>
+  <div class="container">
+
+    <!-- Incidentes -->
+    <div id="pane-incidentes" class="demand-pane active">
+      <div id="incidentes-loading" class="loading"><div class="spinner"></div> Carregando dados...</div>
+      <div id="incidentes-content" style="display:none"></div>
+    </div>
+
+    <!-- Gaps Funcionais (placeholder) -->
+    <div id="pane-gaps" class="demand-pane">
+      <div class="placeholder-box">
+        <div class="icon">🚧</div>
+        <p><strong>Gaps Funcionais</strong></p>
+        <p style="margin-top:0.5rem">Em desenvolvimento — em breve disponível aqui.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <script>
+/* ══════════════════════════════════════════════════════════════════════
+   CONFIGURAÇÕES
+══════════════════════════════════════════════════════════════════════ */
 const TEAMS = [
   { label: 'Atendimento', users: [
     { name: 'Alana Pinheiro',  handle: 'alana.silva@betha.com.br',    dailyHours: 8, schedule: 'all' },
@@ -238,7 +384,43 @@ const HOLIDAYS = new Set([
   '2026-06-04','2026-09-07','2026-10-12','2026-11-02','2026-11-15','2026-11-20','2026-12-25',
 ]);
 
-// ── Auth ──────────────────────────────────────────────────────────────
+// Filtros de Incidentes
+const INCIDENT_FILTERS = [
+  { id: '121810', color: '#e53e3e', dotColor: '#fc8181', label: 'Fila de Incidentes' },
+  { id: '132006', color: '#d69e2e', dotColor: '#f6e05e', label: 'Em Testes' },
+  { id: '121901', color: '#2f855a', dotColor: '#68d391', label: 'Aguardando Liberação' },
+];
+
+// Cores por status
+const STATUS_STYLE = {
+  'Aguardando análise':       { bg: '#edf2f7', color: '#4a5568' },
+  'Em análise':               { bg: '#bee3f8', color: '#1a4d7a' },
+  'Realizando implementação': { bg: '#d6bcfa', color: '#44337a' },
+  'Aguardando implementação': { bg: '#fbd38d', color: '#7b341e' },
+  'Não iniciado':             { bg: '#e2e8f0', color: '#718096' },
+  'Atendimento interrompido': { bg: '#fed7d7', color: '#742a2a' },
+  'Aguardando testes':        { bg: '#fefcbf', color: '#744210' },
+  'Realizando testes':        { bg: '#c6f6d5', color: '#22543d' },
+  'Aguardando liberação':     { bg: '#b2f5ea', color: '#234e52' },
+};
+
+// Prioridades
+const PRIORITY_STYLE = {
+  '1': { label: 'Crítico', bg: '#fed7d7', color: '#742a2a', dot: '🔴' },
+  '2': { label: 'Normal',  bg: '#feebc8', color: '#7b341e', dot: '🟡' },
+  '3': { label: 'Médio',   bg: '#fefcbf', color: '#744210', dot: '🟠' },
+  '4': { label: 'Baixo',   bg: '#e2e8f0', color: '#718096', dot: '⚪' },
+};
+
+const TYPE_ICON = {
+  'Incidente':          '🐛',
+  'Tratamento de dados':'🗂️',
+  'Performance':        '⚡',
+};
+
+/* ══════════════════════════════════════════════════════════════════════
+   AUTH
+══════════════════════════════════════════════════════════════════════ */
 function checkAuth() {
   const email = sessionStorage.getItem('gestao_email');
   if (email?.toLowerCase() === 'maite.passos@betha.com.br') {
@@ -254,8 +436,7 @@ function doLogin() {
   const email = document.getElementById('login-email').value.trim().toLowerCase();
   const errEl = document.getElementById('login-error');
   const inpEl = document.getElementById('login-email');
-  errEl.textContent = '';
-  inpEl.classList.remove('error');
+  errEl.textContent = ''; inpEl.classList.remove('error');
   if (!email) { errEl.textContent = 'Informe o e-mail.'; inpEl.classList.add('error'); return; }
   if (email !== 'maite.passos@betha.com.br') { errEl.textContent = 'Acesso não autorizado para este e-mail.'; inpEl.classList.add('error'); return; }
   sessionStorage.setItem('gestao_email', email);
@@ -265,9 +446,38 @@ function doLogin() {
 }
 function logout() { sessionStorage.removeItem('gestao_email'); location.reload(); }
 
-// ── Date utils ────────────────────────────────────────────────────────
-const isWeekend = d => { const w = new Date(d+'T12:00:00').getDay(); return w===0||w===6; };
-const isHoliday = d => HOLIDAYS.has(d);
+/* ══════════════════════════════════════════════════════════════════════
+   NAVEGAÇÃO PRINCIPAL
+══════════════════════════════════════════════════════════════════════ */
+let currentMain = 'apontamentos';
+
+function switchMain(name) {
+  currentMain = name;
+  document.querySelectorAll('.main-nav-tab').forEach(t => t.classList.toggle('active', t.dataset.main === name));
+  document.querySelectorAll('.main-section').forEach(s => s.classList.toggle('active', s.id === `section-${name}`));
+  if (name === 'demandas') tryRenderIncidentes();
+}
+
+function switchPeriod(p) {
+  document.querySelectorAll('#section-apontamentos .period-tab').forEach(t => t.classList.toggle('active', t.dataset.period === p));
+  document.querySelectorAll('.period-content').forEach(c => c.classList.toggle('active', c.id === `pane-${p}`));
+}
+
+function switchDemand(name) {
+  document.querySelectorAll('#section-demandas .period-tab').forEach(t => t.classList.toggle('active', t.dataset.demand === name));
+  document.querySelectorAll('.demand-pane').forEach(p => p.classList.toggle('active', p.id === `pane-${name}`));
+}
+
+function refreshCurrent() {
+  if (currentMain === 'apontamentos') loadData();
+  else { window.DEMANDAS_DATA = null; loadDemandasData(); }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   UTILITÁRIOS DE DATA
+══════════════════════════════════════════════════════════════════════ */
+const isWeekend  = d => { const w = new Date(d+'T12:00:00').getDay(); return w===0||w===6; };
+const isHoliday  = d => HOLIDAYS.has(d);
 const isWorkday  = d => !isWeekend(d) && !isHoliday(d);
 const isFriday   = d => new Date(d+'T12:00:00').getDay() === 5;
 function countExpectedDays(dates, schedule) {
@@ -278,19 +488,20 @@ function dateRange(from, to) {
   while(cur<=end){ dates.push(cur.toISOString().split('T')[0]); cur.setDate(cur.getDate()+1); }
   return dates;
 }
-function today() { return new Date().toISOString().split('T')[0]; }
+function today()     { return new Date().toISOString().split('T')[0]; }
 function weekStart(d) {
   const dt=new Date(d+'T12:00:00'); const day=dt.getDay();
   dt.setDate(dt.getDate()+(day===0?-6:1-day)); return dt.toISOString().split('T')[0];
 }
-const monthStart = d => d.substring(0,7)+'-01';
-const fmtDate = d => new Date(d+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
-const fmtDateShort = d => new Date(d+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit'});
-const fmtMonthName = d => new Date(d+'T12:00:00').toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
-const secToH = s => s/3600;
-const fmtH  = h => (Math.round(h*100)/100).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:2});
+const monthStart    = d => d.substring(0,7)+'-01';
+const fmtDate       = d => new Date(d+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
+const fmtMonthName  = d => new Date(d+'T12:00:00').toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+const secToH        = s => s/3600;
+const fmtH          = h => (Math.round(h*100)/100).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:2});
 
-// ── Data ──────────────────────────────────────────────────────────────
+/* ══════════════════════════════════════════════════════════════════════
+   APONTAMENTOS — carga e render
+══════════════════════════════════════════════════════════════════════ */
 async function loadAllWorklogs(from, to) {
   if (window.HOURS_DATA) {
     const data = {};
@@ -302,17 +513,9 @@ async function loadAllWorklogs(from, to) {
     }
     return data;
   }
-  const data = {};
-  for (const u of ALL_USERS) {
-    try {
-      const r = await fetch(`/api/hours?username=${encodeURIComponent(u.handle)}&from=${from}&to=${to}`,{credentials:'include'});
-      data[u.handle] = (await r.json()).worklogs || {};
-    } catch { data[u.handle] = {}; }
-  }
-  return data;
+  return {};
 }
 
-// ── Render ────────────────────────────────────────────────────────────
 function badge(workedH, expectedH) {
   if (expectedH === 0) return `<span class="badge badge-ok">—</span>`;
   const pct = Math.round(workedH/expectedH*100);
@@ -327,67 +530,25 @@ function renderSummary(elId, totalWorked, totalExpected) {
   const saldo = totalWorked - totalExpected;
   const saldoCls = saldo >= 0 ? 'green' : saldo >= -totalExpected*ALERT_MARGIN ? 'orange' : 'red';
   document.getElementById(elId).innerHTML = `
-    <div class="sum-card blue">
-      <div class="sum-label">Total Apontado</div>
-      <div class="sum-value">${fmtH(totalWorked)}</div>
-      <div class="sum-sub">${pct}% do esperado</div>
-    </div>
-    <div class="sum-card blue">
-      <div class="sum-label">Total Esperado</div>
-      <div class="sum-value">${fmtH(totalExpected)}</div>
-      <div class="sum-sub">${ALL_USERS.length} colaboradores</div>
-    </div>
-    <div class="sum-card ${saldoCls}">
-      <div class="sum-label">Saldo</div>
-      <div class="sum-value">${saldo>=0?'+':''}${fmtH(saldo)}</div>
-      <div class="sum-sub">${saldo>=0?'Dentro do esperado':'Abaixo do esperado'}</div>
-    </div>`;
+    <div class="sum-card blue"><div class="sum-label">Total Apontado</div><div class="sum-value">${fmtH(totalWorked)}</div><div class="sum-sub">${pct}% do esperado</div></div>
+    <div class="sum-card blue"><div class="sum-label">Total Esperado</div><div class="sum-value">${fmtH(totalExpected)}</div><div class="sum-sub">${ALL_USERS.length} colaboradores</div></div>
+    <div class="sum-card ${saldoCls}"><div class="sum-label">Saldo</div><div class="sum-value">${saldo>=0?'+':''}${fmtH(saldo)}</div><div class="sum-sub">${saldo>=0?'Dentro do esperado':'Abaixo do esperado'}</div></div>`;
 }
 
 function teamGroupRow(colspan, label) {
   return `<tr><td colspan="${colspan}" style="padding:0.4rem 0.9rem 0.25rem;background:#f0f4f8;font-size:0.67rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#718096;border-bottom:1px solid #e2e8f0">${label}</td></tr>`;
 }
 
-// ── Daily: single-column summary table ───────────────────────────────
-function renderDaily(from, to, label, worklogs) {
-  const dates = dateRange(from, to);
-  const workdays = dates.filter(isWorkday).length;
-  document.getElementById('lbl-daily').textContent =
-    label + ` · ${fmtDate(from)}${from!==to?' – '+fmtDate(to):''} · ${workdays} dia${workdays!==1?'s':''} útil${workdays!==1?'eis':''}`;
-
-  let totalWorked=0, totalExpected=0, bodyHtml='';
-  for (const team of TEAMS) {
-    bodyHtml += teamGroupRow(4, team.label);
-    for (const u of team.users) {
-      const logs = worklogs[u.handle] || {};
-      const workedH   = secToH(dates.reduce((s,d) => s+(logs[d]||0), 0));
-      const expDays   = countExpectedDays(dates, u.schedule);
-      const expectedH = expDays * u.dailyHours;
-      totalWorked += workedH; totalExpected += expectedH;
-      bodyHtml += `<tr>
-        <td><div class="col-name">${u.name}</div><div class="col-handle">${u.handle}</div></td>
-        <td class="col-num">${fmtH(workedH)}</td>
-        <td class="col-exp">${fmtH(expectedH)}</td>
-        <td>${badge(workedH, expectedH)}</td>
-      </tr>`;
-    }
-  }
-  renderSummary('sum-daily', totalWorked, totalExpected);
-  document.getElementById('tbody-daily').innerHTML = bodyHtml;
-}
-
-// ── Weekly / Monthly: one column per workday ─────────────────────────
 function renderWithDays(period, from, to, label, worklogs) {
-  const todayStr = today();
+  const todayStr  = today();
   const allDates  = dateRange(from, to);
-  const wdays     = allDates.filter(isWorkday);   // workdays only, no weekends/holidays
+  const wdays     = allDates.filter(isWorkday);
   const nCols     = wdays.length;
-  const totalCols = 1 + nCols + 3;               // name + days + Total + Esperado + Alerta
+  const totalCols = 1 + nCols + 3;
 
   document.getElementById(`lbl-${period}`).textContent =
     label + ` · ${fmtDate(from)} – ${fmtDate(to)} · ${nCols} dia${nCols!==1?'s':''} útil${nCols!==1?'eis':''}`;
 
-  // ── Header ──
   const dayHeaders = wdays.map(d => {
     const dt  = new Date(d+'T12:00:00');
     const wd  = dt.toLocaleDateString('pt-BR',{weekday:'short'}).replace('.','');
@@ -396,34 +557,29 @@ function renderWithDays(period, from, to, label, worklogs) {
     return `<th class="th-day${cls}">${wd}<br>${dm}</th>`;
   }).join('');
 
-  // ── Rows ──
-  const dayTotals = new Array(wdays.length).fill(0);   // total por dia (todos os usuários)
+  const dayTotals = new Array(wdays.length).fill(0);
   let totalWorked=0, totalExpected=0, bodyHtml='';
+
   for (const team of TEAMS) {
     bodyHtml += teamGroupRow(totalCols, team.label);
     for (const u of team.users) {
       const logs = worklogs[u.handle] || {};
       let userTotal = 0;
-
       const dayCells = wdays.map((d, i) => {
         if (u.schedule === 'monThu' && isFriday(d)) {
           return `<td class="td-day off${d===todayStr?' today-col':''}">—</td>`;
         }
         const h = secToH(logs[d] || 0);
-        userTotal += h;
-        dayTotals[i] += h;
+        userTotal += h; dayTotals[i] += h;
         const cls = h === 0 ? ' zero' : '';
         return `<td class="td-day${cls}${d===todayStr?' today-col':''}">${h > 0 ? fmtH(h) : ''}</td>`;
       }).join('');
-
       const expDays   = countExpectedDays(wdays, u.schedule);
       const expectedH = expDays * u.dailyHours;
       totalWorked += userTotal; totalExpected += expectedH;
-
       bodyHtml += `<tr>
         <td style="padding:0.4rem 0.9rem;border-bottom:1px solid #edf2f7;white-space:nowrap">
-          <div class="col-name">${u.name}</div>
-          <div class="col-handle">${u.handle}</div>
+          <div class="col-name">${u.name}</div><div class="col-handle">${u.handle}</div>
         </td>
         ${dayCells}
         <td class="col-total">${fmtH(userTotal)}</td>
@@ -433,13 +589,11 @@ function renderWithDays(period, from, to, label, worklogs) {
     }
   }
 
-  // ── Linha de total por dia ──
+  // Linha de total por dia
   const dayTotalCells = wdays.map((d, i) => {
     const isTd = d === todayStr;
-    const val  = dayTotals[i];
-    return `<td class="td-day${isTd?' today-col':''}" style="font-weight:700;background:#edf2f7;border-top:2px solid #cbd5e0;color:#2d3748">${val > 0 ? fmtH(val) : ''}</td>`;
+    return `<td class="td-day${isTd?' today-col':''}" style="font-weight:700;background:#edf2f7;border-top:2px solid #cbd5e0;color:#2d3748">${dayTotals[i] > 0 ? fmtH(dayTotals[i]) : ''}</td>`;
   }).join('');
-
   bodyHtml += `<tr>
     <td style="padding:0.4rem 0.9rem;background:#edf2f7;border-top:2px solid #cbd5e0;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#4a5568;white-space:nowrap">Total do dia</td>
     ${dayTotalCells}
@@ -462,15 +616,9 @@ function renderWithDays(period, from, to, label, worklogs) {
     </table>`;
 }
 
-function renderPeriod(period, from, to, label, worklogs) {
-  if (period === 'daily') renderDaily(from, to, label, worklogs);
-  else renderWithDays(period, from, to, label, worklogs);
-}
-
 async function loadData() {
   document.getElementById('loading-state').style.display = 'flex';
   document.getElementById('main-content').style.display  = 'none';
-
   const todayStr = today();
   const from = monthStart(todayStr);
   let worklogs;
@@ -481,35 +629,170 @@ async function loadData() {
        <button class="hdr-btn" style="margin-top:1rem;color:#2d3748;background:#e2e8f0;border:none" onclick="loadData()">Tentar novamente</button></div>`;
     return;
   }
-
   const genAt = window.HOURS_DATA?.generatedAt;
   document.getElementById('last-update-label').textContent = genAt
     ? 'Atualizado: '+new Date(genAt).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})
     : 'Dados ao vivo';
-
   const wStart = weekStart(todayStr);
-  renderPeriod('weekly',  wStart, todayStr, 'Esta Semana', worklogs);
-  renderPeriod('monthly', from,   todayStr, 'Mês de '+fmtMonthName(from), worklogs);
-
+  renderWithDays('weekly',  wStart, todayStr, 'Esta Semana', worklogs);
+  renderWithDays('monthly', from,   todayStr, 'Mês de '+fmtMonthName(from), worklogs);
   document.getElementById('loading-state').style.display = 'none';
   document.getElementById('main-content').style.display  = 'block';
 }
 
-function switchPeriod(p) {
-  document.querySelectorAll('.period-tab').forEach(t => t.classList.toggle('active', t.dataset.period===p));
-  document.querySelectorAll('.period-content').forEach(c => c.classList.toggle('active', c.id===`pane-${p}`));
+/* ══════════════════════════════════════════════════════════════════════
+   DEMANDAS — render Incidentes
+══════════════════════════════════════════════════════════════════════ */
+let demandasRendered = false;
+
+function tryRenderIncidentes() {
+  if (demandasRendered) return;
+  if (!window.DEMANDAS_DATA) {
+    document.getElementById('incidentes-loading').style.display = 'flex';
+    document.getElementById('incidentes-content').style.display = 'none';
+    return;
+  }
+  renderIncidentes();
 }
 
+function renderIncidentes() {
+  const data = window.DEMANDAS_DATA;
+  document.getElementById('incidentes-loading').style.display = 'none';
+  document.getElementById('incidentes-content').style.display = 'block';
+
+  if (!data) {
+    document.getElementById('incidentes-content').innerHTML =
+      '<div class="placeholder-box"><p>Dados não disponíveis. Tente atualizar.</p></div>';
+    return;
+  }
+
+  const genAt = data.generatedAt
+    ? 'Atualizado: ' + new Date(data.generatedAt).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})
+    : '';
+
+  // ── Cards de resumo no topo
+  let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem">
+    <span style="font-size:0.7rem;color:#a0aec0">${genAt}</span>
+  </div>`;
+
+  html += '<div class="demand-overview">';
+  for (const f of INCIDENT_FILTERS) {
+    const fd = data.filters[f.id] || { total: 0 };
+    html += `<a href="${(data.filters[f.id]||{}).url||'#'}" target="_blank" class="demand-card" style="border-top-color:${f.color}">
+      <div class="demand-card-label">${f.label}</div>
+      <div class="demand-card-num" style="color:${f.color}">${fd.total}</div>
+      <div class="demand-card-sub">issues · abrir no Jira ↗</div>
+    </a>`;
+  }
+  html += '</div>';
+
+  // ── Seção por filtro
+  for (const f of INCIDENT_FILTERS) {
+    const fd = data.filters[f.id];
+    if (!fd) continue;
+
+    html += `<div class="filter-section">`;
+
+    // Cabeçalho
+    html += `<div class="filter-header">
+      <div class="filter-dot" style="background:${f.color}"></div>
+      <span class="filter-title">${f.label}</span>
+      <span class="filter-count-badge" style="background:${f.color}20;color:${f.color}">${fd.total} issues</span>
+      <a href="${fd.url}" target="_blank" class="filter-link">Abrir no Jira ↗</a>
+    </div>`;
+
+    // Status breakdown
+    html += '<div class="status-row">';
+    for (const [status, count] of Object.entries(fd.byStatus || {})) {
+      const st = STATUS_STYLE[status] || { bg: '#e2e8f0', color: '#4a5568' };
+      html += `<span class="status-chip" style="background:${st.bg};color:${st.color}">
+        ${status}
+        <span class="status-chip-count">${count}</span>
+      </span>`;
+    }
+    // Prioridade breakdown
+    if (fd.byPriority) {
+      html += '<span style="margin-left:auto;display:flex;gap:0.4rem;align-items:center">';
+      for (const [p, count] of Object.entries(fd.byPriority).sort()) {
+        if (count === 0) continue;
+        const pr = PRIORITY_STYLE[p] || { dot: '•', label: `P${p}`, bg: '#e2e8f0', color: '#718096' };
+        html += `<span class="prio-badge" style="background:${pr.bg};color:${pr.color}">${pr.dot} ${pr.label} <strong>${count}</strong></span>`;
+      }
+      html += '</span>';
+    }
+    html += '</div>';
+
+    // Tabela de issues
+    html += `<div style="overflow-x:auto"><table class="issue-table">
+      <thead><tr>
+        <th style="width:110px">Issue</th>
+        <th>Resumo</th>
+        <th>Situação</th>
+        <th>Prioridade</th>
+        <th>Responsável</th>
+      </tr></thead>
+      <tbody>`;
+
+    for (const issue of (fd.issues || [])) {
+      const st = STATUS_STYLE[issue.status] || { bg: '#e2e8f0', color: '#4a5568' };
+      const pr = PRIORITY_STYLE[issue.priority] || { dot: '•', label: `P${issue.priority}`, bg: '#e2e8f0', color: '#718096' };
+      const typeIcon = TYPE_ICON[issue.issuetype] || '📌';
+      html += `<tr>
+        <td>
+          <a href="https://desenv.betha.com.br/browse/${issue.key}" target="_blank" class="issue-key">${issue.key}</a>
+          <div style="font-size:0.68rem;color:#a0aec0;margin-top:2px">${typeIcon} ${issue.issuetype}</div>
+        </td>
+        <td class="issue-summary">${escHtml(issue.summary)}</td>
+        <td><span class="status-chip" style="background:${st.bg};color:${st.color}">${issue.status}</span></td>
+        <td><span class="prio-badge" style="background:${pr.bg};color:${pr.color}">${pr.dot} ${pr.label}</span></td>
+        <td class="issue-assignee">${issue.assignee ? escHtml(issue.assignee) : '<span style="color:#e2e8f0">—</span>'}</td>
+      </tr>`;
+    }
+
+    html += '</tbody></table></div></div>';
+  }
+
+  document.getElementById('incidentes-content').innerHTML = html;
+  demandasRendered = true;
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function loadDemandasData() {
+  document.getElementById('incidentes-loading').style.display = 'flex';
+  document.getElementById('incidentes-content').style.display = 'none';
+  demandasRendered = false;
+  const s = document.createElement('script');
+  s.src = 'demandas-data.js?v=' + Date.now();
+  s.onload = () => tryRenderIncidentes();
+  s.onerror = () => {
+    document.getElementById('incidentes-loading').innerHTML =
+      '<div style="text-align:center;color:#718096"><p>Erro ao carregar demandas.</p></div>';
+  };
+  document.head.appendChild(s);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   INICIALIZAÇÃO
+══════════════════════════════════════════════════════════════════════ */
 document.getElementById('header-date').textContent =
   new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
 
-// Carrega hours-data.js com cache-buster para garantir dados sempre atualizados
+// Carrega hours-data.js e demandas-data.js com cache-buster
 (function() {
-  const s = document.createElement('script');
-  s.src = 'hours-data.js?v=' + Date.now();
-  s.onload = function() { if (checkAuth()) loadData(); };
-  s.onerror = function() { if (checkAuth()) loadData(); }; // fallback sem dados
-  document.head.appendChild(s);
+  const sh = document.createElement('script');
+  sh.src = 'hours-data.js?v=' + Date.now();
+  sh.onload  = () => { if (checkAuth()) loadData(); };
+  sh.onerror = () => { if (checkAuth()) loadData(); };
+  document.head.appendChild(sh);
+
+  const sd = document.createElement('script');
+  sd.src = 'demandas-data.js?v=' + Date.now();
+  sd.onload  = () => { if (currentMain === 'demandas') tryRenderIncidentes(); };
+  sd.onerror = () => {};
+  document.head.appendChild(sd);
 })();
 </script>
 </body>
