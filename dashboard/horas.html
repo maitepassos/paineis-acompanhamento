@@ -748,14 +748,18 @@ function tempoStyle(tempoRestante) {
 }
 
 // ── Chamado atendimento: link e badge ────────────────────────────────
-function atendimentoBadge(key) {
-  if (!key) return '<span style="color:#e2e8f0">—</span>';
-  if (key.startsWith('BTHSC-')) {
-    return `<a href="https://atendimento.betha.com.br/browse/${key}" target="_blank"
-      style="font-size:0.74rem;font-weight:700;color:#553c9a;background:#e9d8fd;padding:0.18rem 0.55rem;border-radius:12px;text-decoration:none;white-space:nowrap"
+function atendimentoBadge(links) {
+  if (!links || links.length === 0) return '<span style="color:#e2e8f0">—</span>';
+  return links.map(({key, url}) => {
+    if (key.startsWith('BTHSC-')) {
+      return `<a href="${url}" target="_blank"
+        style="display:inline-block;font-size:0.74rem;font-weight:700;color:#553c9a;background:#e9d8fd;padding:0.18rem 0.55rem;border-radius:12px;text-decoration:none;white-space:nowrap;margin:1px 2px"
+        title="Abrir no Jira Atendimento">${key} ↗</a>`;
+    }
+    return `<a href="${url}" target="_blank"
+      style="display:inline-block;font-size:0.72rem;color:#2b6cb0;background:#ebf8ff;padding:0.18rem 0.55rem;border-radius:12px;text-decoration:none;white-space:nowrap;margin:1px 2px"
       title="Abrir no Jira Atendimento">${key} ↗</a>`;
-  }
-  return `<span style="font-size:0.72rem;color:#718096;background:#edf2f7;padding:0.18rem 0.55rem;border-radius:12px;white-space:nowrap">${key}</span>`;
+  }).join('');
 }
 
 function renderIncidentes() {
@@ -854,7 +858,8 @@ function renderIncidentes() {
       const pr  = PRIORITY_STYLE[issue.priority]|| { dot:'•', label:`P${issue.priority}`, bg:'#e2e8f0', color:'#718096' };
       const ti  = tempoStyle(issue.tempoRestante);
       const typ = TYPE_ICON[issue.issuetype] || '📌';
-      const searchData = `${issue.key} ${issue.summary}`.toLowerCase();
+      const atKeys = (issue.atendimento || []).map(a => a.key).join(' ');
+      const searchData = `${issue.key} ${issue.summary} ${atKeys}`.toLowerCase();
 
       html += `<tr data-status="${escHtml(issue.status)}" data-search="${escHtml(searchData)}">
         <td>
