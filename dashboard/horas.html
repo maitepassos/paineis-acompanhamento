@@ -347,8 +347,9 @@
 ════════════════════════════════════════════════════════════════════════ -->
 <div id="section-demandas" class="main-section">
   <nav class="period-bar">
-    <button class="period-tab active" data-demand="incidentes" onclick="switchDemand('incidentes')">🔴 Incidentes</button>
-    <button class="period-tab"        data-demand="gaps"       onclick="switchDemand('gaps')">🟡 Gaps Funcionais</button>
+    <button class="period-tab active" data-demand="incidentes"    onclick="switchDemand('incidentes')">🔴 Incidentes</button>
+    <button class="period-tab"        data-demand="gaps"          onclick="switchDemand('gaps')">🟡 Gaps Funcionais</button>
+    <button class="period-tab"        data-demand="produtividade" onclick="switchDemand('produtividade')">📊 Produtividade</button>
   </nav>
   <div class="container">
 
@@ -365,6 +366,12 @@
         <p><strong>Gaps Funcionais</strong></p>
         <p style="margin-top:0.5rem">Em desenvolvimento — em breve disponível aqui.</p>
       </div>
+    </div>
+
+    <!-- Produtividade -->
+    <div id="pane-produtividade" class="demand-pane">
+      <div id="produtividade-loading" class="loading"><div class="spinner"></div> Carregando dados...</div>
+      <div id="produtividade-content" style="display:none"></div>
     </div>
 
   </div>
@@ -477,7 +484,11 @@ function switchMain(name) {
   currentMain = name;
   document.querySelectorAll('.main-nav-tab').forEach(t => t.classList.toggle('active', t.dataset.main === name));
   document.querySelectorAll('.main-section').forEach(s => s.classList.toggle('active', s.id === `section-${name}`));
-  if (name === 'demandas') tryRenderIncidentes();
+  if (name === 'demandas') {
+    const activeDemand = document.querySelector('#section-demandas .period-tab.active')?.dataset?.demand || 'incidentes';
+    if (activeDemand === 'incidentes') tryRenderIncidentes();
+    else if (activeDemand === 'produtividade') tryRenderProdutividade();
+  }
 }
 
 function switchPeriod(p) {
@@ -488,6 +499,8 @@ function switchPeriod(p) {
 function switchDemand(name) {
   document.querySelectorAll('#section-demandas .period-tab').forEach(t => t.classList.toggle('active', t.dataset.demand === name));
   document.querySelectorAll('.demand-pane').forEach(p => p.classList.toggle('active', p.id === `pane-${name}`));
+  if (name === 'incidentes')    tryRenderIncidentes();
+  if (name === 'produtividade') tryRenderProdutividade();
 }
 
 function refreshCurrent() {
@@ -918,12 +931,138 @@ function loadDemandasData() {
 }
 
 /* ══════════════════════════════════════════════════════════════════════
+   PRODUTIVIDADE — render
+══════════════════════════════════════════════════════════════════════ */
+let produtividadeRendered = false;
+
+function tryRenderProdutividade() {
+  if (produtividadeRendered) return;
+  if (!window.PRODUTIVIDADE_DATA) {
+    document.getElementById('produtividade-loading').style.display = 'flex';
+    document.getElementById('produtividade-content').style.display = 'none';
+    return;
+  }
+  document.getElementById('produtividade-loading').style.display = 'none';
+  document.getElementById('produtividade-content').style.display = 'block';
+  renderProdutividade();
+}
+
+function renderProdutividade() {
+  const data = window.PRODUTIVIDADE_DATA;
+  if (!data) return;
+
+  const genAt = data.generatedAt
+    ? 'Atualizado: ' + new Date(data.generatedAt).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})
+    : '';
+
+  const maxTotal = data.byAssignee[0]?.total || 1;
+
+  // Cores por tipo de tarefa
+  const TYPE_COLOR = {
+    'Incidente':          { bg:'#fed7d7', color:'#742a2a', border:'#fc8181' },
+    'Story':              { bg:'#bee3f8', color:'#2a4365', border:'#63b3ed' },
+    'Tratamento de dados':{ bg:'#fefcbf', color:'#744210', border:'#f6e05e' },
+    'Tarefa':             { bg:'#c6f6d5', color:'#22543d', border:'#68d391' },
+    'Performance':        { bg:'#e9d8fd', color:'#44337a', border:'#b794f4' },
+  };
+
+  // Iniciais do colaborador
+  function initials(name) {
+    return name.replace(/\s*\[X\]\s*$/, '').split(' ').filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join('');
+  }
+  function isInactive(name) { return name.includes('[X]'); }
+  function shortName(name) { return name.replace(/\s*\[X\]\s*$/, ' ✕'); }
+
+  let html = `
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:0.5rem">
+    <div>
+      <h2 style="font-size:1.1rem;font-weight:700;color:#1a202c;margin:0">📊 Produtividade — ${escHtml(data.periodo)}</h2>
+      <span style="font-size:0.72rem;color:#a0aec0">${genAt} ·
+        <a href="${data.filterUrl}" target="_blank" style="color:#3182ce">Ver filtro no Jira ↗</a>
+      </span>
+    </div>
+    <div style="background:#ebf8ff;color:#2b6cb0;font-size:1rem;font-weight:700;padding:0.5rem 1.2rem;border-radius:10px;border:1.5px solid #bee3f8">
+      ${data.total} issues atendidas
+    </div>
+  </div>`;
+
+  /* ── Seção 1: Produção por colaborador ─── */
+  html += `<div class="filter-section" style="margin-bottom:1.5rem">
+    <div class="filter-header" style="margin-bottom:1rem">
+      <div class="filter-dot" style="background:#3182ce"></div>
+      <span class="filter-title">Produção por Colaborador</span>
+      <span class="filter-count-badge" style="background:#ebf8ff;color:#2b6cb0">${data.byAssignee.length} colaboradores</span>
+    </div>`;
+
+  for (const { name, total } of data.byAssignee) {
+    const pct = Math.round((total / maxTotal) * 100);
+    const inactive = isInactive(name);
+    const ini = initials(name);
+    const sname = shortName(name);
+    html += `
+    <div style="display:flex;align-items:center;gap:0.75rem;padding:0.5rem 1.2rem;border-bottom:1px solid #f0f4f8;${inactive?'opacity:0.55':''}">
+      <div style="width:36px;height:36px;border-radius:50%;background:${inactive?'#e2e8f0':'#2b6cb0'};color:${inactive?'#718096':'#fff'};display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;flex-shrink:0">${escHtml(ini)}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:0.85rem;font-weight:600;color:${inactive?'#a0aec0':'#2d3748'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(sname)}</div>
+        <div style="height:8px;background:#edf2f7;border-radius:4px;margin-top:4px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:${inactive?'#cbd5e0':'#3182ce'};border-radius:4px;transition:width 0.4s"></div>
+        </div>
+      </div>
+      <div style="font-size:1.1rem;font-weight:700;color:${inactive?'#a0aec0':'#2b6cb0'};min-width:32px;text-align:right">${total}</div>
+    </div>`;
+  }
+  html += `</div>`;
+
+  /* ── Seção 2: Por tipo de tarefa e colaborador ─── */
+  html += `<div class="filter-section">
+    <div class="filter-header" style="margin-bottom:1rem">
+      <div class="filter-dot" style="background:#6b46c1"></div>
+      <span class="filter-title">Por Tipo de Tarefa e Colaborador</span>
+    </div>`;
+
+  const typeOrder = ['Incidente','Story','Tratamento de dados','Tarefa','Performance'];
+  for (const type of typeOrder) {
+    const colabs = data.byTypeAndAssignee[type];
+    if (!colabs) continue;
+    const tc = TYPE_COLOR[type] || { bg:'#e2e8f0', color:'#4a5568', border:'#cbd5e0' };
+    const typeTotal = Object.values(colabs).reduce((s,v)=>s+v, 0);
+    const maxInType = Math.max(...Object.values(colabs));
+    const sorted = Object.entries(colabs).sort((a,b) => b[1]-a[1]);
+
+    html += `<div style="margin-bottom:1.2rem">
+      <div style="display:flex;align-items:center;gap:0.6rem;padding:0.55rem 1.2rem;background:${tc.bg};border-left:4px solid ${tc.border}">
+        <span style="font-size:0.85rem;font-weight:700;color:${tc.color}">${escHtml(type)}</span>
+        <span style="font-size:0.75rem;color:${tc.color};opacity:0.8;margin-left:auto">${typeTotal} total</span>
+      </div>`;
+
+    for (const [name, count] of sorted) {
+      const pct = Math.round((count / maxInType) * 100);
+      const inactive = isInactive(name);
+      const sname = shortName(name);
+      html += `
+      <div style="display:flex;align-items:center;gap:0.75rem;padding:0.4rem 1.2rem 0.4rem 2rem;border-bottom:1px solid #f7fafc;${inactive?'opacity:0.5':''}">
+        <div style="font-size:0.82rem;color:${inactive?'#a0aec0':'#4a5568'};flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(sname)}</div>
+        <div style="width:140px;height:6px;background:#edf2f7;border-radius:3px;overflow:hidden;flex-shrink:0">
+          <div style="height:100%;width:${pct}%;background:${tc.border};border-radius:3px"></div>
+        </div>
+        <div style="font-size:0.9rem;font-weight:700;color:${tc.color};min-width:28px;text-align:right">${count}</div>
+      </div>`;
+    }
+    html += `</div>`;
+  }
+  html += `</div>`;
+
+  document.getElementById('produtividade-content').innerHTML = html;
+  produtividadeRendered = true;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
    INICIALIZAÇÃO
 ══════════════════════════════════════════════════════════════════════ */
 document.getElementById('header-date').textContent =
   new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
 
-// Carrega hours-data.js e demandas-data.js com cache-buster
+// Carrega hours-data.js, demandas-data.js e produtividade-data.js com cache-buster
 (function() {
   const sh = document.createElement('script');
   sh.src = 'hours-data.js?v=' + Date.now();
@@ -936,6 +1075,12 @@ document.getElementById('header-date').textContent =
   sd.onload  = () => { if (currentMain === 'demandas') tryRenderIncidentes(); };
   sd.onerror = () => {};
   document.head.appendChild(sd);
+
+  const sp = document.createElement('script');
+  sp.src = 'produtividade-data.js?v=' + Date.now();
+  sp.onload  = () => { if (currentMain === 'demandas') tryRenderProdutividade(); };
+  sp.onerror = () => {};
+  document.head.appendChild(sp);
 })();
 </script>
 </body>
