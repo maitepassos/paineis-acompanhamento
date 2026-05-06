@@ -736,15 +736,25 @@ function _applyFilter(filterId) {
   if (rst) rst.style.display = (state.activeStatuses.size > 0 || state.searchText) ? 'inline-block' : 'none';
 }
 
-// ── Tempo restante: cor e label ───────────────────────────────────────
-function tempoStyle(tempoRestante) {
-  if (!tempoRestante) return null;
-  const days = parseInt(tempoRestante, 10);
-  if (isNaN(days)) return { bg: '#e2e8f0', color: '#718096', label: tempoRestante };
-  if (days === 0) return { bg: '#fed7d7', color: '#742a2a', label: '⚠ ' + tempoRestante };
-  if (days <= 2)  return { bg: '#feebc8', color: '#7b341e', label: tempoRestante };
-  if (days <= 5)  return { bg: '#fefcbf', color: '#744210', label: tempoRestante };
-  return { bg: '#c6f6d5', color: '#22543d', label: tempoRestante };
+// ── Data de entrega: cor e label ─────────────────────────────────────
+function deliveryStyle(isoDate) {
+  if (!isoDate) return null;
+  const d = new Date(isoDate);
+  if (isNaN(d)) return null;
+
+  // Formata como DD/MM/AAAA HH:mm
+  const pad = n => String(n).padStart(2, '0');
+  const label = `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+
+  // Limiar de alerta: hoje + 1 dia (fim do dia de amanhã)
+  const now = new Date();
+  const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 2); // início do dia depois de amanhã
+  const weekOut  = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 8);
+
+  if (d < now)        return { bg: '#fed7d7', color: '#742a2a', label: '⚠ ' + label, urgent: true };
+  if (d < tomorrow)   return { bg: '#feebc8', color: '#7b341e', label: '⚠ ' + label, urgent: true };
+  if (d < weekOut)    return { bg: '#fefcbf', color: '#744210', label, urgent: false };
+  return               { bg: '#c6f6d5', color: '#22543d', label, urgent: false };
 }
 
 // ── Chamado atendimento: link e badge ────────────────────────────────
@@ -847,7 +857,7 @@ function renderIncidentes() {
         <th>Resumo</th>
         <th style="width:170px">Situação</th>
         <th style="width:105px">Prioridade</th>
-        <th style="width:85px;text-align:center">Tempo Rest.</th>
+        <th style="width:130px;text-align:center">Entrega em</th>
         <th style="width:140px">Atendimento</th>
         <th style="width:160px">Responsável</th>
       </tr></thead>
@@ -856,7 +866,7 @@ function renderIncidentes() {
     for (const issue of (fd.issues || [])) {
       const st  = STATUS_STYLE[issue.status]   || { bg: '#e2e8f0', color: '#4a5568' };
       const pr  = PRIORITY_STYLE[issue.priority]|| { dot:'•', label:`P${issue.priority}`, bg:'#e2e8f0', color:'#718096' };
-      const ti  = tempoStyle(issue.tempoRestante);
+      const ti  = deliveryStyle(issue.dataFinal);
       const typ = TYPE_ICON[issue.issuetype] || '📌';
       const atKeys = (issue.atendimento || []).map(a => a.key).join(' ');
       const searchData = `${issue.key} ${issue.summary} ${atKeys}`.toLowerCase();
@@ -870,7 +880,9 @@ function renderIncidentes() {
         <td><span class="status-chip" style="background:${st.bg};color:${st.color};cursor:default">${escHtml(issue.status)}</span></td>
         <td><span class="prio-badge" style="background:${pr.bg};color:${pr.color}">${pr.dot} ${pr.label}</span></td>
         <td style="text-align:center">
-          ${ti ? `<span style="font-size:0.73rem;font-weight:700;background:${ti.bg};color:${ti.color};padding:0.18rem 0.55rem;border-radius:12px;white-space:nowrap">${ti.label}</span>` : '<span style="color:#e2e8f0">—</span>'}
+          ${ti
+            ? `<span style="font-size:0.72rem;font-weight:${ti.urgent?'700':'600'};background:${ti.bg};color:${ti.color};padding:0.2rem 0.55rem;border-radius:8px;white-space:nowrap;display:inline-block;line-height:1.4">${ti.label}</span>`
+            : '<span style="color:#e2e8f0">—</span>'}
         </td>
         <td>${atendimentoBadge(issue.atendimento)}</td>
         <td class="issue-assignee">${issue.assignee ? escHtml(issue.assignee) : '<span style="color:#e2e8f0">—</span>'}</td>
