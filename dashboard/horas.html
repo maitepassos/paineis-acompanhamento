@@ -359,13 +359,10 @@
       <div id="incidentes-content" style="display:none"></div>
     </div>
 
-    <!-- Gaps Funcionais (placeholder) -->
+    <!-- Gaps Funcionais -->
     <div id="pane-gaps" class="demand-pane">
-      <div class="placeholder-box">
-        <div class="icon">🚧</div>
-        <p><strong>Gaps Funcionais</strong></p>
-        <p style="margin-top:0.5rem">Em desenvolvimento — em breve disponível aqui.</p>
-      </div>
+      <div id="gaps-loading" class="loading"><div class="spinner"></div> Carregando sprints...</div>
+      <div id="gaps-content" style="display:none"></div>
     </div>
 
     <!-- Produtividade -->
@@ -500,6 +497,7 @@ function switchDemand(name) {
   document.querySelectorAll('#section-demandas .period-tab').forEach(t => t.classList.toggle('active', t.dataset.demand === name));
   document.querySelectorAll('.demand-pane').forEach(p => p.classList.toggle('active', p.id === `pane-${name}`));
   if (name === 'incidentes')    tryRenderIncidentes();
+  if (name === 'gaps')          tryRenderGaps();
   if (name === 'produtividade') tryRenderProdutividade();
 }
 
@@ -931,6 +929,135 @@ function loadDemandasData() {
 }
 
 /* ══════════════════════════════════════════════════════════════════════
+   GAPS FUNCIONAIS — render Sprints
+══════════════════════════════════════════════════════════════════════ */
+let gapsRendered = false;
+
+function tryRenderGaps() {
+  if (gapsRendered) return;
+  if (!window.GAPS_DATA) {
+    document.getElementById('gaps-loading').style.display = 'flex';
+    document.getElementById('gaps-content').style.display = 'none';
+    return;
+  }
+  document.getElementById('gaps-loading').style.display = 'none';
+  document.getElementById('gaps-content').style.display = 'block';
+  renderGaps();
+}
+
+function renderGaps() {
+  const data = window.GAPS_DATA;
+  if (!data) return;
+
+  const STORY_STATUS = {
+    'Atendida':            { bg:'#c6f6d5', color:'#22543d' },
+    'Aguardando liberação':{ bg:'#bee3f8', color:'#2a4365' },
+    'Em andamento':        { bg:'#feebc8', color:'#7b341e' },
+    'Novo':                { bg:'#e2e8f0', color:'#4a5568' },
+    'Não iniciado':        { bg:'#e2e8f0', color:'#4a5568' },
+    'Aguardando correção': { bg:'#fed7d7', color:'#742a2a' },
+  };
+
+  const genAt = data.generatedAt
+    ? 'Atualizado: ' + new Date(data.generatedAt).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})
+    : '';
+
+  let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;flex-wrap:wrap;gap:0.5rem">
+    <h2 style="font-size:1.1rem;font-weight:700;color:#1a202c;margin:0">🚀 Sprints em Andamento — Saúde</h2>
+    <span style="font-size:0.7rem;color:#a0aec0">${genAt}</span>
+  </div>`;
+
+  for (const sprint of data.sprints) {
+    const pad = n => String(n).padStart(2,'0');
+    function fmtDate(iso) {
+      if (!iso) return '—';
+      const d = new Date(iso);
+      return `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()}`;
+    }
+
+    const total   = sprint.stories.length;
+    const done    = sprint.stories.filter(s => s.statusCategory === 'done').length;
+    const pct     = total ? Math.round((done/total)*100) : 0;
+    const bugsOpen   = sprint.stories.reduce((n, s) => n + s.bugs.filter(b=>!b.done).length, 0);
+    const bugsDone   = sprint.stories.reduce((n, s) => n + s.bugs.filter(b=> b.done).length, 0);
+
+    html += `<div class="filter-section" style="margin-bottom:1.5rem">
+      <!-- Cabeçalho da sprint -->
+      <div style="padding:1rem 1.2rem;border-bottom:1px solid #e2e8f0">
+        <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap">
+          <span style="font-size:1rem;font-weight:700;color:#1a202c">${escHtml(sprint.name)}</span>
+          <span style="font-size:0.72rem;background:#c6f6d5;color:#22543d;padding:0.15rem 0.6rem;border-radius:20px;font-weight:600">● ATIVA</span>
+          <span style="font-size:0.72rem;color:#718096;margin-left:auto">${fmtDate(sprint.start)} → ${fmtDate(sprint.end)}</span>
+        </div>
+        <!-- Progresso da sprint -->
+        <div style="margin-top:0.75rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+          <div style="flex:1;min-width:160px">
+            <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:#718096;margin-bottom:4px">
+              <span>${done} de ${total} stories concluídas</span>
+              <span style="font-weight:700;color:#2b6cb0">${pct}%</span>
+            </div>
+            <div style="height:8px;background:#edf2f7;border-radius:4px;overflow:hidden">
+              <div style="height:100%;width:${pct}%;background:#3182ce;border-radius:4px;transition:width 0.4s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:0.5rem;flex-shrink:0">
+            ${bugsOpen  ? `<span style="font-size:0.75rem;font-weight:700;background:#fed7d7;color:#742a2a;padding:0.2rem 0.6rem;border-radius:10px">🐛 ${bugsOpen} bug${bugsOpen>1?'s':''} em aberto</span>` : ''}
+            ${bugsDone  ? `<span style="font-size:0.75rem;font-weight:600;background:#c6f6d5;color:#22543d;padding:0.2rem 0.6rem;border-radius:10px">✓ ${bugsDone} bug${bugsDone>1?'s':''} resolvido${bugsDone>1?'s':''}</span>` : ''}
+            ${(!bugsOpen && !bugsDone) ? '<span style="font-size:0.73rem;color:#a0aec0">Sem bugs</span>' : ''}
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabela de stories -->
+      <div style="overflow-x:auto">
+        <table class="issue-table" style="min-width:600px">
+          <thead><tr>
+            <th style="width:105px">Story</th>
+            <th>Descrição</th>
+            <th style="width:155px">Situação</th>
+            <th style="width:155px">Responsável</th>
+            <th style="width:200px">Ocorrências</th>
+          </tr></thead>
+          <tbody>`;
+
+    for (const story of sprint.stories) {
+      const ss = STORY_STATUS[story.status] || { bg:'#e2e8f0', color:'#4a5568' };
+      const bugs = story.bugs || [];
+
+      let bugsHtml = '';
+      if (bugs.length === 0) {
+        bugsHtml = '<span style="color:#e2e8f0;font-size:0.8rem">—</span>';
+      } else {
+        bugsHtml = bugs.map(b => {
+          const bgBug   = b.done ? '#c6f6d5' : '#fed7d7';
+          const clBug   = b.done ? '#22543d' : '#742a2a';
+          const icon    = b.done ? '✓' : '●';
+          return `<a href="https://desenv.betha.com.br/browse/${b.key}" target="_blank"
+            title="${escHtml(b.summary)}"
+            style="display:inline-flex;align-items:center;gap:3px;font-size:0.72rem;font-weight:700;background:${bgBug};color:${clBug};padding:0.15rem 0.5rem;border-radius:10px;text-decoration:none;margin:1px 2px;white-space:nowrap"
+            >${icon} ${b.key}</a>`;
+        }).join('');
+      }
+
+      html += `<tr>
+        <td>
+          <a href="https://desenv.betha.com.br/browse/${story.key}" target="_blank" class="issue-key">${story.key}</a>
+        </td>
+        <td class="issue-summary">${escHtml(story.summary)}</td>
+        <td><span style="font-size:0.78rem;font-weight:600;background:${ss.bg};color:${ss.color};padding:0.2rem 0.6rem;border-radius:12px;white-space:nowrap">${escHtml(story.status)}</span></td>
+        <td class="issue-assignee">${story.assignee ? escHtml(story.assignee) : '<span style="color:#e2e8f0">—</span>'}</td>
+        <td style="line-height:1.8">${bugsHtml}</td>
+      </tr>`;
+    }
+
+    html += `</tbody></table></div></div>`;
+  }
+
+  document.getElementById('gaps-content').innerHTML = html;
+  gapsRendered = true;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
    PRODUTIVIDADE — render
 ══════════════════════════════════════════════════════════════════════ */
 let produtividadeRendered = false;
@@ -1081,6 +1208,12 @@ document.getElementById('header-date').textContent =
   sp.onload  = () => { if (currentMain === 'demandas') tryRenderProdutividade(); };
   sp.onerror = () => {};
   document.head.appendChild(sp);
+
+  const sg = document.createElement('script');
+  sg.src = 'gaps-data.js?v=' + Date.now();
+  sg.onload  = () => { if (currentMain === 'demandas') tryRenderGaps(); };
+  sg.onerror = () => {};
+  document.head.appendChild(sg);
 })();
 </script>
 </body>
