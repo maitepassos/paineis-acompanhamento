@@ -1,7 +1,23 @@
-// Gerado automaticamente em 2026-05-06T19:30:00.000Z
+// Gerado automaticamente em 2026-05-06T20:00:00.000Z
 // NÃO editar manualmente
 window.GAPS_DATA = {
-  "generatedAt": "2026-05-06T19:30:00.000Z",
+  "generatedAt": "2026-05-06T20:00:00.000Z",
+  "epics": {
+    "filterUrl": "https://desenv.betha.com.br/issues/?filter=167921",
+    "total": 10,
+    "items": [
+      { "key": "SAUD-66838", "summary": "Painel de Indicadores do Cofinanciamento Federal da Atenção Primária", "epicName": "Painel de Indicadores do Cofinanciamento Federal da Atenção Primária", "funcionalidade": "Indicadores", "status": "Em desenvolvimento", "statusCategory": "indeterminate", "assignee": "Ivo Roberto Oliani" },
+      { "key": "SAUD-74065", "summary": "Ajustes e Melhorias Maio", "epicName": "Ajustes e Melhorias Maio", "funcionalidade": null, "status": "Novo", "statusCategory": "new", "assignee": null },
+      { "key": "SAUD-71631", "summary": "Ajustes e Melhorias Abril", "epicName": "Ajustes e Melhorias Abril", "funcionalidade": null, "status": "Novo", "statusCategory": "new", "assignee": null },
+      { "key": "SAUD-70863", "summary": "Puericultura", "epicName": "Puericultura", "funcionalidade": null, "status": "Novo", "statusCategory": "new", "assignee": null },
+      { "key": "SAUD-70001", "summary": "Relatórios", "epicName": "Relatórios", "funcionalidade": null, "status": "Novo", "statusCategory": "new", "assignee": null },
+      { "key": "SAUD-70000", "summary": "Pequenas Melhorias", "epicName": "Pequenas Melhorias", "funcionalidade": null, "status": "Novo", "statusCategory": "new", "assignee": null },
+      { "key": "SAUD-69999", "summary": "Satisfação do Cliente", "epicName": "Satisfação do Cliente", "funcionalidade": null, "status": "Novo", "statusCategory": "new", "assignee": null },
+      { "key": "SAUD-69560", "summary": "Atualizações e-SUS e outros sistemas do Ministério da Saúde", "epicName": "Atualizações e-SUS e outros sistemas do Ministério da Saúde", "funcionalidade": null, "status": "Novo", "statusCategory": "new", "assignee": null },
+      { "key": "SAUD-68367", "summary": "Pesquisa de Satisfação de Clientes - Atendimento Médico e Avaliação de Unidades", "epicName": "Pesquisa NPS sobre atendimentos e geral na saúde", "funcionalidade": "Indicadores", "status": "Novo", "statusCategory": "new", "assignee": null },
+      { "key": "SAUD-68333", "summary": "IA de Apoio Clínico no Atendimento e Prescrição", "epicName": "IA de Apoio Clínico no Atendimento e Prescrição", "funcionalidade": "Multiprofissional", "status": "Novo", "statusCategory": "new", "assignee": "Jhon Theylor Barros Steiner" }
+    ]
+  },
   "sprints": [
     {
       "id": "7325",
