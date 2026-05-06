@@ -397,6 +397,7 @@ function renderWithDays(period, from, to, label, worklogs) {
   }).join('');
 
   // ── Rows ──
+  const dayTotals = new Array(wdays.length).fill(0);   // total por dia (todos os usuários)
   let totalWorked=0, totalExpected=0, bodyHtml='';
   for (const team of TEAMS) {
     bodyHtml += teamGroupRow(totalCols, team.label);
@@ -404,12 +405,13 @@ function renderWithDays(period, from, to, label, worklogs) {
       const logs = worklogs[u.handle] || {};
       let userTotal = 0;
 
-      const dayCells = wdays.map(d => {
+      const dayCells = wdays.map((d, i) => {
         if (u.schedule === 'monThu' && isFriday(d)) {
           return `<td class="td-day off${d===todayStr?' today-col':''}">—</td>`;
         }
         const h = secToH(logs[d] || 0);
         userTotal += h;
+        dayTotals[i] += h;
         const cls = h === 0 ? ' zero' : '';
         return `<td class="td-day${cls}${d===todayStr?' today-col':''}">${h > 0 ? fmtH(h) : ''}</td>`;
       }).join('');
@@ -430,6 +432,21 @@ function renderWithDays(period, from, to, label, worklogs) {
       </tr>`;
     }
   }
+
+  // ── Linha de total por dia ──
+  const dayTotalCells = wdays.map((d, i) => {
+    const isTd = d === todayStr;
+    const val  = dayTotals[i];
+    return `<td class="td-day${isTd?' today-col':''}" style="font-weight:700;background:#edf2f7;border-top:2px solid #cbd5e0;color:#2d3748">${val > 0 ? fmtH(val) : ''}</td>`;
+  }).join('');
+
+  bodyHtml += `<tr>
+    <td style="padding:0.4rem 0.9rem;background:#edf2f7;border-top:2px solid #cbd5e0;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#4a5568;white-space:nowrap">Total do dia</td>
+    ${dayTotalCells}
+    <td class="col-total" style="background:#edf2f7;border-top:2px solid #cbd5e0">${fmtH(totalWorked)}</td>
+    <td style="padding:0.4rem 0.7rem;background:#edf2f7;border-top:2px solid #cbd5e0"></td>
+    <td style="padding:0.4rem 0.7rem;background:#edf2f7;border-top:2px solid #cbd5e0"></td>
+  </tr>`;
 
   renderSummary(`sum-${period}`, totalWorked, totalExpected);
   document.getElementById(`table-${period}`).innerHTML = `
