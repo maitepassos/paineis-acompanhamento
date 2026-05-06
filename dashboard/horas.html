@@ -856,7 +856,6 @@ function renderIncidentes() {
         <th style="width:110px">Issue</th>
         <th>Resumo</th>
         <th style="width:170px">Situação</th>
-        <th style="width:105px">Prioridade</th>
         <th style="width:130px;text-align:center">Entrega em</th>
         <th style="width:140px">Atendimento</th>
         <th style="width:160px">Responsável</th>
@@ -878,7 +877,6 @@ function renderIncidentes() {
         </td>
         <td class="issue-summary">${escHtml(issue.summary)}</td>
         <td><span class="status-chip" style="background:${st.bg};color:${st.color};cursor:default">${escHtml(issue.status)}</span></td>
-        <td><span class="prio-badge" style="background:${pr.bg};color:${pr.color}">${pr.dot} ${pr.label}</span></td>
         <td style="text-align:center">
           ${ti
             ? `<span style="font-size:0.72rem;font-weight:${ti.urgent?'700':'600'};background:${ti.bg};color:${ti.color};padding:0.2rem 0.55rem;border-radius:8px;white-space:nowrap;display:inline-block;line-height:1.4">${ti.label}</span>`
