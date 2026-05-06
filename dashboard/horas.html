@@ -862,7 +862,12 @@ function renderIncidentes() {
       </tr></thead>
       <tbody>`;
 
-    for (const issue of (fd.issues || [])) {
+    const sortedIssues = (fd.issues || []).slice().sort((a, b) => {
+      const da = a.dataFinal ? new Date(a.dataFinal).getTime() : Infinity;
+      const db = b.dataFinal ? new Date(b.dataFinal).getTime() : Infinity;
+      return da - db;
+    });
+    for (const issue of sortedIssues) {
       const st  = STATUS_STYLE[issue.status]   || { bg: '#e2e8f0', color: '#4a5568' };
       const pr  = PRIORITY_STYLE[issue.priority]|| { dot:'•', label:`P${issue.priority}`, bg:'#e2e8f0', color:'#718096' };
       const ti  = deliveryStyle(issue.dataFinal);
