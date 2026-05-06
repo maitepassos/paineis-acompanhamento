@@ -193,18 +193,40 @@
 
     /* ── Demandas: breakdown de status ────────────────────────────────── */
     .status-row {
-      display: flex; flex-wrap: wrap; gap: 0.45rem;
-      padding: 0.75rem 1.2rem; border-bottom: 1px solid #edf2f7;
+      display: flex; flex-wrap: wrap; gap: 0.45rem; align-items: center;
+      padding: 0.65rem 1.2rem; border-bottom: 1px solid #edf2f7;
       background: #fafbfc;
     }
     .status-chip {
       display: inline-flex; align-items: center; gap: 0.35rem;
       padding: 0.22rem 0.7rem; border-radius: 20px; font-size: 0.74rem; font-weight: 600;
-      cursor: default; border: 1px solid transparent;
+      cursor: pointer; border: 2px solid transparent; transition: all 0.15s; user-select: none;
     }
+    .status-chip:hover { filter: brightness(0.93); }
+    .status-chip.active { border-color: currentColor; box-shadow: 0 0 0 2px rgba(0,0,0,0.15); }
     .status-chip-count {
       background: rgba(0,0,0,0.12); border-radius: 10px;
       padding: 0.05rem 0.45rem; font-size: 0.7rem; font-weight: 800;
+    }
+    /* ── Busca de issue ────────────────────────────────────────────────── */
+    .issue-search-bar {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.6rem 1.2rem; border-bottom: 1px solid #edf2f7; background: white;
+    }
+    .issue-search-input {
+      flex: 1; max-width: 320px; padding: 0.4rem 0.8rem;
+      border: 1.5px solid #e2e8f0; border-radius: 6px; font-size: 0.82rem;
+      outline: none; transition: border-color 0.15s; color: #2d3748;
+    }
+    .issue-search-input:focus { border-color: #3182ce; }
+    .filter-reset-btn {
+      font-size: 0.74rem; color: #3182ce; background: none; border: none;
+      cursor: pointer; padding: 0.3rem 0.5rem; border-radius: 4px;
+      display: none; transition: background 0.15s;
+    }
+    .filter-reset-btn:hover { background: #ebf8ff; }
+    .filter-count-label {
+      font-size: 0.72rem; color: #a0aec0; margin-left: auto; white-space: nowrap;
     }
 
     /* ── Demandas: tabela de issues ────────────────────────────────────── */
@@ -655,6 +677,87 @@ function tryRenderIncidentes() {
   renderIncidentes();
 }
 
+// ── Estado dos filtros por seção ──────────────────────────────────────
+const _filterState = {};  // { [filterId]: { activeStatuses: Set, searchText: '' } }
+
+function _getState(filterId) {
+  if (!_filterState[filterId]) _filterState[filterId] = { activeStatuses: new Set(), searchText: '' };
+  return _filterState[filterId];
+}
+
+function toggleStatusChip(chip, filterId) {
+  const status = chip.dataset.status;
+  const state  = _getState(filterId);
+  if (state.activeStatuses.has(status)) {
+    state.activeStatuses.delete(status);
+    chip.classList.remove('active');
+  } else {
+    state.activeStatuses.add(status);
+    chip.classList.add('active');
+  }
+  _applyFilter(filterId);
+}
+
+function searchIssues(input, filterId) {
+  _getState(filterId).searchText = input.value.toLowerCase();
+  _applyFilter(filterId);
+}
+
+function resetFilters(filterId) {
+  const state = _getState(filterId);
+  state.activeStatuses.clear();
+  state.searchText = '';
+  document.querySelectorAll(`#chips-${filterId} .status-chip`).forEach(c => c.classList.remove('active'));
+  const inp = document.getElementById(`search-${filterId}`);
+  if (inp) inp.value = '';
+  _applyFilter(filterId);
+}
+
+function _applyFilter(filterId) {
+  const state  = _getState(filterId);
+  const tbody  = document.querySelector(`#table-${filterId} tbody`);
+  if (!tbody) return;
+  const rows   = tbody.querySelectorAll('tr');
+  let visible  = 0;
+  rows.forEach(row => {
+    const st   = row.dataset.status || '';
+    const txt  = (row.dataset.search || '');
+    const okSt = state.activeStatuses.size === 0 || state.activeStatuses.has(st);
+    const okTx = !state.searchText || txt.includes(state.searchText);
+    const show = okSt && okTx;
+    row.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  // Atualiza contador
+  const lbl = document.getElementById(`count-${filterId}`);
+  if (lbl) lbl.textContent = `${visible} de ${rows.length} issues`;
+  // Mostra/oculta botão reset
+  const rst = document.getElementById(`reset-${filterId}`);
+  if (rst) rst.style.display = (state.activeStatuses.size > 0 || state.searchText) ? 'inline-block' : 'none';
+}
+
+// ── Tempo restante: cor e label ───────────────────────────────────────
+function tempoStyle(tempoRestante) {
+  if (!tempoRestante) return null;
+  const days = parseInt(tempoRestante, 10);
+  if (isNaN(days)) return { bg: '#e2e8f0', color: '#718096', label: tempoRestante };
+  if (days === 0) return { bg: '#fed7d7', color: '#742a2a', label: '⚠ ' + tempoRestante };
+  if (days <= 2)  return { bg: '#feebc8', color: '#7b341e', label: tempoRestante };
+  if (days <= 5)  return { bg: '#fefcbf', color: '#744210', label: tempoRestante };
+  return { bg: '#c6f6d5', color: '#22543d', label: tempoRestante };
+}
+
+// ── Chamado atendimento: link e badge ────────────────────────────────
+function atendimentoBadge(key) {
+  if (!key) return '<span style="color:#e2e8f0">—</span>';
+  if (key.startsWith('BTHSC-')) {
+    return `<a href="https://atendimento.betha.com.br/browse/${key}" target="_blank"
+      style="font-size:0.74rem;font-weight:700;color:#553c9a;background:#e9d8fd;padding:0.18rem 0.55rem;border-radius:12px;text-decoration:none;white-space:nowrap"
+      title="Abrir no Jira Atendimento">${key} ↗</a>`;
+  }
+  return `<span style="font-size:0.72rem;color:#718096;background:#edf2f7;padding:0.18rem 0.55rem;border-radius:12px;white-space:nowrap">${key}</span>`;
+}
+
 function renderIncidentes() {
   const data = window.DEMANDAS_DATA;
   document.getElementById('incidentes-loading').style.display = 'none';
@@ -673,12 +776,10 @@ function renderIncidentes() {
   // ── Cards de resumo no topo
   let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem">
     <span style="font-size:0.7rem;color:#a0aec0">${genAt}</span>
-  </div>`;
-
-  html += '<div class="demand-overview">';
+  </div><div class="demand-overview">`;
   for (const f of INCIDENT_FILTERS) {
     const fd = data.filters[f.id] || { total: 0 };
-    html += `<a href="${(data.filters[f.id]||{}).url||'#'}" target="_blank" class="demand-card" style="border-top-color:${f.color}">
+    html += `<a href="${fd.url||'#'}" target="_blank" class="demand-card" style="border-top-color:${f.color}">
       <div class="demand-card-label">${f.label}</div>
       <div class="demand-card-num" style="color:${f.color}">${fd.total}</div>
       <div class="demand-card-sub">issues · abrir no Jira ↗</div>
@@ -690,6 +791,7 @@ function renderIncidentes() {
   for (const f of INCIDENT_FILTERS) {
     const fd = data.filters[f.id];
     if (!fd) continue;
+    const fid = f.id;
 
     html += `<div class="filter-section">`;
 
@@ -701,50 +803,71 @@ function renderIncidentes() {
       <a href="${fd.url}" target="_blank" class="filter-link">Abrir no Jira ↗</a>
     </div>`;
 
-    // Status breakdown
-    html += '<div class="status-row">';
+    // Status chips (filtro rápido clicável)
+    html += `<div class="status-row" id="chips-${fid}">`;
     for (const [status, count] of Object.entries(fd.byStatus || {})) {
       const st = STATUS_STYLE[status] || { bg: '#e2e8f0', color: '#4a5568' };
-      html += `<span class="status-chip" style="background:${st.bg};color:${st.color}">
-        ${status}
+      html += `<span class="status-chip" data-status="${escHtml(status)}"
+        style="background:${st.bg};color:${st.color}"
+        onclick="toggleStatusChip(this,'${fid}')"
+        title="Filtrar por: ${escHtml(status)}">
+        ${escHtml(status)}
         <span class="status-chip-count">${count}</span>
       </span>`;
     }
-    // Prioridade breakdown
+    // Prioridades
     if (fd.byPriority) {
-      html += '<span style="margin-left:auto;display:flex;gap:0.4rem;align-items:center">';
+      html += '<span style="display:flex;gap:0.4rem;align-items:center;margin-left:0.5rem">';
       for (const [p, count] of Object.entries(fd.byPriority).sort()) {
-        if (count === 0) continue;
-        const pr = PRIORITY_STYLE[p] || { dot: '•', label: `P${p}`, bg: '#e2e8f0', color: '#718096' };
+        const pr = PRIORITY_STYLE[p] || { dot:'•', label:`P${p}`, bg:'#e2e8f0', color:'#718096' };
         html += `<span class="prio-badge" style="background:${pr.bg};color:${pr.color}">${pr.dot} ${pr.label} <strong>${count}</strong></span>`;
       }
       html += '</span>';
     }
     html += '</div>';
 
+    // Barra de busca
+    html += `<div class="issue-search-bar">
+      <span style="font-size:0.78rem;color:#718096">🔍</span>
+      <input type="text" id="search-${fid}" class="issue-search-input"
+        placeholder="Buscar por issue ou resumo..."
+        oninput="searchIssues(this,'${fid}')">
+      <button id="reset-${fid}" class="filter-reset-btn" onclick="resetFilters('${fid}')">✕ Limpar filtros</button>
+      <span id="count-${fid}" class="filter-count-label">${fd.issues?.length || 0} issues</span>
+    </div>`;
+
     // Tabela de issues
-    html += `<div style="overflow-x:auto"><table class="issue-table">
+    html += `<div style="overflow-x:auto"><table class="issue-table" id="table-${fid}">
       <thead><tr>
         <th style="width:110px">Issue</th>
         <th>Resumo</th>
-        <th>Situação</th>
-        <th>Prioridade</th>
-        <th>Responsável</th>
+        <th style="width:170px">Situação</th>
+        <th style="width:105px">Prioridade</th>
+        <th style="width:85px;text-align:center">Tempo Rest.</th>
+        <th style="width:140px">Atendimento</th>
+        <th style="width:160px">Responsável</th>
       </tr></thead>
       <tbody>`;
 
     for (const issue of (fd.issues || [])) {
-      const st = STATUS_STYLE[issue.status] || { bg: '#e2e8f0', color: '#4a5568' };
-      const pr = PRIORITY_STYLE[issue.priority] || { dot: '•', label: `P${issue.priority}`, bg: '#e2e8f0', color: '#718096' };
-      const typeIcon = TYPE_ICON[issue.issuetype] || '📌';
-      html += `<tr>
+      const st  = STATUS_STYLE[issue.status]   || { bg: '#e2e8f0', color: '#4a5568' };
+      const pr  = PRIORITY_STYLE[issue.priority]|| { dot:'•', label:`P${issue.priority}`, bg:'#e2e8f0', color:'#718096' };
+      const ti  = tempoStyle(issue.tempoRestante);
+      const typ = TYPE_ICON[issue.issuetype] || '📌';
+      const searchData = `${issue.key} ${issue.summary}`.toLowerCase();
+
+      html += `<tr data-status="${escHtml(issue.status)}" data-search="${escHtml(searchData)}">
         <td>
           <a href="https://desenv.betha.com.br/browse/${issue.key}" target="_blank" class="issue-key">${issue.key}</a>
-          <div style="font-size:0.68rem;color:#a0aec0;margin-top:2px">${typeIcon} ${issue.issuetype}</div>
+          <div style="font-size:0.67rem;color:#a0aec0;margin-top:2px">${typ} ${issue.issuetype}</div>
         </td>
         <td class="issue-summary">${escHtml(issue.summary)}</td>
-        <td><span class="status-chip" style="background:${st.bg};color:${st.color}">${issue.status}</span></td>
+        <td><span class="status-chip" style="background:${st.bg};color:${st.color};cursor:default">${escHtml(issue.status)}</span></td>
         <td><span class="prio-badge" style="background:${pr.bg};color:${pr.color}">${pr.dot} ${pr.label}</span></td>
+        <td style="text-align:center">
+          ${ti ? `<span style="font-size:0.73rem;font-weight:700;background:${ti.bg};color:${ti.color};padding:0.18rem 0.55rem;border-radius:12px;white-space:nowrap">${ti.label}</span>` : '<span style="color:#e2e8f0">—</span>'}
+        </td>
+        <td>${atendimentoBadge(issue.atendimento)}</td>
         <td class="issue-assignee">${issue.assignee ? escHtml(issue.assignee) : '<span style="color:#e2e8f0">—</span>'}</td>
       </tr>`;
     }
