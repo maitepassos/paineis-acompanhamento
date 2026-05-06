@@ -1434,8 +1434,86 @@ function renderSuporteProdutividade(period) {
     'Atendimento Telefônico': { bg:'#e9d8fd', color:'#44337a', bar:'#805ad5' },
   };
 
-  function buildPeriodPanel(pd, periodLabel) {
-    const maxResp   = pd.byResponsavel[0]?.total || 1;
+  const DAY_NAMES_PT = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const MON_NAMES_PT = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+
+  function fmtDayCol(isoDate) {
+    const d = new Date(isoDate + 'T12:00:00');
+    return `${DAY_NAMES_PT[d.getDay()]}<br><span style="font-size:0.65rem;font-weight:400">${String(d.getDate()).padStart(2,'0')}/${MON_NAMES_PT[d.getMonth()]}</span>`;
+  }
+
+  function buildResponsavelDiaTable(pd) {
+    const days  = pd.days || [];
+    const byRD  = pd.byResponsavelDia || {};
+    const names = Object.keys(byRD);
+    const todayStr = new Date().toISOString().split('T')[0];
+
+    // Col max per day (para colorir intensidade)
+    const dayMax = {};
+    for (const d of days) {
+      dayMax[d] = Math.max(...names.map(n => byRD[n]?.[d] || 0), 1);
+    }
+
+    let h = `<div class="filter-section" style="margin-bottom:1.5rem">
+      <div class="filter-header">
+        <div class="filter-dot" style="background:#3182ce"></div>
+        <span class="filter-title">Por Responsável (SUP) — dia a dia</span>
+        <span class="filter-count-badge" style="background:#ebf8ff;color:#2b6cb0">${names.length} colaboradores</span>
+      </div>
+      <div style="overflow-x:auto">
+      <table class="hours-table" style="min-width:500px">
+        <thead><tr>
+          <th style="text-align:left;min-width:160px">Responsável</th>`;
+
+    for (const d of days) {
+      const isToday = d === todayStr;
+      h += `<th class="${isToday ? 'th-day today-col' : 'th-day'}" style="text-align:center;min-width:52px">${fmtDayCol(d)}</th>`;
+    }
+    h += `<th class="th-total">Total</th></tr></thead><tbody>`;
+
+    for (const name of names) {
+      const row   = byRD[name] || {};
+      const total = row.total || 0;
+      const ini   = name.split(' ').filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join('');
+      h += `<tr>
+        <td style="white-space:nowrap">
+          <div style="display:flex;align-items:center;gap:0.55rem">
+            <div style="width:30px;height:30px;border-radius:50%;background:#2b6cb0;color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;flex-shrink:0">${escHtml(ini)}</div>
+            <span style="font-size:0.82rem;font-weight:600;color:#2d3748">${escHtml(name)}</span>
+          </div>
+        </td>`;
+      for (const d of days) {
+        const val    = row[d] || 0;
+        const isToday = d === todayStr;
+        const pct    = Math.round((val / dayMax[d]) * 100);
+        const alpha  = val > 0 ? Math.max(0.15, pct / 100) : 0;
+        const bg     = val > 0 ? `rgba(49,130,206,${alpha.toFixed(2)})` : 'transparent';
+        const color  = val > 0 ? (pct > 60 ? '#fff' : '#2b6cb0') : '#e2e8f0';
+        h += `<td class="${isToday ? 'td-day today-col' : 'td-day'}" style="text-align:center;font-size:0.88rem;font-weight:${val>0?'700':'400'}">
+          <div style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;background:${bg};color:${color}">
+            ${val > 0 ? val : '<span style="color:#e2e8f0;font-size:0.7rem">—</span>'}
+          </div>
+        </td>`;
+      }
+      h += `<td class="col-total" style="font-size:1rem;font-weight:800;color:#2b6cb0">${total}</td></tr>`;
+    }
+
+    // Linha de totais por dia
+    h += `<tr style="background:#f7fafc;border-top:2px solid #e2e8f0">
+      <td style="font-size:0.72rem;font-weight:700;color:#718096;text-transform:uppercase;letter-spacing:0.04em;padding:0.4rem 0.9rem">Total / dia</td>`;
+    for (const d of days) {
+      const dayTotal = names.reduce((s, n) => s + (byRD[n]?.[d] || 0), 0);
+      const isToday  = d === todayStr;
+      h += `<td class="${isToday ? 'td-day today-col' : 'td-day'}" style="text-align:center;font-size:0.9rem;font-weight:700;color:#2d3748">${dayTotal || '—'}</td>`;
+    }
+    const grandTotal = names.reduce((s, n) => s + (byRD[n]?.total || 0), 0);
+    h += `<td class="col-total" style="font-size:1rem;font-weight:800;color:#1a365d">${grandTotal}</td></tr>`;
+
+    h += `</tbody></table></div></div>`;
+    return h;
+  }
+
+  function buildPeriodPanel(pd, isSemanal) {
     const maxOrigem = Math.max(...pd.byOrigem.map(o=>o.total), 1);
 
     let h = `<div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;flex-wrap:wrap">
@@ -1445,33 +1523,37 @@ function renderSuporteProdutividade(period) {
       <span style="font-size:0.72rem;color:#a0aec0">
         <a href="${pd.filterUrl}" target="_blank" style="color:#3182ce">Ver filtro no Jira ↗</a>
       </span>
-    </div>
-    <div style="display:flex;gap:1.5rem;flex-wrap:wrap;align-items:flex-start">`;
+    </div>`;
 
-    // Por Responsável
-    h += `<div class="filter-section" style="flex:1;min-width:240px;margin-bottom:0">
-      <div class="filter-header">
-        <div class="filter-dot" style="background:#3182ce"></div>
-        <span class="filter-title">Por Responsável (SUP)</span>
-      </div>`;
-    for (const { name, total } of pd.byResponsavel) {
-      const pct = Math.round((total / maxResp) * 100);
-      const ini = name.split(' ').filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join('');
-      h += `<div style="display:flex;align-items:center;gap:0.75rem;padding:0.55rem 1.2rem;border-bottom:1px solid #f0f4f8">
-        <div style="width:34px;height:34px;border-radius:50%;background:#2b6cb0;color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:700;flex-shrink:0">${escHtml(ini)}</div>
-        <div style="flex:1;min-width:0">
-          <div style="font-size:0.83rem;font-weight:600;color:#2d3748;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(name)}</div>
-          <div style="height:7px;background:#edf2f7;border-radius:4px;margin-top:4px;overflow:hidden">
-            <div style="height:100%;width:${pct}%;background:#3182ce;border-radius:4px"></div>
+    // ── Por Responsável: tabela dia-a-dia (semanal) ou barra simples (mensal)
+    if (isSemanal && pd.byResponsavelDia) {
+      h += buildResponsavelDiaTable(pd);
+    } else {
+      const maxResp = pd.byResponsavel[0]?.total || 1;
+      h += `<div class="filter-section" style="margin-bottom:1.5rem">
+        <div class="filter-header">
+          <div class="filter-dot" style="background:#3182ce"></div>
+          <span class="filter-title">Por Responsável (SUP)</span>
+        </div>`;
+      for (const { name, total } of pd.byResponsavel) {
+        const pct = Math.round((total / maxResp) * 100);
+        const ini = name.split(' ').filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join('');
+        h += `<div style="display:flex;align-items:center;gap:0.75rem;padding:0.55rem 1.2rem;border-bottom:1px solid #f0f4f8">
+          <div style="width:34px;height:34px;border-radius:50%;background:#2b6cb0;color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:700;flex-shrink:0">${escHtml(ini)}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:0.83rem;font-weight:600;color:#2d3748;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(name)}</div>
+            <div style="height:7px;background:#edf2f7;border-radius:4px;margin-top:4px;overflow:hidden">
+              <div style="height:100%;width:${pct}%;background:#3182ce;border-radius:4px"></div>
+            </div>
           </div>
-        </div>
-        <div style="font-size:1.05rem;font-weight:700;color:#2b6cb0;min-width:28px;text-align:right">${total}</div>
-      </div>`;
+          <div style="font-size:1.05rem;font-weight:700;color:#2b6cb0;min-width:28px;text-align:right">${total}</div>
+        </div>`;
+      }
+      h += `</div>`;
     }
-    h += `</div>`;
 
-    // Por Origem
-    h += `<div class="filter-section" style="flex:1;min-width:240px;margin-bottom:0">
+    // ── Por Origem da Solicitação
+    h += `<div class="filter-section" style="margin-bottom:1.5rem">
       <div class="filter-header">
         <div class="filter-dot" style="background:#805ad5"></div>
         <span class="filter-title">Por Origem da Solicitação</span>
@@ -1480,7 +1562,7 @@ function renderSuporteProdutividade(period) {
       const pct = Math.round((total / maxOrigem) * 100);
       const oc  = ORIGEM_COLOR[name] || { bg:'#e2e8f0', color:'#4a5568', bar:'#a0aec0' };
       h += `<div style="display:flex;align-items:center;gap:0.75rem;padding:0.55rem 1.2rem;border-bottom:1px solid #f0f4f8">
-        <span style="font-size:0.72rem;font-weight:600;background:${oc.bg};color:${oc.color};padding:0.18rem 0.55rem;border-radius:8px;white-space:nowrap;min-width:120px;text-align:center">${escHtml(name)}</span>
+        <span style="font-size:0.72rem;font-weight:600;background:${oc.bg};color:${oc.color};padding:0.18rem 0.55rem;border-radius:8px;white-space:nowrap;min-width:130px;text-align:center">${escHtml(name)}</span>
         <div style="flex:1;height:7px;background:#edf2f7;border-radius:4px;overflow:hidden">
           <div style="height:100%;width:${pct}%;background:${oc.bar};border-radius:4px"></div>
         </div>
@@ -1489,7 +1571,6 @@ function renderSuporteProdutividade(period) {
     }
     h += `</div>`;
 
-    h += `</div>`; // flex row
     return h;
   }
 
@@ -1507,8 +1588,8 @@ function renderSuporteProdutividade(period) {
       <button class="prod-period-btn active" data-period="semanal" onclick="switchSuporteProd('semanal')">📅 Semanal</button>
       <button class="prod-period-btn"        data-period="mensal"  onclick="switchSuporteProd('mensal')">🗓 Mensal</button>
     </div>
-    <div id="sp-pane-semanal">${buildPeriodPanel(prod.semanal, 'Semanal')}</div>
-    <div id="sp-pane-mensal"  style="display:none">${buildPeriodPanel(prod.mensal, 'Mensal')}</div>
+    <div id="sp-pane-semanal">${buildPeriodPanel(prod.semanal, true)}</div>
+    <div id="sp-pane-mensal"  style="display:none">${buildPeriodPanel(prod.mensal, false)}</div>
   </div>`;
 
   document.getElementById('suporte-pane-produtividade').innerHTML = html;

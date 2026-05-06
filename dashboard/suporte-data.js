@@ -91,6 +91,11 @@ window.SUPORTE_DATA = {
     "semanal": {
       "filterUrl": "https://atendimento.betha.com.br/issues/?filter=166026",
       "total": 63,
+      "days": ["2026-04-22","2026-04-24","2026-04-27","2026-04-28","2026-04-30","2026-05-04","2026-05-05","2026-05-06"],
+      "byResponsavelDia": {
+        "Alana Pinheiro da Silva": { "2026-04-22":1, "2026-04-24":1, "2026-04-27":1, "2026-04-28":1, "2026-04-30":1, "2026-05-04":16, "2026-05-05":14, "2026-05-06":19, "total":54 },
+        "Juliana Lima e França":   {                                                                                    "2026-05-04":4,  "2026-05-05":4,  "2026-05-06":1,  "total":9  }
+      },
       "byResponsavel": [
         { "name": "Alana Pinheiro da Silva", "total": 54 },
         { "name": "Juliana Lima e França",   "total": 9  }
