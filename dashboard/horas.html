@@ -1717,8 +1717,34 @@ function renderNps() {
       <!-- exemplos expansíveis -->
       <details style="margin-top:0.5rem">
         <summary style="font-size:0.74rem;color:#3182ce;cursor:pointer;font-weight:600">Ver exemplos de comentários</summary>
-        <div style="margin-top:0.5rem;padding:0.5rem;background:#f7fafc;border-radius:6px;border-left:3px solid #bee3f8">
-          ${rec.exemplos.map(e => `<div style="font-size:0.78rem;color:#4a5568;padding:0.3rem 0;border-bottom:1px solid #edf2f7">"${escHtml(e)}"</div>`).join('')}
+        <div style="margin-top:0.5rem;overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:0.76rem">
+            <thead>
+              <tr style="background:#ebf8ff;color:#2b6cb0">
+                <th style="padding:0.35rem 0.5rem;text-align:left;font-weight:700;border-bottom:2px solid #bee3f8;white-space:nowrap">Usuário</th>
+                <th style="padding:0.35rem 0.5rem;text-align:left;font-weight:700;border-bottom:2px solid #bee3f8;white-space:nowrap">Data</th>
+                <th style="padding:0.35rem 0.5rem;text-align:left;font-weight:700;border-bottom:2px solid #bee3f8;white-space:nowrap">Município</th>
+                <th style="padding:0.35rem 0.5rem;text-align:center;font-weight:700;border-bottom:2px solid #bee3f8;white-space:nowrap">Nota</th>
+                <th style="padding:0.35rem 0.5rem;text-align:left;font-weight:700;border-bottom:2px solid #bee3f8">Comentário</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rec.exemplos.map((e, ei) => {
+                const isObj = typeof e === 'object' && e !== null;
+                const nota = isObj ? e.nota : '';
+                const notaNum = parseInt(nota, 10);
+                const notaColor = notaNum <= 6 ? '#e53e3e' : notaNum <= 8 ? '#d69e2e' : '#38a169';
+                const comentario = isObj ? e.comentario : e;
+                return `<tr style="background:${ei%2===0?'#f7fafc':'#fff'};vertical-align:top">
+                  <td style="padding:0.3rem 0.5rem;color:#4a5568;font-weight:600;white-space:nowrap">${escHtml(isObj ? e.usuario : '—')}</td>
+                  <td style="padding:0.3rem 0.5rem;color:#718096;white-space:nowrap">${escHtml(isObj ? e.data : '—')}</td>
+                  <td style="padding:0.3rem 0.5rem;color:#4a5568;white-space:nowrap">${escHtml(isObj ? e.municipio : '—')}</td>
+                  <td style="padding:0.3rem 0.5rem;text-align:center;font-weight:800;color:${notaColor}">${nota || '—'}</td>
+                  <td style="padding:0.3rem 0.5rem;color:#2d3748;font-style:italic">"${escHtml(comentario)}"</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
         </div>
       </details>
     </div>`;
