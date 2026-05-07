@@ -1690,15 +1690,10 @@ function npsChartHtml(porMes) {
 }
 
 const CAT_META = {
-  lentidao:     { label: '🐢 Lentidão',      bg: '#feebc8', color: '#7b341e' },
-  instabilidade:{ label: '⚠️ Instabilidade', bg: '#fed7d7', color: '#742a2a' },
-  impressao:    { label: '🖨️ Impressão',     bg: '#e9d8fd', color: '#553c9a' },
-  agenda:       { label: '📅 Agenda',         bg: '#bee3f8', color: '#2c5282' },
-  usabilidade:  { label: '🖱️ Usabilidade',   bg: '#fefcbf', color: '#744210' },
-  atualizacao:  { label: '🔄 Atualização',    bg: '#e2e8f0', color: '#2d3748' },
-  melhoria:     { label: '🔧 Melhoria',       bg: '#c6f6d5', color: '#22543d' },
-  elogio:       { label: '✅ Elogio',          bg: '#b2f5ea', color: '#234e52' },
-  offtopic:     { label: '💬 Off-topic',      bg: '#e2e8f0', color: '#718096' }
+  lentidao_instab: { label: '⚡ Lentidão / Instabilidade', bg: '#fed7d7', color: '#742a2a' },
+  relatorios:      { label: '🖨️ Relatórios',               bg: '#e9d8fd', color: '#553c9a' },
+  usabilidade:     { label: '🖱️ Usabilidade / Interface',  bg: '#fefcbf', color: '#744210' },
+  melhoria_duvida: { label: '🔧 Melhoria / Dúvida',        bg: '#c6f6d5', color: '#22543d' }
 };
 
 function catBadge(cat) {
@@ -1844,34 +1839,6 @@ function renderNps() {
         <span style="color:#d69e2e">◼${m.neutros}</span>
         <span style="color:#e53e3e">▼${m.detratores}</span>
         <span style="color:#a0aec0;margin-left:auto">${m.total.toLocaleString('pt-BR')} resp.</span>
-      </div>
-    </div>`;
-  }
-  html += `</div>`;
-
-  // ── Cards por mês
-  html += `<div style="display:flex;gap:0.9rem;flex-wrap:wrap;margin-bottom:1.75rem">`;
-  for (const m of data.porMes) {
-    const nc = npsColor(m.nps);
-    const npsStr = (m.nps > 0 ? '+' : '') + m.nps.toFixed(0);
-    const pctD = Math.round(m.detratores/m.total*100);
-    const pctN = Math.round(m.neutros/m.total*100);
-    const pctP = Math.round(m.promotores/m.total*100);
-    html += `<div class="demand-card" style="border-top:4px solid ${nc.bar};min-width:170px;flex:1;cursor:default">
-      <div class="demand-card-label">${m.mes}${m.parcial ? ' <span style="font-size:0.6rem;background:#feebc8;color:#7b341e;padding:0.1rem 0.4rem;border-radius:8px;font-weight:700">parcial</span>' : ''}</div>
-      <div style="font-size:2rem;font-weight:800;color:${nc.color};line-height:1">${npsStr}</div>
-      <div style="font-size:0.68rem;color:#718096;margin-top:0.35rem;font-weight:600">NPS · nota média ${m.notaMedia}</div>
-      <!-- mini bar -->
-      <div style="display:flex;height:6px;border-radius:3px;overflow:hidden;margin-top:0.5rem;gap:1px">
-        <div style="width:${pctP}%;background:#38a169" title="Promotores ${pctP}%"></div>
-        <div style="width:${pctN}%;background:#d69e2e" title="Neutros ${pctN}%"></div>
-        <div style="width:${pctD}%;background:#e53e3e" title="Detratores ${pctD}%"></div>
-      </div>
-      <div style="display:flex;gap:0.5rem;margin-top:0.35rem;font-size:0.66rem;font-weight:600">
-        <span style="color:#38a169">▲${m.promotores}</span>
-        <span style="color:#d69e2e">◼${m.neutros}</span>
-        <span style="color:#e53e3e">▼${m.detratores}</span>
-        <span style="color:#a0aec0;margin-left:auto">${m.total} resp.</span>
       </div>
     </div>`;
   }
