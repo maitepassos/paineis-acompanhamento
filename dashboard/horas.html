@@ -1689,15 +1689,34 @@ function npsChartHtml(porMes) {
   </div>`;
 }
 
+const CAT_META = {
+  lentidao:     { label: '🐢 Lentidão',      bg: '#feebc8', color: '#7b341e' },
+  instabilidade:{ label: '⚠️ Instabilidade', bg: '#fed7d7', color: '#742a2a' },
+  impressao:    { label: '🖨️ Impressão',     bg: '#e9d8fd', color: '#553c9a' },
+  agenda:       { label: '📅 Agenda',         bg: '#bee3f8', color: '#2c5282' },
+  usabilidade:  { label: '🖱️ Usabilidade',   bg: '#fefcbf', color: '#744210' },
+  atualizacao:  { label: '🔄 Atualização',    bg: '#e2e8f0', color: '#2d3748' },
+  melhoria:     { label: '🔧 Melhoria',       bg: '#c6f6d5', color: '#22543d' },
+  elogio:       { label: '✅ Elogio',          bg: '#b2f5ea', color: '#234e52' },
+  offtopic:     { label: '💬 Off-topic',      bg: '#e2e8f0', color: '#718096' }
+};
+
+function catBadge(cat) {
+  const m = CAT_META[cat] || { label: cat, bg: '#e2e8f0', color: '#4a5568' };
+  return `<span style="display:inline-block;padding:2px 7px;border-radius:99px;font-size:0.72rem;font-weight:700;background:${m.bg};color:${m.color};white-space:nowrap">${m.label}</span>`;
+}
+
 function renderNpsComentarios() {
   const pane = document.getElementById('nps-sub-comentarios');
   if (!pane || !window.NPS_COMENTARIOS) return;
   const all = window.NPS_COMENTARIOS;
-  const notaColor2 = n => n >= 9 ? '#38a169' : n >= 7 ? '#d69e2e' : '#e53e3e';
 
-  let html = `<div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:1rem">
+  const catOptions = Object.entries(CAT_META)
+    .map(([k,v]) => `<option value="${k}">${v.label}</option>`).join('');
+
+  let html = `<div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;margin-bottom:1rem">
     <input id="nps-busca" type="text" placeholder="🔍  Buscar comentário, usuário ou cidade…"
-      style="flex:1;min-width:220px;padding:0.45rem 0.75rem;border:1px solid #e2e8f0;border-radius:8px;font-size:0.82rem;outline:none"
+      style="flex:1;min-width:200px;padding:0.45rem 0.75rem;border:1px solid #e2e8f0;border-radius:8px;font-size:0.82rem;outline:none"
       oninput="filtrarComentarios()">
     <select id="nps-filtro-nota" onchange="filtrarComentarios()"
       style="padding:0.45rem 0.65rem;border:1px solid #e2e8f0;border-radius:8px;font-size:0.82rem;background:white;cursor:pointer">
@@ -1706,16 +1725,22 @@ function renderNpsComentarios() {
       <option value="neu">Neutros (7–8)</option>
       <option value="pro">Promotores (9–10)</option>
     </select>
+    <select id="nps-filtro-cat" onchange="filtrarComentarios()"
+      style="padding:0.45rem 0.65rem;border:1px solid #e2e8f0;border-radius:8px;font-size:0.82rem;background:white;cursor:pointer">
+      <option value="">Todas as categorias</option>
+      ${catOptions}
+    </select>
     <span id="nps-count-badge" style="font-size:0.75rem;font-weight:700;color:#718096"></span>
   </div>
   <div style="overflow-x:auto">
-    <table class="hours-table" id="nps-comentarios-tbl" style="min-width:700px;font-size:0.8rem">
+    <table class="hours-table" id="nps-comentarios-tbl" style="min-width:780px;font-size:0.8rem">
       <thead><tr>
         <th style="text-align:center;width:52px">Nota</th>
         <th style="text-align:left;white-space:nowrap">Data</th>
         <th style="text-align:left">Usuário</th>
         <th style="text-align:left">Cidade / UF</th>
-        <th style="text-align:left;min-width:300px">Comentário</th>
+        <th style="text-align:left;white-space:nowrap">Classificação</th>
+        <th style="text-align:left;min-width:280px">Comentário</th>
       </tr></thead>
       <tbody id="nps-tbody">
         ${renderComentariosRows(all)}
@@ -1737,6 +1762,7 @@ function renderComentariosRows(rows) {
     <td style="white-space:nowrap;color:#718096">${escHtml(r.data)}</td>
     <td style="font-weight:600;color:#4a5568;white-space:nowrap">${escHtml(r.usuario)}</td>
     <td style="white-space:nowrap;color:#4a5568">${escHtml(r.cidade)}/${escHtml(r.uf)}</td>
+    <td>${r.categoria ? catBadge(r.categoria) : ''}</td>
     <td style="color:#2d3748;font-style:italic">"${escHtml(r.comentario)}"</td>
   </tr>`).join('');
 }
@@ -1744,17 +1770,19 @@ function renderComentariosRows(rows) {
 function filtrarComentarios() {
   const busca = (document.getElementById('nps-busca')?.value||'').toLowerCase();
   const filtroNota = document.getElementById('nps-filtro-nota')?.value||'';
+  const filtroCat  = document.getElementById('nps-filtro-cat')?.value||'';
   if (!window.NPS_COMENTARIOS) return;
   let rows = window.NPS_COMENTARIOS.filter(r => {
     const matchNota = !filtroNota
       || (filtroNota==='det' && r.nota <= 6)
       || (filtroNota==='neu' && r.nota >= 7 && r.nota <= 8)
       || (filtroNota==='pro' && r.nota >= 9);
+    const matchCat  = !filtroCat || r.categoria === filtroCat;
     const matchBusca = !busca
       || r.comentario.toLowerCase().includes(busca)
       || r.usuario.toLowerCase().includes(busca)
       || r.cidade.toLowerCase().includes(busca);
-    return matchNota && matchBusca;
+    return matchNota && matchCat && matchBusca;
   });
   const tbody = document.getElementById('nps-tbody');
   if (tbody) tbody.innerHTML = renderComentariosRows(rows);
