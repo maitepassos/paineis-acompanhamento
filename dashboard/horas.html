@@ -1652,38 +1652,104 @@ function switchNpsSubTab(name) {
 }
 
 function npsChartHtml(porMes) {
-  const maxNps = Math.max(...porMes.map(m => Math.abs(m.nps)), 10);
-  const barH = 140; // px total bar area height
-  const npsColor2 = nps => nps >= 30 ? '#38a169' : nps >= 15 ? '#68d391' : nps >= 0 ? '#f6ad55' : '#e53e3e';
+  const W = 540, H = 210;
+  const pad = { top: 32, right: 28, bottom: 48, left: 44 };
+  const cw = W - pad.left - pad.right;
+  const ch = H - pad.top - pad.bottom;
 
-  let bars = porMes.map(m => {
-    const isNeg = m.nps < 0;
-    const pct = Math.round(Math.abs(m.nps) / maxNps * 100);
-    const col = npsColor2(m.nps);
-    const npsStr = (m.nps > 0 ? '+' : '') + m.nps.toFixed(1);
-    const barPx = Math.max(Math.round(Math.abs(m.nps) / maxNps * barH), 4);
-    return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:0;min-width:50px">
-      <div style="font-size:0.78rem;font-weight:800;color:${col};margin-bottom:3px">${npsStr}</div>
-      <div style="width:70%;height:${barPx}px;background:${col};border-radius:4px 4px 0 0;opacity:${m.parcial?'0.7':'1'}"></div>
-      <div style="font-size:0.65rem;color:#718096;margin-top:5px;font-weight:600;text-align:center">${m.mesAbrev}${m.parcial ? '<br><span style="color:#d69e2e;font-size:0.6rem">parcial</span>' : ''}</div>
-      <div style="font-size:0.62rem;color:#a0aec0;text-align:center">${m.total.toLocaleString('pt-BR')}</div>
-    </div>`;
+  const npsColor2 = v => v >= 30 ? '#38a169' : v >= 15 ? '#48bb78' : v >= 0 ? '#ed8936' : '#e53e3e';
+  const maxY = Math.ceil(Math.max(...porMes.map(m => m.nps), 10) / 10) * 10 + 8;
+  const minY = Math.min(...porMes.map(m => m.nps), 0) < 0
+    ? Math.floor(Math.min(...porMes.map(m => m.nps)) / 10) * 10 - 5
+    : 0;
+
+  const xPos = i => pad.left + (porMes.length < 2 ? cw/2 : i / (porMes.length - 1) * cw);
+  const yPos = v => pad.top + ch - ((v - minY) / (maxY - minY)) * ch;
+
+  // Grid & Y-axis labels
+  const gridSteps = [];
+  for (let v = 0; v <= maxY; v += 10) if (v >= minY) gridSteps.push(v);
+  const gridHtml = gridSteps.map(v => {
+    const y = yPos(v);
+    const isZero = v === 0;
+    return `<line x1="${pad.left}" y1="${y.toFixed(1)}" x2="${W - pad.right}" y2="${y.toFixed(1)}"
+        stroke="${isZero ? '#cbd5e0' : '#edf2f7'}" stroke-width="${isZero ? 1.5 : 1}"/>
+      <text x="${pad.left - 7}" y="${(y + 4).toFixed(1)}" text-anchor="end"
+        font-size="10" fill="#a0aec0" font-family="sans-serif">${v}</text>`;
   }).join('');
+
+  // Area fill path
+  const pts = porMes.map((m, i) => [xPos(i), yPos(m.nps)]);
+  const linePts = pts.map(p => p.join(',')).join(' ');
+  const areaD = `M ${pts[0][0].toFixed(1)},${yPos(minY).toFixed(1)} `
+    + pts.map(p => `L ${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ')
+    + ` L ${pts[pts.length-1][0].toFixed(1)},${yPos(minY).toFixed(1)} Z`;
+
+  // Smooth cubic bezier through points
+  function smoothLine(ps) {
+    if (ps.length < 2) return `M ${ps[0][0]},${ps[0][1]}`;
+    let d = `M ${ps[0][0].toFixed(1)},${ps[0][1].toFixed(1)}`;
+    for (let i = 1; i < ps.length; i++) {
+      const cpx = (ps[i-1][0] + ps[i][0]) / 2;
+      d += ` C ${cpx.toFixed(1)},${ps[i-1][1].toFixed(1)} ${cpx.toFixed(1)},${ps[i][1].toFixed(1)} ${ps[i][0].toFixed(1)},${ps[i][1].toFixed(1)}`;
+    }
+    return d;
+  }
+  const smoothD = smoothLine(pts);
+  const smoothArea = `M ${pts[0][0].toFixed(1)},${yPos(minY).toFixed(1)} `
+    + smoothD.replace(/^M [^ ]+ /, 'L ')
+    + ` L ${pts[pts.length-1][0].toFixed(1)},${yPos(minY).toFixed(1)} Z`;
+
+  // Dots + value labels
+  const dotsHtml = porMes.map((m, i) => {
+    const x = xPos(i).toFixed(1), y = yPos(m.nps).toFixed(1);
+    const col = npsColor2(m.nps);
+    const lbl = (m.nps > 0 ? '+' : '') + m.nps.toFixed(1);
+    const labelY = (yPos(m.nps) - 11).toFixed(1);
+    return `<circle cx="${x}" cy="${y}" r="5.5" fill="${col}" stroke="white" stroke-width="2.5"/>
+      <text x="${x}" y="${labelY}" text-anchor="middle" font-size="11" font-weight="700"
+        fill="${col}" font-family="sans-serif">${lbl}</text>`;
+  }).join('');
+
+  // X-axis labels
+  const xLabelsHtml = porMes.map((m, i) => {
+    const x = xPos(i).toFixed(1);
+    const yLbl = (H - pad.bottom + 14).toFixed(1);
+    const yTotal = (H - pad.bottom + 26).toFixed(1);
+    return `<text x="${x}" y="${yLbl}" text-anchor="middle" font-size="11" font-weight="700"
+        fill="#4a5568" font-family="sans-serif">${m.mesAbrev}${m.parcial ? '*' : ''}</text>
+      <text x="${x}" y="${yTotal}" text-anchor="middle" font-size="9.5" fill="#a0aec0"
+        font-family="sans-serif">${m.total.toLocaleString('pt-BR')}</text>`;
+  }).join('');
+
+  const svg = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block;overflow:visible">
+    <defs>
+      <linearGradient id="npsAreaGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#3182ce" stop-opacity="0.18"/>
+        <stop offset="100%" stop-color="#3182ce" stop-opacity="0.02"/>
+      </linearGradient>
+    </defs>
+    ${gridHtml}
+    <path d="${smoothArea}" fill="url(#npsAreaGrad)"/>
+    <path d="${smoothD}" fill="none" stroke="#3182ce" stroke-width="2.8"
+      stroke-linejoin="round" stroke-linecap="round"/>
+    ${dotsHtml}
+    ${xLabelsHtml}
+  </svg>`;
 
   return `<div class="filter-section" style="margin-bottom:1.75rem">
     <div class="filter-header">
       <div class="filter-dot" style="background:#3182ce"></div>
       <span class="filter-title">Evolução do NPS por Mês</span>
     </div>
-    <div style="padding:1rem 1.5rem 0.5rem">
-      <div style="display:flex;align-items:flex-end;gap:8px;height:${barH+60}px;border-bottom:2px solid #e2e8f0;padding-bottom:0">
-        ${bars}
-      </div>
-      <div style="display:flex;gap:1.2rem;flex-wrap:wrap;margin-top:0.75rem;font-size:0.68rem;font-weight:600;color:#718096">
-        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:#38a169;border-radius:2px;display:inline-block"></span>NPS ≥ 30 — Excelente</span>
-        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:#68d391;border-radius:2px;display:inline-block"></span>NPS 15–29 — Bom</span>
-        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:#f6ad55;border-radius:2px;display:inline-block"></span>NPS 0–14 — Regular</span>
-        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:#e53e3e;border-radius:2px;display:inline-block"></span>NPS &lt; 0 — Crítico</span>
+    <div style="padding:1rem 1.5rem 0.75rem">
+      ${svg}
+      <div style="display:flex;gap:1.2rem;flex-wrap:wrap;margin-top:0.6rem;font-size:0.68rem;font-weight:600;color:#718096">
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:9px;height:9px;background:#38a169;border-radius:50%;display:inline-block"></span>NPS ≥ 30 — Excelente</span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:9px;height:9px;background:#48bb78;border-radius:50%;display:inline-block"></span>NPS 15–29 — Bom</span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:9px;height:9px;background:#ed8936;border-radius:50%;display:inline-block"></span>NPS 0–14 — Regular</span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:9px;height:9px;background:#e53e3e;border-radius:50%;display:inline-block"></span>NPS &lt; 0 — Crítico</span>
+        ${porMes.some(m => m.parcial) ? '<span style="color:#d69e2e">* parcial</span>' : ''}
       </div>
     </div>
   </div>`;
