@@ -1652,8 +1652,8 @@ function switchNpsSubTab(name) {
 }
 
 function npsChartHtml(porMes) {
-  const W = 540, H = 210;
-  const pad = { top: 32, right: 28, bottom: 48, left: 44 };
+  const W = 400, H = 150;
+  const pad = { top: 24, right: 20, bottom: 38, left: 36 };
   const cw = W - pad.left - pad.right;
   const ch = H - pad.top - pad.bottom;
 
@@ -1705,9 +1705,9 @@ function npsChartHtml(porMes) {
     const x = xPos(i).toFixed(1), y = yPos(m.nps).toFixed(1);
     const col = npsColor2(m.nps);
     const lbl = (m.nps > 0 ? '+' : '') + m.nps.toFixed(1);
-    const labelY = (yPos(m.nps) - 11).toFixed(1);
-    return `<circle cx="${x}" cy="${y}" r="5.5" fill="${col}" stroke="white" stroke-width="2.5"/>
-      <text x="${x}" y="${labelY}" text-anchor="middle" font-size="11" font-weight="700"
+    const labelY = (yPos(m.nps) - 8).toFixed(1);
+    return `<circle cx="${x}" cy="${y}" r="4" fill="${col}" stroke="white" stroke-width="2"/>
+      <text x="${x}" y="${labelY}" text-anchor="middle" font-size="9" font-weight="700"
         fill="${col}" font-family="sans-serif">${lbl}</text>`;
   }).join('');
 
@@ -1716,13 +1716,13 @@ function npsChartHtml(porMes) {
     const x = xPos(i).toFixed(1);
     const yLbl = (H - pad.bottom + 14).toFixed(1);
     const yTotal = (H - pad.bottom + 26).toFixed(1);
-    return `<text x="${x}" y="${yLbl}" text-anchor="middle" font-size="11" font-weight="700"
+    return `<text x="${x}" y="${yLbl}" text-anchor="middle" font-size="10" font-weight="700"
         fill="#4a5568" font-family="sans-serif">${m.mesAbrev}${m.parcial ? '*' : ''}</text>
-      <text x="${x}" y="${yTotal}" text-anchor="middle" font-size="9.5" fill="#a0aec0"
+      <text x="${x}" y="${yTotal}" text-anchor="middle" font-size="8.5" fill="#a0aec0"
         font-family="sans-serif">${m.total.toLocaleString('pt-BR')}</text>`;
   }).join('');
 
-  const svg = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block;overflow:visible">
+  const svg = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:480px;height:auto;display:block;overflow:visible">
     <defs>
       <linearGradient id="npsAreaGrad" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stop-color="#3182ce" stop-opacity="0.18"/>
@@ -1731,7 +1731,7 @@ function npsChartHtml(porMes) {
     </defs>
     ${gridHtml}
     <path d="${smoothArea}" fill="url(#npsAreaGrad)"/>
-    <path d="${smoothD}" fill="none" stroke="#3182ce" stroke-width="2.8"
+    <path d="${smoothD}" fill="none" stroke="#3182ce" stroke-width="2.2"
       stroke-linejoin="round" stroke-linecap="round"/>
     ${dotsHtml}
     ${xLabelsHtml}
@@ -1742,7 +1742,7 @@ function npsChartHtml(porMes) {
       <div class="filter-dot" style="background:#3182ce"></div>
       <span class="filter-title">Evolução do NPS por Mês</span>
     </div>
-    <div style="padding:1rem 1.5rem 0.75rem">
+    <div style="padding:0.6rem 1.2rem 0.5rem">
       ${svg}
       <div style="display:flex;gap:1.2rem;flex-wrap:wrap;margin-top:0.6rem;font-size:0.68rem;font-weight:600;color:#718096">
         <span style="display:flex;align-items:center;gap:4px"><span style="width:9px;height:9px;background:#38a169;border-radius:50%;display:inline-block"></span>NPS ≥ 30 — Excelente</span>
