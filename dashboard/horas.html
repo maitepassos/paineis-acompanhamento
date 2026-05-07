@@ -250,6 +250,10 @@
     .prod-period-btn.active { background: #2b6cb0; color: #fff; border-color: #2b6cb0; }
     .prod-period-btn:hover:not(.active) { background: #edf2f7; color: #2d3748; }
 
+    /* ── NPS: sub-tabs ────────────────────────────────────────────────── */
+    .nps-sub-btn.active { color: #3182ce !important; border-bottom-color: #3182ce !important; }
+    .nps-sub-btn:hover:not(.active) { color: #4a5568 !important; background: #f7fafc; }
+
     /* ── Demandas: tabela de issues ────────────────────────────────────── */
     .issue-table { width: 100%; border-collapse: collapse; }
     .issue-table th {
@@ -1639,6 +1643,125 @@ function switchNpsMes(mesAbrev) {
   document.querySelectorAll('.nps-mes-pane').forEach(p => p.style.display = p.id === `nps-pane-${mesAbrev}` ? 'block' : 'none');
 }
 
+let _npsSubTab = 'analise'; // 'analise' | 'comentarios'
+
+function switchNpsSubTab(name) {
+  _npsSubTab = name;
+  document.querySelectorAll('.nps-sub-btn').forEach(b => b.classList.toggle('active', b.dataset.sub === name));
+  document.querySelectorAll('.nps-sub-pane').forEach(p => p.style.display = p.id === `nps-sub-${name}` ? 'block' : 'none');
+}
+
+function npsChartHtml(porMes) {
+  const maxNps = Math.max(...porMes.map(m => Math.abs(m.nps)), 10);
+  const barH = 140; // px total bar area height
+  const npsColor2 = nps => nps >= 30 ? '#38a169' : nps >= 15 ? '#68d391' : nps >= 0 ? '#f6ad55' : '#e53e3e';
+
+  let bars = porMes.map(m => {
+    const isNeg = m.nps < 0;
+    const pct = Math.round(Math.abs(m.nps) / maxNps * 100);
+    const col = npsColor2(m.nps);
+    const npsStr = (m.nps > 0 ? '+' : '') + m.nps.toFixed(1);
+    const barPx = Math.max(Math.round(Math.abs(m.nps) / maxNps * barH), 4);
+    return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:0;min-width:50px">
+      <div style="font-size:0.78rem;font-weight:800;color:${col};margin-bottom:3px">${npsStr}</div>
+      <div style="width:70%;height:${barPx}px;background:${col};border-radius:4px 4px 0 0;opacity:${m.parcial?'0.7':'1'}"></div>
+      <div style="font-size:0.65rem;color:#718096;margin-top:5px;font-weight:600;text-align:center">${m.mesAbrev}${m.parcial ? '<br><span style="color:#d69e2e;font-size:0.6rem">parcial</span>' : ''}</div>
+      <div style="font-size:0.62rem;color:#a0aec0;text-align:center">${m.total.toLocaleString('pt-BR')}</div>
+    </div>`;
+  }).join('');
+
+  return `<div class="filter-section" style="margin-bottom:1.75rem">
+    <div class="filter-header">
+      <div class="filter-dot" style="background:#3182ce"></div>
+      <span class="filter-title">Evolução do NPS por Mês</span>
+    </div>
+    <div style="padding:1rem 1.5rem 0.5rem">
+      <div style="display:flex;align-items:flex-end;gap:8px;height:${barH+60}px;border-bottom:2px solid #e2e8f0;padding-bottom:0">
+        ${bars}
+      </div>
+      <div style="display:flex;gap:1.2rem;flex-wrap:wrap;margin-top:0.75rem;font-size:0.68rem;font-weight:600;color:#718096">
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:#38a169;border-radius:2px;display:inline-block"></span>NPS ≥ 30 — Excelente</span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:#68d391;border-radius:2px;display:inline-block"></span>NPS 15–29 — Bom</span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:#f6ad55;border-radius:2px;display:inline-block"></span>NPS 0–14 — Regular</span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:#e53e3e;border-radius:2px;display:inline-block"></span>NPS &lt; 0 — Crítico</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderNpsComentarios() {
+  const pane = document.getElementById('nps-sub-comentarios');
+  if (!pane || !window.NPS_COMENTARIOS) return;
+  const all = window.NPS_COMENTARIOS;
+  const notaColor2 = n => n >= 9 ? '#38a169' : n >= 7 ? '#d69e2e' : '#e53e3e';
+
+  let html = `<div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:1rem">
+    <input id="nps-busca" type="text" placeholder="🔍  Buscar comentário, usuário ou cidade…"
+      style="flex:1;min-width:220px;padding:0.45rem 0.75rem;border:1px solid #e2e8f0;border-radius:8px;font-size:0.82rem;outline:none"
+      oninput="filtrarComentarios()">
+    <select id="nps-filtro-nota" onchange="filtrarComentarios()"
+      style="padding:0.45rem 0.65rem;border:1px solid #e2e8f0;border-radius:8px;font-size:0.82rem;background:white;cursor:pointer">
+      <option value="">Todas as notas</option>
+      <option value="det">Detratores (≤6)</option>
+      <option value="neu">Neutros (7–8)</option>
+      <option value="pro">Promotores (9–10)</option>
+    </select>
+    <span id="nps-count-badge" style="font-size:0.75rem;font-weight:700;color:#718096"></span>
+  </div>
+  <div style="overflow-x:auto">
+    <table class="hours-table" id="nps-comentarios-tbl" style="min-width:700px;font-size:0.8rem">
+      <thead><tr>
+        <th style="text-align:center;width:52px">Nota</th>
+        <th style="text-align:left;white-space:nowrap">Data</th>
+        <th style="text-align:left">Usuário</th>
+        <th style="text-align:left">Cidade / UF</th>
+        <th style="text-align:left;min-width:300px">Comentário</th>
+      </tr></thead>
+      <tbody id="nps-tbody">
+        ${renderComentariosRows(all)}
+      </tbody>
+    </table>
+  </div>
+  <div style="margin-top:0.5rem;font-size:0.68rem;color:#a0aec0">
+    Período exibido: 01/05/2026 – 06/05/2026 · ${all.length} comentários carregados
+  </div>`;
+
+  pane.innerHTML = html;
+  document.getElementById('nps-count-badge').textContent = all.length + ' comentários';
+}
+
+function renderComentariosRows(rows) {
+  const notaColor2 = n => n >= 9 ? '#38a169' : n >= 7 ? '#d69e2e' : '#e53e3e';
+  return rows.map((r, i) => `<tr style="vertical-align:top;background:${i%2===0?'#f7fafc':'#fff'}">
+    <td style="text-align:center;font-weight:800;color:${notaColor2(r.nota)};font-size:1rem">${r.nota}</td>
+    <td style="white-space:nowrap;color:#718096">${escHtml(r.data)}</td>
+    <td style="font-weight:600;color:#4a5568;white-space:nowrap">${escHtml(r.usuario)}</td>
+    <td style="white-space:nowrap;color:#4a5568">${escHtml(r.cidade)}/${escHtml(r.uf)}</td>
+    <td style="color:#2d3748;font-style:italic">"${escHtml(r.comentario)}"</td>
+  </tr>`).join('');
+}
+
+function filtrarComentarios() {
+  const busca = (document.getElementById('nps-busca')?.value||'').toLowerCase();
+  const filtroNota = document.getElementById('nps-filtro-nota')?.value||'';
+  if (!window.NPS_COMENTARIOS) return;
+  let rows = window.NPS_COMENTARIOS.filter(r => {
+    const matchNota = !filtroNota
+      || (filtroNota==='det' && r.nota <= 6)
+      || (filtroNota==='neu' && r.nota >= 7 && r.nota <= 8)
+      || (filtroNota==='pro' && r.nota >= 9);
+    const matchBusca = !busca
+      || r.comentario.toLowerCase().includes(busca)
+      || r.usuario.toLowerCase().includes(busca)
+      || r.cidade.toLowerCase().includes(busca);
+    return matchNota && matchBusca;
+  });
+  const tbody = document.getElementById('nps-tbody');
+  if (tbody) tbody.innerHTML = renderComentariosRows(rows);
+  const badge = document.getElementById('nps-count-badge');
+  if (badge) badge.textContent = rows.length + ' comentários';
+}
+
 function renderNps() {
   const data = window.NPS_DATA;
   if (!data) return;
@@ -1647,13 +1770,56 @@ function renderNps() {
     ? 'Atualizado: ' + new Date(data.generatedAt).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})
     : '';
 
-  // ── Header
-  let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:0.75rem">
+  // ── Header + sub-tabs
+  let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:0.75rem">
     <div>
       <h2 style="font-size:1.1rem;font-weight:700;color:#1a202c;margin:0">⭐ NPS — Satisfação com o Produto · Saúde (Fly)</h2>
-      <span style="font-size:0.72rem;color:#a0aec0">${genAt} · Vertical Saúde · ${data.ano} · ${data.totalRespostas} respostas coletadas</span>
+      <span style="font-size:0.72rem;color:#a0aec0">${genAt} · Vertical Saúde · ${data.ano} · ${data.totalRespostas.toLocaleString('pt-BR')} respostas coletadas</span>
     </div>
-  </div>`;
+  </div>
+  <div style="display:flex;gap:0;border-bottom:2px solid #e2e8f0;margin-bottom:1.5rem">
+    <button class="nps-sub-btn active" data-sub="analise"
+      onclick="switchNpsSubTab('analise')"
+      style="padding:0.5rem 1.25rem;border:none;background:none;font-size:0.85rem;font-weight:600;color:#3182ce;border-bottom:2px solid #3182ce;margin-bottom:-2px;cursor:pointer">
+      📊 Análise
+    </button>
+    <button class="nps-sub-btn" data-sub="comentarios"
+      onclick="switchNpsSubTab('comentarios')"
+      style="padding:0.5rem 1.25rem;border:none;background:none;font-size:0.85rem;font-weight:600;color:#718096;border-bottom:2px solid transparent;margin-bottom:-2px;cursor:pointer">
+      💬 Comentários
+    </button>
+  </div>
+  <div id="nps-sub-analise" class="nps-sub-pane">`;
+
+  // ── NPS Evolution chart
+  html += npsChartHtml(data.porMes);
+
+  // ── Cards por mês
+  html += `<div style="display:flex;gap:0.9rem;flex-wrap:wrap;margin-bottom:1.75rem">`;
+  for (const m of data.porMes) {
+    const nc = npsColor(m.nps);
+    const npsStr = (m.nps > 0 ? '+' : '') + m.nps.toFixed(0);
+    const pctD = Math.round(m.detratores/m.total*100);
+    const pctN = Math.round(m.neutros/m.total*100);
+    const pctP = Math.round(m.promotores/m.total*100);
+    html += `<div class="demand-card" style="border-top:4px solid ${nc.bar};min-width:170px;flex:1;cursor:default">
+      <div class="demand-card-label">${m.mes}${m.parcial ? ' <span style="font-size:0.6rem;background:#feebc8;color:#7b341e;padding:0.1rem 0.4rem;border-radius:8px;font-weight:700">parcial</span>' : ''}</div>
+      <div style="font-size:2rem;font-weight:800;color:${nc.color};line-height:1">${npsStr}</div>
+      <div style="font-size:0.68rem;color:#718096;margin-top:0.35rem;font-weight:600">NPS · nota média ${m.notaMedia}</div>
+      <div style="display:flex;height:6px;border-radius:3px;overflow:hidden;margin-top:0.5rem;gap:1px">
+        <div style="width:${pctP}%;background:#38a169" title="Promotores ${pctP}%"></div>
+        <div style="width:${pctN}%;background:#d69e2e" title="Neutros ${pctN}%"></div>
+        <div style="width:${pctD}%;background:#e53e3e" title="Detratores ${pctD}%"></div>
+      </div>
+      <div style="display:flex;gap:0.5rem;margin-top:0.35rem;font-size:0.66rem;font-weight:600">
+        <span style="color:#38a169">▲${m.promotores}</span>
+        <span style="color:#d69e2e">◼${m.neutros}</span>
+        <span style="color:#e53e3e">▼${m.detratores}</span>
+        <span style="color:#a0aec0;margin-left:auto">${m.total.toLocaleString('pt-BR')} resp.</span>
+      </div>
+    </div>`;
+  }
+  html += `</div>`;
 
   // ── Cards por mês
   html += `<div style="display:flex;gap:0.9rem;flex-wrap:wrap;margin-bottom:1.75rem">`;
@@ -1796,10 +1962,22 @@ function renderNps() {
     <strong>Metodologia:</strong> NPS = (%Promotores − %Detratores) × 100.
     Promotores: nota 9–10 · Neutros: nota 7–8 · Detratores: nota ≤ 6.
     Categorias de reclamação identificadas por análise de palavras-chave nos comentários dos detratores.
-    Fonte: Power BI — Painel Gerencial DD · ${data.totalRespostas} respostas coletadas.
+    Fonte: Power BI — Painel Gerencial DD · ${data.totalRespostas.toLocaleString('pt-BR')} respostas coletadas.
+  </div>`;
+
+  // ── Fechar pane analise + pane comentarios
+  html += `</div><!-- /nps-sub-analise -->
+  <div id="nps-sub-comentarios" class="nps-sub-pane" style="display:none">
+    <div style="color:#718096;font-size:0.82rem;padding:1rem 0">Carregando comentários...</div>
   </div>`;
 
   document.getElementById('nps-content').innerHTML = html;
+
+  // Render comments if data already loaded
+  if (window.NPS_COMENTARIOS) renderNpsComentarios();
+
+  // Restore sub-tab state
+  switchNpsSubTab(_npsSubTab);
 }
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -1845,6 +2023,12 @@ document.getElementById('header-date').textContent =
   sn.onload  = () => { if (currentMain === 'nps') tryRenderNps(); };
   sn.onerror = () => {};
   document.head.appendChild(sn);
+
+  const sc = document.createElement('script');
+  sc.src = 'nps-comentarios.js?v=' + Date.now();
+  sc.onload  = () => { if (currentMain === 'nps') renderNpsComentarios(); };
+  sc.onerror = () => {};
+  document.head.appendChild(sc);
 })();
 </script>
 </body>
