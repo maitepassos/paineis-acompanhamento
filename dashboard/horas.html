@@ -336,6 +336,7 @@
 <nav class="main-nav-bar">
   <button class="main-nav-tab active" data-main="apontamentos" onclick="switchMain('apontamentos')">⏱ Apontamentos</button>
   <button class="main-nav-tab"        data-main="demandas"     onclick="switchMain('demandas')">📋 Demandas</button>
+  <button class="main-nav-tab"        data-main="nps"          onclick="switchMain('nps')">⭐ NPS</button>
 </nav>
 
 <!-- ═══════════════════════════════════════════════════════════════════════
@@ -360,6 +361,16 @@
         <div class="table-scroll" id="table-monthly"></div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     SEÇÃO: NPS
+════════════════════════════════════════════════════════════════════════ -->
+<div id="section-nps" class="main-section">
+  <div class="container">
+    <div id="nps-loading" class="loading"><div class="spinner"></div> Carregando dados NPS...</div>
+    <div id="nps-content" style="display:none"></div>
   </div>
 </div>
 
@@ -532,6 +543,7 @@ function switchMain(name) {
     else if (activeDemand === 'gaps')     tryRenderGaps();
     else if (activeDemand === 'suporte')  tryRenderSuporte();
   }
+  if (name === 'nps') tryRenderNps();
 }
 
 function switchPeriod(p) {
@@ -1596,6 +1608,175 @@ function renderSuporteProdutividade(period) {
 }
 
 /* ══════════════════════════════════════════════════════════════════════
+   NPS — render
+══════════════════════════════════════════════════════════════════════ */
+let npsRendered = false;
+let npsActiveMes = null;
+
+function tryRenderNps() {
+  if (npsRendered) return;
+  if (!window.NPS_DATA) {
+    document.getElementById('nps-loading').style.display = 'flex';
+    document.getElementById('nps-content').style.display = 'none';
+    return;
+  }
+  document.getElementById('nps-loading').style.display = 'none';
+  document.getElementById('nps-content').style.display = 'block';
+  renderNps();
+  npsRendered = true;
+}
+
+function npsColor(nps) {
+  if (nps >= 50)  return { bg:'#c6f6d5', color:'#22543d', bar:'#38a169' };
+  if (nps >= 0)   return { bg:'#fefcbf', color:'#744210', bar:'#d69e2e' };
+  if (nps >= -30) return { bg:'#feebc8', color:'#7b341e', bar:'#ed8936' };
+  return              { bg:'#fed7d7', color:'#742a2a', bar:'#e53e3e' };
+}
+
+function switchNpsMes(mesAbrev) {
+  npsActiveMes = mesAbrev;
+  document.querySelectorAll('.nps-mes-btn').forEach(b => b.classList.toggle('active', b.dataset.mes === mesAbrev));
+  document.querySelectorAll('.nps-mes-pane').forEach(p => p.style.display = p.id === `nps-pane-${mesAbrev}` ? 'block' : 'none');
+}
+
+function renderNps() {
+  const data = window.NPS_DATA;
+  if (!data) return;
+
+  const genAt = data.generatedAt
+    ? 'Atualizado: ' + new Date(data.generatedAt).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})
+    : '';
+
+  // ── Header
+  let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:0.75rem">
+    <div>
+      <h2 style="font-size:1.1rem;font-weight:700;color:#1a202c;margin:0">⭐ NPS — Satisfação com o Produto · Saúde (Fly)</h2>
+      <span style="font-size:0.72rem;color:#a0aec0">${genAt} · Vertical Saúde · ${data.ano} · ${data.totalRespostas} respostas coletadas</span>
+    </div>
+  </div>`;
+
+  // ── Cards por mês
+  html += `<div style="display:flex;gap:0.9rem;flex-wrap:wrap;margin-bottom:1.75rem">`;
+  for (const m of data.porMes) {
+    const nc = npsColor(m.nps);
+    const npsStr = (m.nps > 0 ? '+' : '') + m.nps.toFixed(0);
+    const pctD = Math.round(m.detratores/m.total*100);
+    const pctN = Math.round(m.neutros/m.total*100);
+    const pctP = Math.round(m.promotores/m.total*100);
+    html += `<div class="demand-card" style="border-top:4px solid ${nc.bar};min-width:170px;flex:1;cursor:default">
+      <div class="demand-card-label">${m.mes}${m.parcial ? ' <span style="font-size:0.6rem;background:#feebc8;color:#7b341e;padding:0.1rem 0.4rem;border-radius:8px;font-weight:700">parcial</span>' : ''}</div>
+      <div style="font-size:2rem;font-weight:800;color:${nc.color};line-height:1">${npsStr}</div>
+      <div style="font-size:0.68rem;color:#718096;margin-top:0.35rem;font-weight:600">NPS · nota média ${m.notaMedia}</div>
+      <!-- mini bar -->
+      <div style="display:flex;height:6px;border-radius:3px;overflow:hidden;margin-top:0.5rem;gap:1px">
+        <div style="width:${pctP}%;background:#38a169" title="Promotores ${pctP}%"></div>
+        <div style="width:${pctN}%;background:#d69e2e" title="Neutros ${pctN}%"></div>
+        <div style="width:${pctD}%;background:#e53e3e" title="Detratores ${pctD}%"></div>
+      </div>
+      <div style="display:flex;gap:0.5rem;margin-top:0.35rem;font-size:0.66rem;font-weight:600">
+        <span style="color:#38a169">▲${m.promotores}</span>
+        <span style="color:#d69e2e">◼${m.neutros}</span>
+        <span style="color:#e53e3e">▼${m.detratores}</span>
+        <span style="color:#a0aec0;margin-left:auto">${m.total} resp.</span>
+      </div>
+    </div>`;
+  }
+  html += `</div>`;
+
+  // ── Top Reclamações
+  html += `<div class="filter-section" style="margin-bottom:1.75rem">
+    <div class="filter-header">
+      <div class="filter-dot" style="background:#e53e3e"></div>
+      <span class="filter-title">Principais Reclamações — Detratores (nota ≤ 6)</span>
+      <span class="filter-count-badge" style="background:#fed7d7;color:#742a2a">${data.topReclamacoes.reduce((s,r)=>s+r.total,0)} menções</span>
+    </div>`;
+
+  const maxRec = data.topReclamacoes[0]?.total || 1;
+  for (const rec of data.topReclamacoes) {
+    const pct = Math.round((rec.total / maxRec) * 100);
+    html += `<div style="padding:0.9rem 1.2rem;border-bottom:1px solid #f0f4f8">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem">
+        <span style="font-size:1.2rem">${rec.icone}</span>
+        <span style="font-size:0.9rem;font-weight:700;color:#2d3748">${escHtml(rec.categoria)}</span>
+        ${rec.alerta ? `<span style="font-size:0.7rem;font-weight:700;background:#feebc8;color:#7b341e;padding:0.15rem 0.5rem;border-radius:8px">${escHtml(rec.alerta)}</span>` : ''}
+        <span style="margin-left:auto;font-size:1rem;font-weight:800;color:#2b6cb0">${rec.total}</span>
+      </div>
+      <!-- barra de progresso -->
+      <div style="height:7px;background:#edf2f7;border-radius:4px;overflow:hidden;margin-bottom:0.55rem">
+        <div style="height:100%;width:${pct}%;background:#3182ce;border-radius:4px"></div>
+      </div>
+      <!-- resumo -->
+      <div style="font-size:0.79rem;color:#4a5568;margin-bottom:0.5rem;font-style:italic">${escHtml(rec.resumo)}</div>
+      <!-- mini sparkline por mês -->
+      <div style="display:flex;gap:0.4rem;flex-wrap:wrap">
+        ${Object.entries(rec.porMes).map(([mes, cnt]) => {
+          const mc = data.porMes.find(m => m.mes === mes);
+          return cnt > 0 ? `<span style="font-size:0.7rem;font-weight:600;background:#ebf8ff;color:#2b6cb0;padding:0.15rem 0.5rem;border-radius:6px">${mes.substring(0,3)}: ${cnt}</span>` : '';
+        }).join('')}
+      </div>
+      <!-- exemplos expansíveis -->
+      <details style="margin-top:0.5rem">
+        <summary style="font-size:0.74rem;color:#3182ce;cursor:pointer;font-weight:600">Ver exemplos de comentários</summary>
+        <div style="margin-top:0.5rem;padding:0.5rem;background:#f7fafc;border-radius:6px;border-left:3px solid #bee3f8">
+          ${rec.exemplos.map(e => `<div style="font-size:0.78rem;color:#4a5568;padding:0.3rem 0;border-bottom:1px solid #edf2f7">"${escHtml(e)}"</div>`).join('')}
+        </div>
+      </details>
+    </div>`;
+  }
+  html += `</div>`;
+
+  // ── Evolução mensal — tabela por mês / categoria
+  html += `<div class="filter-section" style="margin-bottom:1.75rem">
+    <div class="filter-header">
+      <div class="filter-dot" style="background:#805ad5"></div>
+      <span class="filter-title">Evolução por Mês e Categoria</span>
+    </div>
+    <div style="overflow-x:auto">
+    <table class="hours-table" style="min-width:520px">
+      <thead><tr>
+        <th style="text-align:left;min-width:200px">Categoria</th>`;
+  for (const m of data.porMes) {
+    html += `<th class="th-day" style="text-align:center">${m.mesAbrev}${m.parcial?'*':''}</th>`;
+  }
+  html += `<th class="th-total">Total</th></tr></thead><tbody>`;
+
+  for (const rec of data.topReclamacoes) {
+    const rowTotal = Object.values(rec.porMes).reduce((s,v)=>s+v,0);
+    html += `<tr>
+      <td style="font-size:0.82rem;font-weight:600;color:#2d3748">${rec.icone} ${escHtml(rec.categoria)}</td>`;
+    for (const m of data.porMes) {
+      const val = rec.porMes[m.mes] || 0;
+      const isMax = val === Math.max(...Object.values(rec.porMes));
+      html += `<td style="text-align:center;font-size:0.85rem;font-weight:${isMax?'800':'500'};color:${isMax?'#e53e3e':'#4a5568'};background:${isMax?'#fff5f5':'transparent'}">${val || '—'}</td>`;
+    }
+    html += `<td class="col-total" style="color:#2b6cb0;font-weight:800">${rowTotal}</td></tr>`;
+  }
+
+  // NPS row
+  html += `<tr style="background:#f7fafc;border-top:2px solid #e2e8f0">
+    <td style="font-size:0.75rem;font-weight:700;color:#718096;text-transform:uppercase;letter-spacing:0.04em">NPS do Mês</td>`;
+  for (const m of data.porMes) {
+    const nc = npsColor(m.nps);
+    const npsStr = (m.nps > 0 ? '+' : '') + m.nps.toFixed(0);
+    html += `<td style="text-align:center;font-size:0.85rem;font-weight:800;background:${nc.bg};color:${nc.color}">${npsStr}</td>`;
+  }
+  html += `<td class="col-total" style="font-size:0.75rem;color:#a0aec0">—</td></tr>`;
+  html += `</tbody></table></div>
+    <div style="padding:0.5rem 1.2rem;font-size:0.68rem;color:#a0aec0">* Mai/26 dados parciais até 07/05/26</div>
+  </div>`;
+
+  // ── Nota metodológica
+  html += `<div style="background:#f7fafc;border:1px solid #e2e8f0;border-radius:8px;padding:0.85rem 1.2rem;font-size:0.72rem;color:#718096">
+    <strong>Metodologia:</strong> NPS = (%Promotores − %Detratores) × 100.
+    Promotores: nota 9–10 · Neutros: nota 7–8 · Detratores: nota ≤ 6.
+    Categorias de reclamação identificadas por análise de palavras-chave nos comentários dos detratores.
+    Fonte: Power BI — Painel Gerencial DD · ${data.totalRespostas} respostas coletadas.
+  </div>`;
+
+  document.getElementById('nps-content').innerHTML = html;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
    INICIALIZAÇÃO
 ══════════════════════════════════════════════════════════════════════ */
 document.getElementById('header-date').textContent =
@@ -1632,6 +1813,12 @@ document.getElementById('header-date').textContent =
   ss2.onload  = () => { if (currentMain === 'demandas') tryRenderSuporte(); };
   ss2.onerror = () => {};
   document.head.appendChild(ss2);
+
+  const sn = document.createElement('script');
+  sn.src = 'nps-data.js?v=' + Date.now();
+  sn.onload  = () => { if (currentMain === 'nps') tryRenderNps(); };
+  sn.onerror = () => {};
+  document.head.appendChild(sn);
 })();
 </script>
 </body>
