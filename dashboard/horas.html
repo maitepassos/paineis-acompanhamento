@@ -28,6 +28,7 @@
     }
     .login-box input:focus { border-color: #3182ce; }
     .login-box input.error { border-color: #e53e3e; }
+    #login-pwd:focus { border-color: #3182ce; }
     .login-error { color: #e53e3e; font-size: 0.78rem; margin-bottom: 0.6rem; min-height: 1rem; }
     .login-btn {
       width: 100%; padding: 0.75rem; background: #2b6cb0; color: white; border: none;
@@ -314,11 +315,24 @@
 <!-- Login -->
 <div id="login-overlay">
   <div class="login-box">
+    <div style="font-size:2.2rem;margin-bottom:0.4rem">🔒</div>
     <h2>Painel de Gestão</h2>
-    <p>Acesso restrito.<br>Informe seu e-mail corporativo.</p>
+    <p>Acesso restrito — Betha Sistemas<br>Informe seu e-mail e senha.</p>
     <input type="email" id="login-email" placeholder="seu@betha.com.br" autocomplete="email">
+    <div style="position:relative;margin-bottom:0.5rem">
+      <input type="password" id="login-pwd" placeholder="Senha" autocomplete="current-password"
+        style="width:100%;padding:0.7rem 2.8rem 0.7rem 1rem;border:2px solid #e2e8f0;border-radius:8px;font-size:0.93rem;outline:none;box-sizing:border-box;transition:border-color 0.15s">
+      <button type="button" onclick="togglePwd()"
+        style="position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#a0aec0;font-size:1rem;padding:0;line-height:1"
+        title="Mostrar/ocultar senha" id="pwd-eye">👁</button>
+    </div>
+    <label style="display:flex;align-items:center;gap:0.5rem;font-size:0.78rem;color:#718096;margin-bottom:0.9rem;cursor:pointer">
+      <input type="checkbox" id="login-remember" style="width:auto;margin:0">
+      Manter conectado por 30 dias
+    </label>
     <div class="login-error" id="login-error"></div>
-    <button class="login-btn" id="login-btn">Acessar</button>
+    <button class="login-btn" id="login-btn">Entrar</button>
+    <div id="login-lockout" style="display:none;margin-top:0.75rem;padding:0.5rem 0.75rem;background:#fff5f5;border-radius:6px;font-size:0.75rem;color:#c53030;font-weight:600"></div>
   </div>
 </div>
 
@@ -534,30 +548,110 @@ const TYPE_ICON = {
 /* ══════════════════════════════════════════════════════════════════════
    AUTH
 ══════════════════════════════════════════════════════════════════════ */
-function checkAuth() {
-  const email = sessionStorage.getItem('gestao_email');
-  if (email?.toLowerCase() === 'maite.passos@betha.com.br') {
-    document.getElementById('login-overlay').classList.add('hidden');
-    document.getElementById('user-pill').textContent = '👤 ' + email.split('@')[0];
-    return true;
-  }
-  return false;
+/* ══════════════════════════════════════════════════════════════════════
+   AUTENTICAÇÃO
+   • Senha padrão: Betha@2026
+   • Para adicionar usuários: inclua o e-mail em AUTH_USERS
+   • Para trocar a senha: substitua AUTH_PWD_HASH pelo SHA-256 da nova senha
+══════════════════════════════════════════════════════════════════════ */
+const AUTH_USERS = [
+  'maite.passos@betha.com.br',
+  // Adicione mais e-mails autorizados abaixo:
+  // 'outro.usuario@betha.com.br',
+];
+const AUTH_PWD_HASH = 'ad7f55a3fe8a783843f1f8ec0476a64e5fa709092cf52bf3aa82fae1d9e3de9a'; // Betha@2026
+
+const _SK  = 'gestao_v2_session';   // chave de sessão no localStorage
+const _AK  = 'gestao_v2_attempts';  // chave de tentativas
+const MAX_TRIES   = 5;
+const LOCK_MS     = 15 * 60 * 1000; // 15 minutos de bloqueio
+const TTL_SHORT   =  8 * 60 * 60 * 1000; // 8 horas
+const TTL_LONG    = 30 * 24 * 60 * 60 * 1000; // 30 dias
+
+async function _sha256(txt) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(txt));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
-document.getElementById('login-btn').addEventListener('click', doLogin);
-document.getElementById('login-email').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-function doLogin() {
-  const email = document.getElementById('login-email').value.trim().toLowerCase();
-  const errEl = document.getElementById('login-error');
-  const inpEl = document.getElementById('login-email');
-  errEl.textContent = ''; inpEl.classList.remove('error');
-  if (!email) { errEl.textContent = 'Informe o e-mail.'; inpEl.classList.add('error'); return; }
-  if (email !== 'maite.passos@betha.com.br') { errEl.textContent = 'Acesso não autorizado para este e-mail.'; inpEl.classList.add('error'); return; }
-  sessionStorage.setItem('gestao_email', email);
+
+function _getAttempts() {
+  try { return JSON.parse(localStorage.getItem(_AK) || '{"n":0,"t":0}'); }
+  catch { return { n: 0, t: 0 }; }
+}
+function _isLocked() {
+  const a = _getAttempts();
+  if (a.n < MAX_TRIES) return 0;
+  const rem = LOCK_MS - (Date.now() - a.t);
+  if (rem <= 0) { localStorage.removeItem(_AK); return 0; }
+  return Math.ceil(rem / 60000);
+}
+function _recordFail() {
+  const a = _getAttempts();
+  if (Date.now() - a.t > LOCK_MS) { a.n = 0; a.t = Date.now(); }
+  if (!a.t) a.t = Date.now();
+  a.n++;
+  localStorage.setItem(_AK, JSON.stringify(a));
+}
+
+function _unlockDashboard(email) {
   document.getElementById('login-overlay').classList.add('hidden');
   document.getElementById('user-pill').textContent = '👤 ' + email.split('@')[0];
+}
+
+function checkAuth() {
+  try {
+    const s = JSON.parse(localStorage.getItem(_SK) || 'null');
+    if (!s || Date.now() > s.exp) { localStorage.removeItem(_SK); return false; }
+    _unlockDashboard(s.email);
+    return true;
+  } catch { return false; }
+}
+
+function togglePwd() {
+  const f = document.getElementById('login-pwd');
+  f.type = f.type === 'password' ? 'text' : 'password';
+  document.getElementById('pwd-eye').textContent = f.type === 'password' ? '👁' : '🙈';
+}
+
+document.getElementById('login-btn').addEventListener('click', doLogin);
+document.getElementById('login-email').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('login-pwd').focus(); });
+document.getElementById('login-pwd').addEventListener('keydown',  e => { if (e.key === 'Enter') doLogin(); });
+
+async function doLogin() {
+  const email  = document.getElementById('login-email').value.trim().toLowerCase();
+  const pwd    = document.getElementById('login-pwd').value;
+  const errEl  = document.getElementById('login-error');
+  const lockEl = document.getElementById('login-lockout');
+  const btn    = document.getElementById('login-btn');
+  errEl.textContent = ''; lockEl.style.display = 'none';
+
+  const locked = _isLocked();
+  if (locked) {
+    lockEl.textContent = `⛔ Acesso bloqueado por ${locked} min após múltiplas tentativas incorretas.`;
+    lockEl.style.display = 'block'; return;
+  }
+  if (!email) { errEl.textContent = 'Informe o e-mail.'; return; }
+  if (!pwd)   { errEl.textContent = 'Informe a senha.'; return; }
+  if (!AUTH_USERS.includes(email)) { _recordFail(); errEl.textContent = 'E-mail não autorizado.'; return; }
+
+  btn.disabled = true; btn.textContent = 'Verificando…';
+  const hash = await _sha256(pwd);
+  btn.disabled = false; btn.textContent = 'Entrar';
+
+  if (hash !== AUTH_PWD_HASH) {
+    _recordFail();
+    const rem = MAX_TRIES - _getAttempts().n;
+    errEl.textContent = `Senha incorreta.${rem > 0 ? ` ${rem} tentativa(s) restante(s).` : ' Acesso temporariamente bloqueado.'}`;
+    return;
+  }
+
+  localStorage.removeItem(_AK);
+  const remember = document.getElementById('login-remember').checked;
+  localStorage.setItem(_SK, JSON.stringify({ email, exp: Date.now() + (remember ? TTL_LONG : TTL_SHORT) }));
+  _unlockDashboard(email);
   loadData();
 }
-function logout() { sessionStorage.removeItem('gestao_email'); location.reload(); }
+
+function logout() { localStorage.removeItem(_SK); location.reload(); }
 
 /* ══════════════════════════════════════════════════════════════════════
    NAVEGAÇÃO PRINCIPAL
