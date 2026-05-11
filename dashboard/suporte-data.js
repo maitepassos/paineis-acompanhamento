@@ -1,124 +1,175 @@
-// Gerado automaticamente em 2026-05-06T21:00:00.000Z
+// Gerado automaticamente em 2026-05-11T16:00:00.000Z
 // NÃO editar manualmente
 window.SUPORTE_DATA = {
-  "generatedAt": "2026-05-06T21:00:00.000Z",
+  "generatedAt": "2026-05-11T16:00:00.000Z",
   "atendimento": {
     "filterUrl": "https://atendimento.betha.com.br/issues/?filter=165415",
-    "total": 9,
+    "total": 7,
     "byStatus": {
-      "Aguardando atendimento N2 (SUP)": 5,
-      "Aguardando Triagem (SUP)": 4
+      "Aguardando atendimento N2 (SUP)": 4,
+      "Aguardando Triagem (SUP)": 3
     },
     "byResponsavel": {
-      "Sem responsável": 9
+      "Sem responsável": 5,
+      "Alana Pinheiro da Silva": 2
     },
     "issues": [
       {
-        "key": "DSI-33895",
-        "summary": "Cargas Transparência Cloud",
+        "key": "DSI-33954",
+        "summary": "'O campo qual identidade de gênero deve ser informado...' em fichas muito antigas",
         "status": "Aguardando atendimento N2 (SUP)",
         "responsavelSup": null,
-        "entidade": "Delta Soluções em Informática Ltda",
-        "sloAtendimento": { "breached": false, "remainingTime": 4872842, "breachedDate": 1778155654425 }
+        "entidade": "Delta Soluções em Informática Ltda"
       },
       {
-        "key": "CSMCSM-149229",
-        "summary": "Prontuário de paciente Visitante",
-        "status": "Aguardando atendimento N2 (SUP)",
-        "responsavelSup": null,
-        "entidade": "CSM Central de Software Municipal Ltda",
-        "sloAtendimento": { "breached": false, "remainingTime": 10770564, "breachedDate": 1778161552190 }
-      },
-      {
-        "key": "CSMCSM-149212",
-        "summary": "Alteração de veículo na viagem",
-        "status": "Aguardando atendimento N2 (SUP)",
-        "responsavelSup": null,
-        "entidade": "CSM Central de Software Municipal Ltda",
-        "sloAtendimento": { "breached": false, "remainingTime": 5283934, "breachedDate": 1778156065591 }
-      },
-      {
-        "key": "CSMCSM-149208",
-        "summary": "Erro na exportação das fichas de vacinação esus",
-        "status": "Aguardando atendimento N2 (SUP)",
-        "responsavelSup": null,
-        "entidade": "CSM Central de Software Municipal Ltda",
-        "sloAtendimento": { "breached": false, "remainingTime": 4090008, "breachedDate": 1778154871701 }
-      },
-      {
-        "key": "CSMCSM-149147",
-        "summary": "Divergência de informações apresentado no relatório",
-        "status": "Aguardando atendimento N2 (SUP)",
-        "responsavelSup": null,
-        "entidade": "CSM Central de Software Municipal Ltda",
-        "sloAtendimento": { "breached": true, "remainingTime": -12741964, "breachedDate": 1778085000000 }
-      },
-      {
-        "key": "BTHSC-313216",
-        "summary": "Incidente com agenda",
+        "key": "BTHSC-314611",
+        "summary": "Cofinanciamento",
         "status": "Aguardando Triagem (SUP)",
         "responsavelSup": null,
-        "entidade": "Prefeitura da Estância de Atibaia - Atibaia/SP",
-        "sloAtendimento": { "breached": false, "remainingTime": 17929871, "breachedDate": 1778174111669 }
+        "entidade": "Prefeitura da Estância de Atibaia - Atibaia/SP"
       },
       {
-        "key": "BTHSC-313204",
-        "summary": "PORTAL DA TRANSPARÊNCIA NÃO ESTA ATUALIZANDO",
+        "key": "BTHSC-314392",
+        "summary": "Erro na baixa de estoque na dispensação (Salbutamol)",
         "status": "Aguardando Triagem (SUP)",
         "responsavelSup": null,
-        "entidade": "Fundo Municipal Saúde Capinzal - Capinzal/SC",
-        "sloAtendimento": { "breached": false, "remainingTime": 17029204, "breachedDate": 1778173211024 }
+        "entidade": "Rafael Fernandes de Paulo"
       },
       {
-        "key": "BTHSC-313178",
-        "summary": "Não estou conseguindo atualizar o RAAS",
-        "status": "Aguardando Triagem (SUP)",
-        "responsavelSup": null,
-        "entidade": "Fundo Municipal Saúde Palmitos - Palmitos/SC",
-        "sloAtendimento": { "breached": false, "remainingTime": 15218145, "breachedDate": 1778166000000 }
+        "key": "BTHSC-314384",
+        "summary": "retirar marcação automático de filtros",
+        "status": "Aguardando atendimento N2 (SUP)",
+        "responsavelSup": "Alana Pinheiro da Silva",
+        "entidade": "Betha Sistemas"
       },
       {
-        "key": "BTHSC-312983",
-        "summary": "Inconsistencias de exportação de dados de vacinas",
-        "status": "Aguardando Triagem (SUP)",
+        "key": "SOL-4953",
+        "summary": "Registro de Não atendimento após a recepção do cliente está estornando a cota",
+        "status": "Aguardando atendimento N2 (SUP)",
         "responsavelSup": null,
-        "entidade": "Fundo Municipal Saúde Santa Cruz do Sul - Santa Cruz do Sul/RS",
-        "sloAtendimento": { "breached": false, "remainingTime": 3819841, "breachedDate": 1778154601725 }
+        "entidade": "Solução Pública - Arthur Abreu de Assis"
+      },
+      {
+        "key": "BTHSC-313951",
+        "summary": "CATMAT",
+        "status": "Aguardando atendimento N2 (SUP)",
+        "responsavelSup": null,
+        "entidade": "Paulo Joaquim Gralha Bragatto"
+      },
+      {
+        "key": "BTHSC-310397",
+        "summary": "Lançamento - Entrada nº 40199 - efetuada, porém não está exibindo o item no Estoque.",
+        "status": "Aguardando Triagem (SUP)",
+        "responsavelSup": "Alana Pinheiro da Silva",
+        "entidade": "Prefeitura da Estância de Atibaia - Atibaia/SP"
       }
     ]
   },
   "produtividade": {
     "semanal": {
       "filterUrl": "https://atendimento.betha.com.br/issues/?filter=166026",
-      "total": 63,
-      "days": ["2026-04-22","2026-04-24","2026-04-27","2026-04-28","2026-04-30","2026-05-04","2026-05-05","2026-05-06"],
+      "total": 22,
+      "days": [
+        "2026-05-05",
+        "2026-05-06",
+        "2026-05-07",
+        "2026-05-08",
+        "2026-05-09",
+        "2026-05-11"
+      ],
       "byResponsavelDia": {
-        "Alana Pinheiro da Silva": { "2026-04-22":1, "2026-04-24":1, "2026-04-27":1, "2026-04-28":1, "2026-04-30":1, "2026-05-04":16, "2026-05-05":14, "2026-05-06":19, "total":54 },
-        "Juliana Lima e França":   {                                                                                    "2026-05-04":4,  "2026-05-05":4,  "2026-05-06":1,  "total":9  }
+        "Alana Pinheiro da Silva": {
+          "2026-05-11": 18,
+          "total": 18
+        },
+        "Sem responsável": {
+          "2026-05-11": 1,
+          "total": 1
+        },
+        "Juliana Lima e França": {
+          "2026-05-11": 2,
+          "total": 2
+        },
+        "Erinete Silveira da Silva Fernandes": {
+          "2026-05-11": 1,
+          "total": 1
+        }
       },
       "byResponsavel": [
-        { "name": "Alana Pinheiro da Silva", "total": 54 },
-        { "name": "Juliana Lima e França",   "total": 9  }
-      ],
-      "byOrigem": [
-        { "name": "Nível 1",                "total": 34 },
-        { "name": "Portal/Cliente",         "total": 16 },
-        { "name": "Chat/Whatsapp",          "total": 12 },
-        { "name": "Atendimento Telefônico", "total": 1  }
+        {
+          "name": "Alana Pinheiro da Silva",
+          "total": 18
+        },
+        {
+          "name": "Juliana Lima e França",
+          "total": 2
+        },
+        {
+          "name": "Sem responsável",
+          "total": 1
+        },
+        {
+          "name": "Erinete Silveira da Silva Fernandes",
+          "total": 1
+        }
       ]
     },
     "mensal": {
       "filterUrl": "https://atendimento.betha.com.br/issues/?filter=166025",
-      "total": 64,
+      "total": 105,
       "byResponsavel": [
-        { "name": "Alana Pinheiro da Silva", "total": 55 },
-        { "name": "Juliana Lima e França",   "total": 9  }
-      ],
-      "byOrigem": [
-        { "name": "Nível 1",                "total": 34 },
-        { "name": "Portal/Cliente",         "total": 16 },
-        { "name": "Chat/Whatsapp",          "total": 13 },
-        { "name": "Atendimento Telefônico", "total": 1  }
+        {
+          "name": "Alana Pinheiro da Silva",
+          "total": 75
+        },
+        {
+          "name": "Sem responsável",
+          "total": 7
+        },
+        {
+          "name": "Juliana Lima e França",
+          "total": 7
+        },
+        {
+          "name": "Lucas Donato De Toledo Segal",
+          "total": 3
+        },
+        {
+          "name": "Ivo Roberto Oliani",
+          "total": 3
+        },
+        {
+          "name": "Adriano Lucas Damião",
+          "total": 2
+        },
+        {
+          "name": "Arthur Abreu de Assis",
+          "total": 2
+        },
+        {
+          "name": "Luan Crispin Martins",
+          "total": 1
+        },
+        {
+          "name": "Frank William Miranda de Carvalho",
+          "total": 1
+        },
+        {
+          "name": "Erinete Silveira da Silva Fernandes",
+          "total": 1
+        },
+        {
+          "name": "Luis Fernando Teixeira",
+          "total": 1
+        },
+        {
+          "name": "Sabrina Avila de Abreu",
+          "total": 1
+        },
+        {
+          "name": "PAULO RICARDO DE CARVALHO FERNANDES",
+          "total": 1
+        }
       ]
     }
   }
