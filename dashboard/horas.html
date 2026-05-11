@@ -1670,7 +1670,8 @@ function renderSuporteProdutividade(period) {
   }
 
   function buildPeriodPanel(pd, isSemanal) {
-    const maxOrigem = Math.max(...pd.byOrigem.map(o=>o.total), 1);
+    const origemList = pd.byOrigem || [];
+    const maxOrigem = Math.max(...origemList.map(o=>o.total), 1);
 
     let h = `<div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;flex-wrap:wrap">
       <div style="background:#ebf8ff;color:#2b6cb0;font-size:1rem;font-weight:700;padding:0.5rem 1.2rem;border-radius:10px;border:1.5px solid #bee3f8">
@@ -1709,12 +1710,13 @@ function renderSuporteProdutividade(period) {
     }
 
     // ── Por Origem da Solicitação
+    if (origemList.length > 0) {
     h += `<div class="filter-section" style="margin-bottom:1.5rem">
       <div class="filter-header">
         <div class="filter-dot" style="background:#805ad5"></div>
         <span class="filter-title">Por Origem da Solicitação</span>
       </div>`;
-    for (const { name, total } of pd.byOrigem) {
+    for (const { name, total } of origemList) {
       const pct = Math.round((total / maxOrigem) * 100);
       const oc  = ORIGEM_COLOR[name] || { bg:'#e2e8f0', color:'#4a5568', bar:'#a0aec0' };
       h += `<div style="display:flex;align-items:center;gap:0.75rem;padding:0.55rem 1.2rem;border-bottom:1px solid #f0f4f8">
@@ -1726,6 +1728,7 @@ function renderSuporteProdutividade(period) {
       </div>`;
     }
     h += `</div>`;
+    } // end if origemList.length
 
     return h;
   }
