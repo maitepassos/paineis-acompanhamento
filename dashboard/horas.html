@@ -2465,29 +2465,67 @@ function renderPorArea(clientes, snap, importDate) {
   const sorted = Object.entries(grupos).sort((a,b)=>b[1].length-a[1].length);
   const max = sorted[0]?.[1].length||1;
 
-  const cards = sorted.map(([area, items]) => {
-    const pct = Math.round(items.length/max*100);
+  const today = new Date(); const in6m = new Date(today); in6m.setMonth(in6m.getMonth()+6);
+  const parseT = t => { if (!t) return null; const [d,m,y]=t.split('/'); return new Date(`${y}-${m}-${d}`); };
+
+  const porteBadge = p => p===3
+    ? `<span style="background:#e9d8fd;color:#553c9a;padding:1px 6px;border-radius:8px;font-size:0.67rem;font-weight:700">Grande</span>`
+    : p===2 ? `<span style="background:#bee3f8;color:#2c5282;padding:1px 6px;border-radius:8px;font-size:0.67rem;font-weight:700">Média</span>`
+    : `<span style="background:#e2e8f0;color:#4a5568;padding:1px 6px;border-radius:8px;font-size:0.67rem;font-weight:700">Pequena</span>`;
+
+  const cards = sorted.map(([area, items], idx) => {
+    const pct    = Math.round(items.length/max*100);
     const estados = [...new Set(items.map(c=>c.e))].sort().join(', ');
+    const totalQ  = items.reduce((s,c)=>s+c.q,0);
+    const sorted_items = [...items].sort((a,b)=>a.c.localeCompare(b.c, 'pt-BR'));
+
+    const tableRows = sorted_items.map((c,i) => {
+      const d = parseT(c.t);
+      let termBg='', termColor='#2d3748';
+      if (d && d < today)     { termBg='background:#fed7d7;'; termColor='#c53030'; }
+      else if (d && d <= in6m){ termBg='background:#feebc8;'; termColor='#c05621'; }
+      return `<tr style="vertical-align:middle;background:${i%2===0?'#f7fafc':'#fff'}">
+        <td style="font-size:0.76rem;font-weight:600;color:#2d3748">${escHtml(c.c)}</td>
+        <td style="font-size:0.74rem;color:#4a5568;white-space:nowrap">${escHtml(c.m)}/${c.e}</td>
+        <td style="text-align:center">${porteBadge(c.p)}</td>
+        <td style="text-align:center;font-size:0.74rem;font-weight:700;${termBg}color:${termColor};white-space:nowrap">${c.t||'—'}</td>
+        <td style="text-align:right;font-size:0.74rem;color:#2b6cb0;font-weight:600">${c.q.toLocaleString('pt-BR')}</td>
+      </tr>`;
+    }).join('');
+
+    const expandId = `area-expand-${idx}`;
+    const arrowId  = `area-arrow-${idx}`;
     return `<div class="filter-section" style="margin-bottom:1rem">
-      <div class="filter-header" style="cursor:pointer" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+      <div class="filter-header" style="cursor:pointer;user-select:none"
+        onclick="(function(btn){
+          var panel=document.getElementById('${expandId}');
+          var arrow=document.getElementById('${arrowId}');
+          var open=panel.style.display!=='none';
+          panel.style.display=open?'none':'block';
+          arrow.textContent=open?'▶':'▼';
+        })(this)">
         <div class="filter-dot" style="background:#3182ce"></div>
         <span class="filter-title">${escHtml(area)}</span>
         <span class="filter-count-badge" style="background:#ebf8ff;color:#2c5282">${items.length} cliente${items.length>1?'s':''}</span>
-        <span style="margin-left:auto;font-size:0.72rem;color:#718096">${estados}</span>
+        <span style="font-size:0.71rem;color:#a0aec0;margin-left:0.5rem">${totalQ.toLocaleString('pt-BR')} usuários</span>
+        <span style="font-size:0.71rem;color:#718096;margin-left:auto">${estados}</span>
+        <span id="${arrowId}" style="margin-left:0.75rem;font-size:0.72rem;color:#a0aec0">▶</span>
       </div>
-      <div style="padding:0.5rem 1.2rem">
-        <div style="height:7px;background:#edf2f7;border-radius:4px;overflow:hidden;margin-bottom:0.6rem">
-          <div style="width:${pct}%;height:100%;background:#3182ce;border-radius:4px"></div></div>
+      <div style="padding:0.4rem 1.2rem 0.5rem">
+        <div style="height:6px;background:#edf2f7;border-radius:4px;overflow:hidden">
+          <div style="width:${pct}%;height:100%;background:#3182ce;border-radius:4px"></div>
+        </div>
       </div>
-      <div style="display:none;padding:0.25rem 1.2rem 0.75rem">
-        <table class="hours-table" style="font-size:0.76rem;width:100%">
-          <thead><tr><th style="text-align:left">Conta</th><th>UF</th><th>Porte</th><th>Término</th></tr></thead>
-          <tbody>${items.sort((a,b)=>a.c.localeCompare(b.c, 'pt-BR')).map(c=>`<tr>
-            <td style="color:#2d3748">${escHtml(c.c)}</td>
-            <td style="text-align:center;color:#718096">${c.e}</td>
-            <td style="text-align:center">${c.p===3?'Grande':c.p===2?'Média':'Pequena'}</td>
-            <td style="text-align:center;color:${!c.t?'#a0aec0':'#2d3748'}">${c.t||'—'}</td>
-          </tr>`).join('')}</tbody>
+      <div id="${expandId}" style="display:none;padding:0 1.2rem 0.75rem">
+        <table class="hours-table" style="font-size:0.78rem;width:100%">
+          <thead><tr>
+            <th style="text-align:left">Conta</th>
+            <th style="text-align:left">Município/UF</th>
+            <th style="text-align:center">Porte</th>
+            <th style="text-align:center">Término</th>
+            <th style="text-align:right">Usuários</th>
+          </tr></thead>
+          <tbody>${tableRows}</tbody>
         </table>
       </div>
     </div>`;
@@ -2495,7 +2533,7 @@ function renderPorArea(clientes, snap, importDate) {
 
   return `<div style="margin-bottom:1.25rem">
     <h2 style="font-size:1.1rem;font-weight:700;color:#1a202c;margin:0 0 0.25rem">📍 Clientes por Área Comercial</h2>
-    <span style="font-size:0.72rem;color:#a0aec0">${snap.label} · ${sorted.length} áreas · clique em cada área para expandir</span>
+    <span style="font-size:0.72rem;color:#a0aec0">${snap.label} · ${sorted.length} áreas · clique para expandir cada área</span>
   </div>
   ${cards}
   ${importBtnHtml(window._comercialAllSnaps||[])}`;
