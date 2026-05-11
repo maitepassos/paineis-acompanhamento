@@ -410,12 +410,13 @@
      SEÇÃO: COMERCIAL
 ════════════════════════════════════════════════════════════════════════ -->
 <div id="section-comercial" class="main-section">
+  <nav class="period-bar">
+    <button class="period-tab active" data-ctab="ativos"  onclick="switchComercialTab('ativos')">🏢 Clientes Ativos</button>
+    <button class="period-tab"        data-ctab="area"    onclick="switchComercialTab('area')">📍 Por Área Comercial</button>
+    <button class="period-tab"        data-ctab="porte"   onclick="switchComercialTab('porte')">📦 Por Porte</button>
+  </nav>
   <div class="container">
-    <div style="padding:3rem 0;text-align:center;color:#a0aec0">
-      <div style="font-size:3rem;margin-bottom:1rem">💼</div>
-      <div style="font-size:1.1rem;font-weight:700;color:#4a5568;margin-bottom:0.5rem">Comercial</div>
-      <div style="font-size:0.85rem">Em construção — dados serão integrados em breve.</div>
-    </div>
+    <div id="comercial-content"></div>
   </div>
 </div>
 
@@ -686,6 +687,7 @@ function switchMain(name) {
     else if (activeDemand === 'suporte')  tryRenderSuporte();
   }
   if (name === 'nps') tryRenderNps();
+  if (name === 'comercial') renderComercial();
 }
 
 function switchPeriod(p) {
@@ -2228,7 +2230,342 @@ document.getElementById('header-date').textContent =
   sc.onload  = () => { if (currentMain === 'nps') renderNpsComentarios(); };
   sc.onerror = () => {};
   document.head.appendChild(sc);
+
+  // ── Comercial data
+  const scom = document.createElement('script');
+  scom.src = 'comercial-data.js?v=' + Date.now();
+  scom.onload  = () => { if (currentMain === 'comercial') renderComercial(); };
+  scom.onerror = () => {};
+  document.head.appendChild(scom);
 })();
+
+/* ══════════════════════════════════════════════════════════════════════
+   COMERCIAL
+══════════════════════════════════════════════════════════════════════ */
+let _comercialTab = 'ativos';
+
+function switchComercialTab(tab) {
+  _comercialTab = tab;
+  document.querySelectorAll('[data-ctab]').forEach(b => b.classList.toggle('active', b.dataset.ctab === tab));
+  renderComercial();
+}
+
+function renderComercial() {
+  const el = document.getElementById('comercial-content');
+  if (!el) return;
+
+  // Merge: base data + localStorage snapshots
+  const base = window.COMERCIAL_DATA?.snapshots || [];
+  let local = [];
+  try { local = JSON.parse(localStorage.getItem('comercial_snapshots') || '[]'); } catch {}
+  // Merge by importedAt key (local overrides if same key)
+  const allSnaps = [...base];
+  local.forEach(ls => { if (!allSnaps.find(s => s.importedAt === ls.importedAt)) allSnaps.push(ls); });
+  allSnaps.sort((a,b) => a.importedAt > b.importedAt ? 1 : -1);
+
+  const snap = allSnaps[allSnaps.length - 1];
+  const prevSnap = allSnaps.length > 1 ? allSnaps[allSnaps.length - 2] : null;
+
+  if (!snap) { el.innerHTML = '<div style="padding:2rem;text-align:center;color:#a0aec0">Nenhum dado carregado. Importe um arquivo CSV.</div>'; renderImportBar(el, allSnaps); return; }
+
+  const clientes = snap.clientes;
+  const importDate = new Date(snap.importedAt).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+
+  // ── helpers
+  const today = new Date();
+  const in6m  = new Date(today); in6m.setMonth(in6m.getMonth() + 6);
+  const parseDate = s => { if (!s) return null; const [d,m,y] = s.split('/'); return new Date(`${y}-${m}-${d}`); };
+  const expirando = clientes.filter(c => { const d = parseDate(c.t); return d && d <= in6m && d >= today; });
+  const vencidos  = clientes.filter(c => { const d = parseDate(c.t); return d && d < today; });
+
+  // ── diff vs prev
+  let diffHtml = '';
+  if (prevSnap) {
+    const prevContas = new Set(prevSnap.clientes.map(c => c.c));
+    const currContas = new Set(clientes.map(c => c.c));
+    const entrados  = clientes.filter(c => !prevContas.has(c.c));
+    const saidos    = prevSnap.clientes.filter(c => !currContas.has(c.c));
+    if (entrados.length || saidos.length) {
+      diffHtml = `<div class="filter-section" style="margin-bottom:1.5rem">
+        <div class="filter-header"><div class="filter-dot" style="background:#38a169"></div>
+          <span class="filter-title">Variação vs ${prevSnap.label}</span></div>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;padding:0.75rem 1.2rem">
+          ${entrados.length ? `<div style="flex:1;min-width:200px"><div style="font-size:0.75rem;font-weight:700;color:#38a169;margin-bottom:0.4rem">▲ ${entrados.length} NOVOS</div>${entrados.map(c=>`<div style="font-size:0.78rem;color:#2d3748;padding:2px 0">✅ ${escHtml(c.c)} <span style="color:#a0aec0">(${c.e})</span></div>`).join('')}</div>` : ''}
+          ${saidos.length   ? `<div style="flex:1;min-width:200px"><div style="font-size:0.75rem;font-weight:700;color:#e53e3e;margin-bottom:0.4rem">▼ ${saidos.length} SAÍRAM</div>${saidos.map(c=>`<div style="font-size:0.78rem;color:#2d3748;padding:2px 0">❌ ${escHtml(c.c)} <span style="color:#a0aec0">(${c.e})</span></div>`).join('')}</div>` : ''}
+        </div></div>`;
+    }
+  }
+
+  if (_comercialTab === 'ativos')  el.innerHTML = renderAtivos(clientes, snap, importDate, expirando, vencidos, diffHtml);
+  if (_comercialTab === 'area')    el.innerHTML = renderPorArea(clientes, snap, importDate);
+  if (_comercialTab === 'porte')   el.innerHTML = renderPorPorte(clientes, snap, importDate);
+
+  // bind import after render
+  const fi = document.getElementById('comercial-file-input');
+  if (fi) fi.addEventListener('change', e => handleComercialImport(e, allSnaps));
+}
+
+function renderImportBar(el, snaps) {
+  el.innerHTML += `<div style="padding:1rem 0">${importBtnHtml(snaps)}</div>`;
+  const fi = document.getElementById('comercial-file-input');
+  if (fi) fi.addEventListener('change', e => handleComercialImport(e, snaps));
+}
+
+function importBtnHtml(snaps) {
+  const labels = snaps.map(s => `<span style="background:#edf2f7;padding:2px 7px;border-radius:8px;font-size:0.72rem;margin-right:4px">${s.label}</span>`).join('');
+  return `<div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;padding:0.75rem 0;border-top:1px solid #edf2f7;margin-top:1rem">
+    <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;background:#2b6cb0;color:white;padding:0.45rem 1rem;border-radius:8px;font-size:0.82rem;font-weight:600">
+      ⬆️ Importar CSV <input type="file" id="comercial-file-input" accept=".csv" style="display:none">
+    </label>
+    <span style="font-size:0.75rem;color:#718096">Histórico: ${labels || 'nenhum'}</span>
+  </div>`;
+}
+
+function renderAtivos(clientes, snap, importDate, expirando, vencidos, diffHtml) {
+  const p1 = clientes.filter(c=>c.p===1).length;
+  const p2 = clientes.filter(c=>c.p===2).length;
+  const p3 = clientes.filter(c=>c.p===3).length;
+  const porteBar = (n,total,cor,label) => `<div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.3rem">
+    <span style="width:90px;font-size:0.72rem;color:#718096">${label}</span>
+    <div style="flex:1;height:8px;background:#edf2f7;border-radius:4px;overflow:hidden">
+      <div style="width:${Math.round(n/total*100)}%;height:100%;background:${cor}"></div></div>
+    <span style="font-size:0.72rem;font-weight:700;width:28px;text-align:right;color:${cor}">${n}</span></div>`;
+
+  const rows = [...clientes].sort((a,b)=>a.c.localeCompare(b.c,,'pt-BR')).map((c,i)=>{
+    const d = (() => { if (!c.t) return null; const [dd,mm,yy]=c.t.split('/'); return new Date(`${yy}-${mm}-${dd}`); })();
+    const today = new Date();
+    const in6m = new Date(today); in6m.setMonth(in6m.getMonth()+6);
+    let termBg='', termColor='#2d3748';
+    if (d && d < today)      { termBg='#fed7d7'; termColor='#c53030'; }
+    else if (d && d <= in6m) { termBg='#feebc8'; termColor='#c05621'; }
+    const porteBadge = c.p===3 ? `<span style="background:#e9d8fd;color:#553c9a;padding:1px 6px;border-radius:8px;font-size:0.68rem;font-weight:700">Grande</span>`
+                    : c.p===2 ? `<span style="background:#bee3f8;color:#2c5282;padding:1px 6px;border-radius:8px;font-size:0.68rem;font-weight:700">Média</span>`
+                    : `<span style="background:#e2e8f0;color:#4a5568;padding:1px 6px;border-radius:8px;font-size:0.68rem;font-weight:700">Pequena</span>`;
+    return `<tr style="vertical-align:middle;background:${i%2===0?'#f7fafc':'#fff'}">
+      <td style="font-size:0.78rem;color:#2d3748;font-weight:600">${escHtml(c.c)}</td>
+      <td style="font-size:0.75rem;color:#4a5568;white-space:nowrap">${escHtml(c.m)}/${escHtml(c.e)}</td>
+      <td style="font-size:0.73rem;color:#718096;white-space:nowrap">${escHtml(c.ag)}</td>
+      <td style="text-align:center">${porteBadge}</td>
+      <td style="text-align:center;font-size:0.75rem;font-weight:700;background:${termBg};color:${termColor};white-space:nowrap">${c.t||'—'}</td>
+      <td style="text-align:right;font-size:0.75rem;color:#2b6cb0;font-weight:600">${c.q.toLocaleString('pt-BR')}</td>
+    </tr>`;
+  }).join('');
+
+  return `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.5rem">
+      <div><h2 style="font-size:1.1rem;font-weight:700;color:#1a202c;margin:0">💼 Clientes Ativos — Saúde</h2>
+        <span style="font-size:0.72rem;color:#a0aec0">Importado em ${importDate} · ${snap.label}</span></div>
+    </div>
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem">
+      <div class="demand-card" style="border-top:4px solid #3182ce;min-width:140px;flex:1;cursor:default">
+        <div class="demand-card-label">Total de Clientes</div>
+        <div style="font-size:2.2rem;font-weight:800;color:#3182ce">${clientes.length}</div>
+        <div style="margin-top:0.75rem">${porteBar(p3,clientes.length,'#9f7aea','Grandes')}${porteBar(p2,clientes.length,'#3182ce','Médias')}${porteBar(p1,clientes.length,'#68d391','Pequenas')}</div>
+      </div>
+      <div class="demand-card" style="border-top:4px solid #e53e3e;min-width:140px;flex:1;cursor:default">
+        <div class="demand-card-label">Vencidos</div>
+        <div style="font-size:2.2rem;font-weight:800;color:#e53e3e">${vencidos.length}</div>
+        <div style="font-size:0.72rem;color:#718096;margin-top:0.3rem">Contratos já expirados</div>
+      </div>
+      <div class="demand-card" style="border-top:4px solid #ed8936;min-width:140px;flex:1;cursor:default">
+        <div class="demand-card-label">Vencem em 6 meses</div>
+        <div style="font-size:2.2rem;font-weight:800;color:#ed8936">${expirando.length}</div>
+        <div style="font-size:0.72rem;color:#718096;margin-top:0.3rem">Oportunidade de renovação</div>
+      </div>
+      <div class="demand-card" style="border-top:4px solid #38a169;min-width:140px;flex:1;cursor:default">
+        <div class="demand-card-label">Estados</div>
+        <div style="font-size:2.2rem;font-weight:800;color:#38a169">${new Set(clientes.map(c=>c.e)).size}</div>
+        <div style="font-size:0.72rem;color:#718096;margin-top:0.3rem">Estados atendidos</div>
+      </div>
+    </div>
+    ${diffHtml}
+    <div class="filter-section" style="margin-bottom:1.5rem">
+      <div class="filter-header"><div class="filter-dot" style="background:#2b6cb0"></div>
+        <span class="filter-title">Lista Geral</span>
+        <span class="filter-count-badge" style="background:#ebf8ff;color:#2c5282">${clientes.length} clientes</span>
+      </div>
+      <div style="padding:0.75rem 1.2rem 0.5rem;display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center">
+        <input id="com-busca" type="text" placeholder="🔍 Buscar conta, município…"
+          style="flex:1;min-width:180px;padding:0.4rem 0.7rem;border:1px solid #e2e8f0;border-radius:8px;font-size:0.82rem;outline:none"
+          oninput="filtrarComercial()">
+        <select id="com-porte" onchange="filtrarComercial()"
+          style="padding:0.4rem 0.6rem;border:1px solid #e2e8f0;border-radius:8px;font-size:0.82rem;background:white;cursor:pointer">
+          <option value="">Todos os portes</option>
+          <option value="1">Pequenas</option><option value="2">Médias</option><option value="3">Grandes</option>
+        </select>
+        <select id="com-estado" onchange="filtrarComercial()"
+          style="padding:0.4rem 0.6rem;border:1px solid #e2e8f0;border-radius:8px;font-size:0.82rem;background:white;cursor:pointer">
+          <option value="">Todos os estados</option>
+          ${[...new Set(clientes.map(c=>c.e))].sort().map(e=>`<option value="${e}">${e}</option>`).join('')}
+        </select>
+      </div>
+      <div style="overflow-x:auto;padding:0 1.2rem 1rem">
+        <table class="hours-table" style="min-width:700px;font-size:0.8rem">
+          <thead><tr>
+            <th style="text-align:left">Conta</th>
+            <th style="text-align:left">Município/UF</th>
+            <th style="text-align:left">Área Comercial</th>
+            <th style="text-align:center">Porte</th>
+            <th style="text-align:center">Término</th>
+            <th style="text-align:right">Qtd. Usuários</th>
+          </tr></thead>
+          <tbody id="com-tbody">${rows}</tbody>
+        </table>
+      </div>
+    </div>
+    ${importBtnHtml(window._comercialAllSnaps||[])}`;
+}
+
+function renderPorArea(clientes, snap, importDate) {
+  const grupos = {};
+  clientes.forEach(c => { if (!grupos[c.ag]) grupos[c.ag]=[]; grupos[c.ag].push(c); });
+  const sorted = Object.entries(grupos).sort((a,b)=>b[1].length-a[1].length);
+  const max = sorted[0]?.[1].length||1;
+
+  const cards = sorted.map(([area, items]) => {
+    const pct = Math.round(items.length/max*100);
+    const estados = [...new Set(items.map(c=>c.e))].sort().join(', ');
+    return `<div class="filter-section" style="margin-bottom:1rem">
+      <div class="filter-header" style="cursor:pointer" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+        <div class="filter-dot" style="background:#3182ce"></div>
+        <span class="filter-title">${escHtml(area)}</span>
+        <span class="filter-count-badge" style="background:#ebf8ff;color:#2c5282">${items.length} cliente${items.length>1?'s':''}</span>
+        <span style="margin-left:auto;font-size:0.72rem;color:#718096">${estados}</span>
+      </div>
+      <div style="padding:0.5rem 1.2rem">
+        <div style="height:7px;background:#edf2f7;border-radius:4px;overflow:hidden;margin-bottom:0.6rem">
+          <div style="width:${pct}%;height:100%;background:#3182ce;border-radius:4px"></div></div>
+      </div>
+      <div style="display:none;padding:0.25rem 1.2rem 0.75rem">
+        <table class="hours-table" style="font-size:0.76rem;width:100%">
+          <thead><tr><th style="text-align:left">Conta</th><th>UF</th><th>Porte</th><th>Término</th></tr></thead>
+          <tbody>${items.sort((a,b)=>a.c.localeCompare(b.c,,'pt-BR')).map(c=>`<tr>
+            <td style="color:#2d3748">${escHtml(c.c)}</td>
+            <td style="text-align:center;color:#718096">${c.e}</td>
+            <td style="text-align:center">${c.p===3?'Grande':c.p===2?'Média':'Pequena'}</td>
+            <td style="text-align:center;color:${!c.t?'#a0aec0':'#2d3748'}">${c.t||'—'}</td>
+          </tr>`).join('')}</tbody>
+        </table>
+      </div>
+    </div>`;
+  }).join('');
+
+  return `<div style="margin-bottom:1.25rem">
+    <h2 style="font-size:1.1rem;font-weight:700;color:#1a202c;margin:0 0 0.25rem">📍 Clientes por Área Comercial</h2>
+    <span style="font-size:0.72rem;color:#a0aec0">${snap.label} · ${sorted.length} áreas · clique em cada área para expandir</span>
+  </div>
+  ${cards}
+  ${importBtnHtml(window._comercialAllSnaps||[])}`;
+}
+
+function renderPorPorte(clientes, snap, importDate) {
+  const grupos = { 3: { label:'🏛️ Grandes Contas', cor:'#9f7aea', items:[] }, 2: { label:'🏢 Médias Contas', cor:'#3182ce', items:[] }, 1: { label:'🏠 Pequenas Contas', cor:'#38a169', items:[] } };
+  clientes.forEach(c => grupos[c.p]?.items.push(c));
+
+  const cards = [3,2,1].map(p => {
+    const g = grupos[p];
+    const itens = g.items.sort((a,b)=>a.c.localeCompare(b.c,,'pt-BR'));
+    const estados = [...new Set(itens.map(c=>c.e))].sort().join(', ');
+    const totalQ = itens.reduce((s,c)=>s+c.q,0);
+    return `<div class="filter-section" style="margin-bottom:1.25rem">
+      <div class="filter-header">
+        <div class="filter-dot" style="background:${g.cor}"></div>
+        <span class="filter-title">${g.label}</span>
+        <span class="filter-count-badge" style="background:#edf2f7;color:#2d3748">${itens.length} clientes</span>
+        <span style="margin-left:auto;font-size:0.72rem;color:#718096">${totalQ.toLocaleString('pt-BR')} usuários · ${estados}</span>
+      </div>
+      <div style="overflow-x:auto;padding:0.25rem 1.2rem 0.75rem">
+        <table class="hours-table" style="font-size:0.76rem;width:100%">
+          <thead><tr>
+            <th style="text-align:left">Conta</th><th>UF</th><th style="text-align:left">Área Comercial</th>
+            <th>Término</th><th style="text-align:right">Usuários</th>
+          </tr></thead>
+          <tbody>${itens.map((c,i)=>`<tr style="background:${i%2===0?'#f7fafc':'#fff'}">
+            <td style="color:#2d3748;font-weight:600">${escHtml(c.c)}</td>
+            <td style="text-align:center;color:#718096">${c.e}</td>
+            <td style="color:#718096;font-size:0.73rem">${escHtml(c.ag)}</td>
+            <td style="text-align:center;color:${!c.t?'#a0aec0':'#2d3748'}">${c.t||'—'}</td>
+            <td style="text-align:right;color:#2b6cb0;font-weight:600">${c.q.toLocaleString('pt-BR')}</td>
+          </tr>`).join('')}</tbody>
+        </table>
+      </div>
+    </div>`;
+  }).join('');
+
+  return `<div style="margin-bottom:1.25rem">
+    <h2 style="font-size:1.1rem;font-weight:700;color:#1a202c;margin:0 0 0.25rem">📦 Clientes por Porte</h2>
+    <span style="font-size:0.72rem;color:#a0aec0">${snap.label} · ${clientes.length} clientes no total</span>
+  </div>
+  ${cards}
+  ${importBtnHtml(window._comercialAllSnaps||[])}`;
+}
+
+function filtrarComercial() {
+  const busca  = (document.getElementById('com-busca')?.value||'').toLowerCase();
+  const porte  = document.getElementById('com-porte')?.value||'';
+  const estado = document.getElementById('com-estado')?.value||'';
+  const base   = window.COMERCIAL_DATA?.snapshots?.[0]?.clientes || [];
+  let local = []; try { local = JSON.parse(localStorage.getItem('comercial_snapshots')||'[]'); } catch {}
+  const all = [...base,...(local.flatMap(s=>s.clientes||[]))];
+  // Use latest snapshot
+  const allSnaps = [...(window.COMERCIAL_DATA?.snapshots||[])];
+  local.forEach(ls => { if (!allSnaps.find(s=>s.importedAt===ls.importedAt)) allSnaps.push(ls); });
+  allSnaps.sort((a,b)=>a.importedAt>b.importedAt?1:-1);
+  const snap = allSnaps[allSnaps.length-1];
+  if (!snap) return;
+  const rows = snap.clientes.filter(c => {
+    const mb = !busca || c.c.toLowerCase().includes(busca) || c.m.toLowerCase().includes(busca);
+    const mp = !porte || String(c.p) === porte;
+    const me = !estado || c.e === estado;
+    return mb && mp && me;
+  });
+  const today = new Date(); const in6m = new Date(today); in6m.setMonth(in6m.getMonth()+6);
+  const tbody = document.getElementById('com-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = rows.sort((a,b)=>a.c.localeCompare(b.c,,'pt-BR')).map((c,i)=>{
+    const d = c.t ? (() => { const [dd,mm,yy]=c.t.split('/'); return new Date(`${yy}-${mm}-${dd}`); })() : null;
+    let termBg='', termColor='#2d3748';
+    if (d && d < today)      { termBg='#fed7d7'; termColor='#c53030'; }
+    else if (d && d <= in6m) { termBg='#feebc8'; termColor='#c05621'; }
+    const porteBadge = c.p===3 ? `<span style="background:#e9d8fd;color:#553c9a;padding:1px 6px;border-radius:8px;font-size:0.68rem;font-weight:700">Grande</span>`
+                    : c.p===2 ? `<span style="background:#bee3f8;color:#2c5282;padding:1px 6px;border-radius:8px;font-size:0.68rem;font-weight:700">Média</span>`
+                    : `<span style="background:#e2e8f0;color:#4a5568;padding:1px 6px;border-radius:8px;font-size:0.68rem;font-weight:700">Pequena</span>`;
+    return `<tr style="vertical-align:middle;background:${i%2===0?'#f7fafc':'#fff'}">
+      <td style="font-size:0.78rem;color:#2d3748;font-weight:600">${escHtml(c.c)}</td>
+      <td style="font-size:0.75rem;color:#4a5568;white-space:nowrap">${escHtml(c.m)}/${escHtml(c.e)}</td>
+      <td style="font-size:0.73rem;color:#718096;white-space:nowrap">${escHtml(c.ag)}</td>
+      <td style="text-align:center">${porteBadge}</td>
+      <td style="text-align:center;font-size:0.75rem;font-weight:700;background:${termBg};color:${termColor};white-space:nowrap">${c.t||'—'}</td>
+      <td style="text-align:right;font-size:0.75rem;color:#2b6cb0;font-weight:600">${c.q.toLocaleString('pt-BR')}</td>
+    </tr>`;
+  }).join('');
+}
+
+function handleComercialImport(e, existingSnaps) {
+  const file = e.target.files?.[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const text = ev.target.result;
+    const lines = text.split('\n').filter(l=>l.trim());
+    const clientes = [];
+    for (let i=1;i<lines.length;i++) {
+      const cols = lines[i].split(';').map(s=>s.replace(/^"|"$/g,'').trim());
+      if (cols.length < 8 || !cols[0]) continue;
+      const porte = cols[6].includes('3') ? 3 : cols[6].includes('2') ? 2 : 1;
+      const ag = cols[4].replace(/\s*\(Área \d+\)/,'').replace(/\s*\(Parciais\)/,'').trim();
+      clientes.push({c:cols[0],m:cols[2],e:cols[3]?.substring(0,2)||cols[3],a:cols[4],ag,p:porte,t:cols[7]||'',q:parseInt(cols[8]||'0')||0});
+    }
+    if (!clientes.length) { alert('Nenhum dado encontrado no arquivo.'); return; }
+    const now = new Date();
+    const label = now.toLocaleDateString('pt-BR',{month:'short',year:'numeric'}).replace('.','').replace(/^\w/,c=>c.toUpperCase());
+    const snap = { importedAt: now.toISOString(), label, source: file.name, clientes };
+    const stored = existingSnaps.filter(s => s.source !== 'comercial-data.js'); // keep only local
+    stored.push(snap);
+    localStorage.setItem('comercial_snapshots', JSON.stringify(stored));
+    renderComercial();
+  };
+  reader.readAsText(file, 'UTF-8');
+}
 </script>
 </body>
 </html>
