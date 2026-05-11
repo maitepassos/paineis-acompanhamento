@@ -2243,6 +2243,38 @@ document.getElementById('header-date').textContent =
    COMERCIAL
 ══════════════════════════════════════════════════════════════════════ */
 let _comercialTab = 'ativos';
+let _comQuickFilter = 'all';
+
+const _COM_FILTER_LABELS = {
+  vencidos: '🔴 Vencidos', expirando: '🟠 Vencem em 6 meses',
+  p1: '🏠 Pequenas Contas', p2: '🏢 Médias Contas', p3: '🏛️ Grandes Contas'
+};
+
+function filtrarPorTotalizador(tipo) {
+  // Clicar no mesmo filtro ativo → limpa
+  _comQuickFilter = (_comQuickFilter === tipo) ? 'all' : tipo;
+
+  // Destaque visual dos cards
+  const cardIds = ['card-total','card-vencidos','card-expirando','card-p1','card-p2','card-p3'];
+  const activeMap = { all:'card-total', vencidos:'card-vencidos', expirando:'card-expirando', p1:'card-p1', p2:'card-p2', p3:'card-p3' };
+  cardIds.forEach(id => {
+    const el = document.getElementById(id); if (!el) return;
+    const isActive = activeMap[_comQuickFilter] === id && _comQuickFilter !== 'all';
+    el.style.boxShadow = isActive ? '0 0 0 2.5px #3182ce' : '';
+    el.style.background = isActive ? '#ebf8ff' : '';
+  });
+
+  // Badge de filtro ativo
+  const badge = document.getElementById('com-filter-badge');
+  const label = document.getElementById('com-filter-label');
+  if (badge && label) {
+    const show = _comQuickFilter !== 'all';
+    badge.style.display = show ? 'inline-flex' : 'none';
+    label.textContent = _COM_FILTER_LABELS[_comQuickFilter] || '';
+  }
+
+  filtrarComercial();
+}
 
 function switchComercialTab(tab) {
   _comercialTab = tab;
@@ -2357,22 +2389,32 @@ function renderAtivos(clientes, snap, importDate, expirando, vencidos, diffHtml)
         <span style="font-size:0.72rem;color:#a0aec0">Importado em ${importDate} · ${snap.label}</span></div>
     </div>
     <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem">
-      <div class="demand-card" style="border-top:4px solid #3182ce;min-width:140px;flex:1;cursor:default">
+      <div id="card-total" class="demand-card" onclick="filtrarPorTotalizador('all')"
+        style="border-top:4px solid #3182ce;min-width:140px;flex:1;cursor:pointer;transition:box-shadow .15s,background .15s" title="Mostrar todos">
         <div class="demand-card-label">Total de Clientes</div>
         <div style="font-size:2.2rem;font-weight:800;color:#3182ce">${clientes.length}</div>
-        <div style="margin-top:0.75rem">${porteBar(p3,clientes.length,'#9f7aea','Grandes')}${porteBar(p2,clientes.length,'#3182ce','Médias')}${porteBar(p1,clientes.length,'#68d391','Pequenas')}</div>
+        <div style="margin-top:0.75rem">
+          <div onclick="event.stopPropagation();filtrarPorTotalizador('p3')" id="card-p3" style="cursor:pointer;border-radius:4px;padding:1px 2px;transition:background .12s">${porteBar(p3,clientes.length,'#9f7aea','Grandes')}</div>
+          <div onclick="event.stopPropagation();filtrarPorTotalizador('p2')" id="card-p2" style="cursor:pointer;border-radius:4px;padding:1px 2px;transition:background .12s">${porteBar(p2,clientes.length,'#3182ce','Médias')}</div>
+          <div onclick="event.stopPropagation();filtrarPorTotalizador('p1')" id="card-p1" style="cursor:pointer;border-radius:4px;padding:1px 2px;transition:background .12s">${porteBar(p1,clientes.length,'#68d391','Pequenas')}</div>
+        </div>
       </div>
-      <div class="demand-card" style="border-top:4px solid #e53e3e;min-width:140px;flex:1;cursor:default">
+      <div id="card-vencidos" class="demand-card" onclick="filtrarPorTotalizador('vencidos')"
+        style="border-top:4px solid #e53e3e;min-width:140px;flex:1;cursor:pointer;transition:box-shadow .15s,background .15s" title="Filtrar: contratos vencidos">
         <div class="demand-card-label">Vencidos</div>
         <div style="font-size:2.2rem;font-weight:800;color:#e53e3e">${vencidos.length}</div>
         <div style="font-size:0.72rem;color:#718096;margin-top:0.3rem">Contratos já expirados</div>
+        <div style="font-size:0.65rem;color:#a0aec0;margin-top:0.4rem">clique para filtrar</div>
       </div>
-      <div class="demand-card" style="border-top:4px solid #ed8936;min-width:140px;flex:1;cursor:default">
+      <div id="card-expirando" class="demand-card" onclick="filtrarPorTotalizador('expirando')"
+        style="border-top:4px solid #ed8936;min-width:140px;flex:1;cursor:pointer;transition:box-shadow .15s,background .15s" title="Filtrar: vencem em 6 meses">
         <div class="demand-card-label">Vencem em 6 meses</div>
         <div style="font-size:2.2rem;font-weight:800;color:#ed8936">${expirando.length}</div>
         <div style="font-size:0.72rem;color:#718096;margin-top:0.3rem">Oportunidade de renovação</div>
+        <div style="font-size:0.65rem;color:#a0aec0;margin-top:0.4rem">clique para filtrar</div>
       </div>
-      <div class="demand-card" style="border-top:4px solid #38a169;min-width:140px;flex:1;cursor:default">
+      <div id="card-estados" class="demand-card"
+        style="border-top:4px solid #38a169;min-width:140px;flex:1;cursor:default">
         <div class="demand-card-label">Estados</div>
         <div style="font-size:2.2rem;font-weight:800;color:#38a169">${new Set(clientes.map(c=>c.e)).size}</div>
         <div style="font-size:0.72rem;color:#718096;margin-top:0.3rem">Estados atendidos</div>
@@ -2382,7 +2424,8 @@ function renderAtivos(clientes, snap, importDate, expirando, vencidos, diffHtml)
     <div class="filter-section" style="margin-bottom:1.5rem">
       <div class="filter-header"><div class="filter-dot" style="background:#2b6cb0"></div>
         <span class="filter-title">Lista Geral</span>
-        <span class="filter-count-badge" style="background:#ebf8ff;color:#2c5282">${clientes.length} clientes</span>
+        <span id="com-count-badge" class="filter-count-badge" style="background:#ebf8ff;color:#2c5282">${clientes.length} clientes</span>
+        <span id="com-filter-badge" style="display:none;margin-left:0.5rem;background:#feebc8;color:#7b341e;padding:2px 8px;border-radius:8px;font-size:0.72rem;font-weight:700;cursor:pointer" onclick="filtrarPorTotalizador('all')" title="Limpar filtro">✕ <span id="com-filter-label"></span></span>
       </div>
       <div style="padding:0.75rem 1.2rem 0.5rem;display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center">
         <input id="com-busca" type="text" placeholder="🔍 Buscar conta, município…"
@@ -2504,26 +2547,38 @@ function filtrarComercial() {
   const busca  = (document.getElementById('com-busca')?.value||'').toLowerCase();
   const porte  = document.getElementById('com-porte')?.value||'';
   const estado = document.getElementById('com-estado')?.value||'';
-  const base   = window.COMERCIAL_DATA?.snapshots?.[0]?.clientes || [];
-  let local = []; try { local = JSON.parse(localStorage.getItem('comercial_snapshots')||'[]'); } catch {}
-  const all = [...base,...(local.flatMap(s=>s.clientes||[]))];
-  // Use latest snapshot
   const allSnaps = [...(window.COMERCIAL_DATA?.snapshots||[])];
+  let local = []; try { local = JSON.parse(localStorage.getItem('comercial_snapshots')||'[]'); } catch {}
   local.forEach(ls => { if (!allSnaps.find(s=>s.importedAt===ls.importedAt)) allSnaps.push(ls); });
   allSnaps.sort((a,b)=>a.importedAt>b.importedAt?1:-1);
   const snap = allSnaps[allSnaps.length-1];
   if (!snap) return;
+
+  const today = new Date(); const in6m = new Date(today); in6m.setMonth(in6m.getMonth()+6);
+  const parseT = t => { if (!t) return null; const [dd,mm,yy]=t.split('/'); return new Date(`${yy}-${mm}-${dd}`); };
+
   const rows = snap.clientes.filter(c => {
     const mb = !busca || c.c.toLowerCase().includes(busca) || c.m.toLowerCase().includes(busca);
     const mp = !porte || String(c.p) === porte;
     const me = !estado || c.e === estado;
-    return mb && mp && me;
+    // filtro rápido dos totalizadores
+    const d  = parseT(c.t);
+    const mq = !_comQuickFilter || _comQuickFilter === 'all' ? true
+      : _comQuickFilter === 'vencidos'   ? (d && d < today)
+      : _comQuickFilter === 'expirando'  ? (d && d >= today && d <= in6m)
+      : _comQuickFilter === 'p1'         ? c.p === 1
+      : _comQuickFilter === 'p2'         ? c.p === 2
+      : _comQuickFilter === 'p3'         ? c.p === 3 : true;
+    return mb && mp && me && mq;
   });
-  const today = new Date(); const in6m = new Date(today); in6m.setMonth(in6m.getMonth()+6);
+
+  // Atualiza badge de contagem
+  const countBadge = document.getElementById('com-count-badge');
+  if (countBadge) countBadge.textContent = rows.length + ' cliente' + (rows.length!==1?'s':'');
   const tbody = document.getElementById('com-tbody');
   if (!tbody) return;
   tbody.innerHTML = rows.sort((a,b)=>a.c.localeCompare(b.c, 'pt-BR')).map((c,i)=>{
-    const d = c.t ? (() => { const [dd,mm,yy]=c.t.split('/'); return new Date(`${yy}-${mm}-${dd}`); })() : null;
+    const d = parseT(c.t);
     let termBg='', termColor='#2d3748';
     if (d && d < today)      { termBg='#fed7d7'; termColor='#c53030'; }
     else if (d && d <= in6m) { termBg='#feebc8'; termColor='#c05621'; }
