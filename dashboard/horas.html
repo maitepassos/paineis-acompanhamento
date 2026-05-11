@@ -333,6 +333,18 @@
     <div class="login-error" id="login-error"></div>
     <button class="login-btn" id="login-btn">Entrar</button>
     <div id="login-lockout" style="display:none;margin-top:0.75rem;padding:0.5rem 0.75rem;background:#fff5f5;border-radius:6px;font-size:0.75rem;color:#c53030;font-weight:600"></div>
+    <div style="margin-top:1.1rem;border-top:1px solid #edf2f7;padding-top:0.9rem">
+      <button type="button" onclick="toggleHint()"
+        style="background:none;border:none;color:#3182ce;font-size:0.78rem;cursor:pointer;text-decoration:underline;padding:0">
+        Esqueceu a senha?
+      </button>
+      <div id="login-hint" style="display:none;margin-top:0.6rem;padding:0.6rem 0.75rem;background:#ebf8ff;border-radius:6px;font-size:0.78rem;color:#2c5282;text-align:left;line-height:1.5">
+        💡 <strong>Dica:</strong> Nome da empresa + <code style="background:#bee3f8;padding:1px 4px;border-radius:3px">@</code> + ano atual<br>
+        <span style="font-size:0.7rem;color:#4a5568">Ex: Empresa@Ano — com inicial maiúscula</span><br><br>
+        Se ainda não conseguir, entre em contato com<br>
+        <strong>maite.passos@betha.com.br</strong> para resetar.
+      </div>
+    </div>
   </div>
 </div>
 
@@ -610,6 +622,10 @@ function togglePwd() {
   const f = document.getElementById('login-pwd');
   f.type = f.type === 'password' ? 'text' : 'password';
   document.getElementById('pwd-eye').textContent = f.type === 'password' ? '👁' : '🙈';
+}
+function toggleHint() {
+  const h = document.getElementById('login-hint');
+  h.style.display = h.style.display === 'none' ? 'block' : 'none';
 }
 
 document.getElementById('login-btn').addEventListener('click', doLogin);
