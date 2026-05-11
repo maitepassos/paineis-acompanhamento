@@ -2331,7 +2331,7 @@ function renderAtivos(clientes, snap, importDate, expirando, vencidos, diffHtml)
       <div style="width:${Math.round(n/total*100)}%;height:100%;background:${cor}"></div></div>
     <span style="font-size:0.72rem;font-weight:700;width:28px;text-align:right;color:${cor}">${n}</span></div>`;
 
-  const rows = [...clientes].sort((a,b)=>a.c.localeCompare(b.c,,'pt-BR')).map((c,i)=>{
+  const rows = [...clientes].sort((a,b)=>a.c.localeCompare(b.c, 'pt-BR')).map((c,i)=>{
     const d = (() => { if (!c.t) return null; const [dd,mm,yy]=c.t.split('/'); return new Date(`${yy}-${mm}-${dd}`); })();
     const today = new Date();
     const in6m = new Date(today); in6m.setMonth(in6m.getMonth()+6);
@@ -2439,7 +2439,7 @@ function renderPorArea(clientes, snap, importDate) {
       <div style="display:none;padding:0.25rem 1.2rem 0.75rem">
         <table class="hours-table" style="font-size:0.76rem;width:100%">
           <thead><tr><th style="text-align:left">Conta</th><th>UF</th><th>Porte</th><th>Término</th></tr></thead>
-          <tbody>${items.sort((a,b)=>a.c.localeCompare(b.c,,'pt-BR')).map(c=>`<tr>
+          <tbody>${items.sort((a,b)=>a.c.localeCompare(b.c, 'pt-BR')).map(c=>`<tr>
             <td style="color:#2d3748">${escHtml(c.c)}</td>
             <td style="text-align:center;color:#718096">${c.e}</td>
             <td style="text-align:center">${c.p===3?'Grande':c.p===2?'Média':'Pequena'}</td>
@@ -2464,7 +2464,7 @@ function renderPorPorte(clientes, snap, importDate) {
 
   const cards = [3,2,1].map(p => {
     const g = grupos[p];
-    const itens = g.items.sort((a,b)=>a.c.localeCompare(b.c,,'pt-BR'));
+    const itens = g.items.sort((a,b)=>a.c.localeCompare(b.c, 'pt-BR'));
     const estados = [...new Set(itens.map(c=>c.e))].sort().join(', ');
     const totalQ = itens.reduce((s,c)=>s+c.q,0);
     return `<div class="filter-section" style="margin-bottom:1.25rem">
@@ -2522,7 +2522,7 @@ function filtrarComercial() {
   const today = new Date(); const in6m = new Date(today); in6m.setMonth(in6m.getMonth()+6);
   const tbody = document.getElementById('com-tbody');
   if (!tbody) return;
-  tbody.innerHTML = rows.sort((a,b)=>a.c.localeCompare(b.c,,'pt-BR')).map((c,i)=>{
+  tbody.innerHTML = rows.sort((a,b)=>a.c.localeCompare(b.c, 'pt-BR')).map((c,i)=>{
     const d = c.t ? (() => { const [dd,mm,yy]=c.t.split('/'); return new Date(`${yy}-${mm}-${dd}`); })() : null;
     let termBg='', termColor='#2d3748';
     if (d && d < today)      { termBg='#fed7d7'; termColor='#c53030'; }
