@@ -1,22 +1,28 @@
-// Gerado automaticamente em 2026-05-11T16:00:00.000Z
-// NÃO editar manualmente
+// Gerado automaticamente em 2026-05-12T16:00:00.000Z
+// Fonte: Jira Desenvolvimento -- filtro 170409
+// Vertical: Saude (Fly) | Periodo: Mai/2026
+// NAO editar manualmente
 window.PRODUTIVIDADE_DATA = {
-  "generatedAt": "2026-05-11T16:00:00.000Z",
-  "filterUrl": "https://desenv.betha.com.br/issues/?filter=170409",
-  "periodo": "Últimos 30 dias",
-  "total": 156,
+  "generatedAt": "2026-05-12T16:00:00.000Z",
+  "filterUrl": "https://desenvolvimento.betha.cloud/issues/?filter=170409",
+  "periodo": "Mai/2026",
+  "total": 170,
   "byAssignee": [
     {
       "name": "Rai Bonassa Martins",
-      "total": 43
-    },
-    {
-      "name": "Arthur Bortoluzzi Coelho",
-      "total": 26
+      "total": 44
     },
     {
       "name": "Gustavo Taufembach Bett",
-      "total": 21
+      "total": 28
+    },
+    {
+      "name": "Arthur Bortoluzzi Coelho",
+      "total": 27
+    },
+    {
+      "name": "Bruno Felipe Moreira Lima",
+      "total": 14
     },
     {
       "name": "João Marcos Vieira dos Santos",
@@ -24,11 +30,7 @@ window.PRODUTIVIDADE_DATA = {
     },
     {
       "name": "João Miguel Fortunato Rita",
-      "total": 11
-    },
-    {
-      "name": "Bruno Felipe Moreira Lima",
-      "total": 10
+      "total": 12
     },
     {
       "name": "Max Fertig",
@@ -65,14 +67,14 @@ window.PRODUTIVIDADE_DATA = {
   ],
   "byTypeAndAssignee": {
     "Incidente": {
-      "Arthur Bortoluzzi Coelho": 21,
-      "Bruno Felipe Moreira Lima": 9,
+      "Arthur Bortoluzzi Coelho": 22,
+      "Bruno Felipe Moreira Lima": 13,
       "Diogo Roberto da Silva [X]": 5,
-      "Gustavo Taufembach Bett": 14,
+      "Gustavo Taufembach Bett": 20,
       "João Marcos Vieira dos Santos": 8,
-      "João Miguel Fortunato Rita": 9,
+      "João Miguel Fortunato Rita": 10,
       "Luiz Fernando Reichert [X]": 1,
-      "Rai Bonassa Martins": 31
+      "Rai Bonassa Martins": 32
     },
     "Story": {
       "Arthur Bortoluzzi Coelho": 5,
@@ -93,7 +95,7 @@ window.PRODUTIVIDADE_DATA = {
       "Tiago Gustavo Waide": 3
     },
     "Tarefa": {
-      "Gustavo Taufembach Bett": 4,
+      "Gustavo Taufembach Bett": 5,
       "Ivo Roberto Oliani": 3,
       "Max Fertig": 9,
       "Sandro da Silva Santos Filho": 1
